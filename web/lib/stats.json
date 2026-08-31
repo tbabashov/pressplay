@@ -1,0 +1,56 @@
+{
+  "albums": 165,
+  "songs": 2421,
+  "na": 110,
+  "distribution": {
+    "0": 28,
+    "1": 26,
+    "2": 33,
+    "3": 38,
+    "4": 65,
+    "5": 118,
+    "6": 177,
+    "7": 300,
+    "8": 459,
+    "9": 440,
+    "10": 345,
+    "11": 392
+  },
+  "artists": 93,
+  "yearMin": 1982,
+  "yearMax": 2026,
+  "topArtists": [
+    {
+      "name": "Kanye West",
+      "count": 13
+    },
+    {
+      "name": "The Alchemist",
+      "count": 12
+    },
+    {
+      "name": "Travis Scott",
+      "count": 8
+    },
+    {
+      "name": "Westside Gunn",
+      "count": 7
+    },
+    {
+      "name": "JPEGMAFIA",
+      "count": 6
+    },
+    {
+      "name": "Kendrick Lamar",
+      "count": 6
+    },
+    {
+      "name": "Drake",
+      "count": 6
+    },
+    {
+      "name": "Freddie Gibbs",
+      "count": 5
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "name": "album-rankings",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k \"npm:server\" \"npm:client\"",
+    "server": "node server/index.js",
+    "client": "vite",
+    "build": "vite build",
+    "start": "NODE_ENV=production node server/index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "html-to-image": "^1.11.11",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.7.0",
+    "concurrently": "^8.2.2",
+    "vite": "^5.4.0"
+  }
+}

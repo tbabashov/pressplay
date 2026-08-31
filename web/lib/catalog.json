@@ -1,0 +1,1681 @@
+[
+  {
+    "name": "Piñata",
+    "artists": [
+      "Freddie Gibbs",
+      "Madlib"
+    ],
+    "year": "2014",
+    "score": 10.7,
+    "cover": "/covers/pinata.jpg",
+    "tracks": 17
+  },
+  {
+    "name": "Cheat Codes",
+    "artists": [
+      "Danger Mouse & Black Thought"
+    ],
+    "year": "2022",
+    "score": 10.7,
+    "cover": "/covers/cheat-codes.jpg",
+    "tracks": 12
+  },
+  {
+    "name": "Late Registration",
+    "artists": [
+      "Kanye West"
+    ],
+    "year": "2005",
+    "score": 10.6,
+    "cover": "/covers/late-registration.jpg",
+    "tracks": 21
+  },
+  {
+    "name": "The College Dropout",
+    "artists": [
+      "Kanye West"
+    ],
+    "year": "2004",
+    "score": 10.6,
+    "cover": "/covers/the-college-dropout.jpg",
+    "tracks": 21
+  },
+  {
+    "name": "Bandana",
+    "artists": [
+      "Freddie Gibbs",
+      "Madlib"
+    ],
+    "year": "2019",
+    "score": 10.5,
+    "cover": "/covers/bandana.jpg",
+    "tracks": 15
+  },
+  {
+    "name": "Be",
+    "artists": [
+      "Common"
+    ],
+    "year": "2005",
+    "score": 10.5,
+    "cover": "/covers/be.jpg",
+    "tracks": 11
+  },
+  {
+    "name": "Good Kid, M.A.A.D City",
+    "artists": [
+      "Kendrick Lamar"
+    ],
+    "year": "2012",
+    "score": 10.4,
+    "cover": "/covers/good-kid-m-a-a-d-city.jpg",
+    "tracks": 16
+  },
+  {
+    "name": "Aquemini",
+    "artists": [
+      "Outkast"
+    ],
+    "year": "1998",
+    "score": 10.4,
+    "cover": "/covers/aquemini.jpg",
+    "tracks": 15
+  },
+  {
+    "name": "Illmatic",
+    "artists": [
+      "Nas"
+    ],
+    "year": "1994",
+    "score": 10.3,
+    "cover": "/covers/illmatic.jpg",
+    "tracks": 10
+  },
+  {
+    "name": "Alfredo 2",
+    "artists": [
+      "Freddie Gibbs",
+      "The Alchemist"
+    ],
+    "year": "2025",
+    "score": 10.3,
+    "cover": "/covers/alfredo-2.jpg",
+    "tracks": 14
+  },
+  {
+    "name": "To Pimp a Butterfly",
+    "artists": [
+      "Kendrick Lamar"
+    ],
+    "year": "2015",
+    "score": 10.3,
+    "cover": "/covers/to-pimp-a-butterfly.jpg",
+    "tracks": 16
+  },
+  {
+    "name": "Alfredo",
+    "artists": [
+      "Freddie Gibbs",
+      "The Alchemist"
+    ],
+    "year": "2020",
+    "score": 10.3,
+    "cover": "/covers/alfredo.jpg",
+    "tracks": 10
+  },
+  {
+    "name": "Enter the Wu-Tang (36 Chambers)",
+    "artists": [
+      "Wu-Tang Clan"
+    ],
+    "year": "1993",
+    "score": 10.3,
+    "cover": "/covers/enter-the-wu-tang-36-chambers.jpg",
+    "tracks": 9
+  },
+  {
+    "name": "IGOR",
+    "artists": [
+      "Tyler, The Creator"
+    ],
+    "year": "2019",
+    "score": 10.2,
+    "cover": "/covers/igor.jpg",
+    "tracks": 12
+  },
+  {
+    "name": "Thriller",
+    "artists": [
+      "Michael Jackson"
+    ],
+    "year": "1982",
+    "score": 10.2,
+    "cover": "/covers/thriller.jpg",
+    "tracks": 9
+  },
+  {
+    "name": "Madvillainy",
+    "artists": [
+      "MF DOOM",
+      "Madlib",
+      "Madvillain"
+    ],
+    "year": "2004",
+    "score": 10.2,
+    "cover": "/covers/madvillainy.jpg",
+    "tracks": 24
+  },
+  {
+    "name": "Graduation",
+    "artists": [
+      "Kanye West"
+    ],
+    "year": "2007",
+    "score": 10.2,
+    "cover": "/covers/graduation.jpg",
+    "tracks": 14
+  },
+  {
+    "name": "The Blueprint",
+    "artists": [
+      "JAŸ-Z"
+    ],
+    "year": "2001",
+    "score": 10.2,
+    "cover": "/covers/the-blueprint.jpg",
+    "tracks": 15
+  },
+  {
+    "name": "The Forever Story",
+    "artists": [
+      "JID"
+    ],
+    "year": "2022",
+    "score": 10.1,
+    "cover": "/covers/the-forever-story.jpg",
+    "tracks": 15
+  },
+  {
+    "name": "My Beautiful Dark Twisted Fantasy",
+    "artists": [
+      "Kanye West"
+    ],
+    "year": "2010",
+    "score": 10.1,
+    "cover": "/covers/my-beautiful-dark-twisted-fantasy.jpg",
+    "tracks": 14
+  },
+  {
+    "name": "Black On Both Sides",
+    "artists": [
+      "Mos Def"
+    ],
+    "year": "1999",
+    "score": 10,
+    "cover": "/covers/black-on-both-sides.jpg",
+    "tracks": 17
+  },
+  {
+    "name": "Currents",
+    "artists": [
+      "Tame Impala"
+    ],
+    "year": "2015",
+    "score": 10,
+    "cover": "/covers/currents.jpg",
+    "tracks": 13
+  },
+  {
+    "name": "Man On the Moon: The End of Day",
+    "artists": [
+      "Kid Cudi"
+    ],
+    "year": "2009",
+    "score": 10,
+    "cover": "/covers/man-on-the-moon-the-end-of-day.jpg",
+    "tracks": 15
+  },
+  {
+    "name": "The Price Of Tea In China",
+    "artists": [
+      "Boldy James"
+    ],
+    "year": "2020",
+    "score": 9.9,
+    "cover": "/covers/the-price-of-tea-in-china.jpg",
+    "tracks": 12
+  },
+  {
+    "name": "Tana Talk 3",
+    "artists": [
+      "Benny the Butcher"
+    ],
+    "year": "2018",
+    "score": 9.9,
+    "cover": "/covers/tana-talk-3.jpg",
+    "tracks": 14
+  },
+  {
+    "name": "No Idols",
+    "artists": [
+      "Domo Genesis",
+      "The Alchemist"
+    ],
+    "year": "2023",
+    "score": 9.8,
+    "cover": "/covers/no-idols.jpg",
+    "tracks": 12
+  },
+  {
+    "name": "Melt My Eyez See Your Future",
+    "artists": [
+      "Denzel Curry"
+    ],
+    "year": "2022",
+    "score": 9.8,
+    "cover": "/covers/melt-my-eyez-see-your-future.jpg",
+    "tracks": 14
+  },
+  {
+    "name": "Pray For Haiti",
+    "artists": [
+      "Mach-Hommy"
+    ],
+    "year": "2021",
+    "score": 9.8,
+    "cover": "/covers/pray-for-haiti.jpg",
+    "tracks": 16
+  },
+  {
+    "name": "VOIR DIRE",
+    "artists": [
+      "Earl Sweatshirt",
+      "The Alchemist"
+    ],
+    "year": "2023",
+    "score": 9.8,
+    "cover": "/covers/voir-dire.jpg",
+    "tracks": 11
+  },
+  {
+    "name": "Covert Coup",
+    "artists": [
+      "Curren$y",
+      "The Alchemist"
+    ],
+    "year": "2011",
+    "score": 9.7,
+    "cover": "/covers/covert-coup.jpg",
+    "tracks": 10
+  },
+  {
+    "name": "The Eminem Show",
+    "artists": [
+      "Eminem"
+    ],
+    "year": "2002",
+    "score": 9.7,
+    "cover": "/covers/the-eminem-show.jpg",
+    "tracks": 20
+  },
+  {
+    "name": "Samurai",
+    "artists": [
+      "Lupe Fiasco"
+    ],
+    "year": "2024",
+    "score": 9.7,
+    "cover": "/covers/samurai.jpg",
+    "tracks": 8
+  },
+  {
+    "name": "MM..FOOD",
+    "artists": [
+      "MF DOOM"
+    ],
+    "year": "2004",
+    "score": 9.7,
+    "cover": "/covers/mm-food.jpg",
+    "tracks": 15
+  },
+  {
+    "name": "Meteora",
+    "artists": [
+      "LINKIN PARK"
+    ],
+    "year": "2003",
+    "score": 9.7,
+    "cover": "/covers/meteora.jpg",
+    "tracks": 13
+  },
+  {
+    "name": "Yeezus",
+    "artists": [
+      "Kanye West"
+    ],
+    "year": "2013",
+    "score": 9.7,
+    "cover": "/covers/yeezus.jpg",
+    "tracks": 10
+  },
+  {
+    "name": "Liquid Swords",
+    "artists": [
+      "The Genius",
+      "GZA"
+    ],
+    "year": "1995",
+    "score": 9.7,
+    "cover": "/covers/liquid-swords.jpg",
+    "tracks": 13
+  },
+  {
+    "name": "Egotrip",
+    "artists": [
+      "John Michel & Anthony James"
+    ],
+    "year": "2025",
+    "score": 9.7,
+    "cover": "/covers/egotrip.jpg",
+    "tracks": 12
+  },
+  {
+    "name": "The Plugs I Met",
+    "artists": [
+      "Benny the Butcher"
+    ],
+    "year": "2019",
+    "score": 9.7,
+    "cover": "/covers/the-plugs-i-met.jpg",
+    "tracks": 7
+  },
+  {
+    "name": "Mos Def & Talib Kweli Are Black Star",
+    "artists": [
+      "Black Star"
+    ],
+    "year": "1998",
+    "score": 9.6,
+    "cover": "/covers/mos-def-talib-kweli-are-black-star.jpg",
+    "tracks": 13
+  },
+  {
+    "name": "Rodeo",
+    "artists": [
+      "Travis Scott"
+    ],
+    "year": "2015",
+    "score": 9.6,
+    "cover": "/covers/rodeo.jpg",
+    "tracks": 16
+  },
+  {
+    "name": "Burning Desire",
+    "artists": [
+      "MIKE"
+    ],
+    "year": "2023",
+    "score": 9.6,
+    "cover": "/covers/burning-desire.jpg",
+    "tracks": 24
+  },
+  {
+    "name": "TA13OO",
+    "artists": [
+      "Denzel Curry"
+    ],
+    "year": "2018",
+    "score": 9.6,
+    "cover": "/covers/ta13oo.jpg",
+    "tracks": 13
+  },
+  {
+    "name": "Donuts",
+    "artists": [
+      "J Dilla"
+    ],
+    "year": "2006",
+    "score": 9.6,
+    "cover": "/covers/donuts.jpg",
+    "tracks": 31
+  },
+  {
+    "name": "Super Tecmo Bo",
+    "artists": [
+      "Boldy James",
+      "The Alchemist"
+    ],
+    "year": "2021",
+    "score": 9.6,
+    "cover": "/covers/super-tecmo-bo.jpg",
+    "tracks": 9
+  },
+  {
+    "name": "ASTROWORLD",
+    "artists": [
+      "Travis Scott"
+    ],
+    "year": "2018",
+    "score": 9.5,
+    "cover": "/covers/astroworld.jpg",
+    "tracks": 17
+  },
+  {
+    "name": "PLANET FROG",
+    "artists": [
+      "Action Bronson"
+    ],
+    "year": "2026",
+    "score": 9.5,
+    "cover": "/covers/planet-frog.jpg",
+    "tracks": 13
+  },
+  {
+    "name": "Imperial",
+    "artists": [
+      "Denzel Curry"
+    ],
+    "year": "2016",
+    "score": 9.5,
+    "cover": "/covers/imperial.jpg",
+    "tracks": 10
+  },
+  {
+    "name": "The Miseducation of Lauryn Hill",
+    "artists": [
+      "Lauryn Hill"
+    ],
+    "year": "1998",
+    "score": 9.5,
+    "cover": "/covers/the-miseducation-of-lauryn-hill.jpg",
+    "tracks": 16
+  },
+  {
+    "name": "OFFLINE!",
+    "artists": [
+      "JPEGMAFIA"
+    ],
+    "year": "2021",
+    "score": 9.5,
+    "cover": "/covers/offline.jpg",
+    "tracks": 20
+  },
+  {
+    "name": "The Great Escape",
+    "artists": [
+      "Larry June",
+      "The Alchemist"
+    ],
+    "year": "2023",
+    "score": 9.5,
+    "cover": "/covers/the-great-escape.jpg",
+    "tracks": 15
+  },
+  {
+    "name": "Call Me If You Get Lost",
+    "artists": [
+      "Tyler, The Creator"
+    ],
+    "year": "2021",
+    "score": 9.5,
+    "cover": "/covers/call-me-if-you-get-lost.jpg",
+    "tracks": 16
+  },
+  {
+    "name": "1999",
+    "artists": [
+      "Joey Bada$$"
+    ],
+    "year": "2012",
+    "score": 9.4,
+    "cover": "/covers/1999.jpg",
+    "tracks": 15
+  },
+  {
+    "name": "The Fall-Off",
+    "artists": [
+      "J. Cole"
+    ],
+    "year": "2026",
+    "score": 9.4,
+    "cover": "/covers/the-fall-off.jpg",
+    "tracks": 24
+  },
+  {
+    "name": "Hybrid Theory (Deluxe Edition)",
+    "artists": [
+      "LINKIN PARK"
+    ],
+    "year": "2000",
+    "score": 9.4,
+    "cover": "/covers/hybrid-theory-deluxe-edition.jpg",
+    "tracks": 16
+  },
+  {
+    "name": "Life Is Beautiful",
+    "artists": [
+      "Larry June",
+      "2 Chainz",
+      "The Alchemist"
+    ],
+    "year": "2025",
+    "score": 9.4,
+    "cover": "/covers/life-is-beautiful.jpg",
+    "tracks": 13
+  },
+  {
+    "name": "e.t.d.s. A Mixtape by .idk.",
+    "artists": [
+      "IDK"
+    ],
+    "year": "2026",
+    "score": 9.4,
+    "cover": "/covers/e-t-d-s-a-mixtape-by-idk.jpg",
+    "tracks": 15
+  },
+  {
+    "name": "UTOPIA",
+    "artists": [
+      "Travis Scott"
+    ],
+    "year": "2023",
+    "score": 9.4,
+    "cover": "/covers/utopia.jpg",
+    "tracks": 19
+  },
+  {
+    "name": "Cry Baby",
+    "artists": [
+      "Vince Staples"
+    ],
+    "year": "2026",
+    "score": 9.4,
+    "cover": "/covers/cry-baby.jpg",
+    "tracks": 11
+  },
+  {
+    "name": "Faith Is A Rock",
+    "artists": [
+      "MIKE",
+      "Wiki",
+      "The Alchemist"
+    ],
+    "year": "2023",
+    "score": 9.4,
+    "cover": "/covers/faith-is-a-rock.jpg",
+    "tracks": 10
+  },
+  {
+    "name": "AT.LONG.LAST.A$AP",
+    "artists": [
+      "A$AP Rocky"
+    ],
+    "year": "2015",
+    "score": 9.3,
+    "cover": "/covers/at-long-last-a-ap.jpg",
+    "tracks": 18
+  },
+  {
+    "name": "LONG.LIVE.A$AP",
+    "artists": [
+      "A$AP Rocky"
+    ],
+    "year": "2013",
+    "score": 9.3,
+    "cover": "/covers/long-live-a-ap.jpg",
+    "tracks": 17
+  },
+  {
+    "name": "2000",
+    "artists": [
+      "Joey Bada$$"
+    ],
+    "year": "2022",
+    "score": 9.3,
+    "cover": "/covers/2000.jpg",
+    "tracks": 14
+  },
+  {
+    "name": "Kiss the Ring",
+    "artists": [
+      "Rome Streetz"
+    ],
+    "year": "2022",
+    "score": 9.3,
+    "cover": "/covers/kiss-the-ring.jpg",
+    "tracks": 17
+  },
+  {
+    "name": "808s & Heartbreak",
+    "artists": [
+      "Kanye West"
+    ],
+    "year": "2008",
+    "score": 9.2,
+    "cover": "/covers/808s-heartbreak.jpg",
+    "tracks": 12
+  },
+  {
+    "name": "Flygod",
+    "artists": [
+      "Westside Gunn"
+    ],
+    "year": "2016",
+    "score": 9.2,
+    "cover": "/covers/flygod.jpg",
+    "tracks": 18
+  },
+  {
+    "name": "Swimming",
+    "artists": [
+      "Mac Miller"
+    ],
+    "year": "2018",
+    "score": 9.2,
+    "cover": "/covers/swimming.jpg",
+    "tracks": 13
+  },
+  {
+    "name": "Pray For Paris",
+    "artists": [
+      "Westside Gunn"
+    ],
+    "year": "2020",
+    "score": 9.2,
+    "cover": "/covers/pray-for-paris.jpg",
+    "tracks": 13
+  },
+  {
+    "name": "Scaring The Hoes",
+    "artists": [
+      "JPEGMAFIA",
+      "Danny Brown"
+    ],
+    "year": "2023",
+    "score": 9.2,
+    "cover": "/covers/scaring-the-hoes.jpg",
+    "tracks": 14
+  },
+  {
+    "name": "Balens Cho (Hot Candles)",
+    "artists": [
+      "Mach-Hommy"
+    ],
+    "year": "2021",
+    "score": 9.2,
+    "cover": "/covers/balens-cho-hot-candles.jpg",
+    "tracks": 13
+  },
+  {
+    "name": "LULU",
+    "artists": [
+      "Conway the Machine",
+      "The Alchemist"
+    ],
+    "year": "2020",
+    "score": 9.2,
+    "cover": "/covers/lulu.jpg",
+    "tracks": 7
+  },
+  {
+    "name": "Hiding Places",
+    "artists": [
+      "billy woods & Kenny Segal"
+    ],
+    "year": "2019",
+    "score": 9.2,
+    "cover": "/covers/hiding-places.jpg",
+    "tracks": 12
+  },
+  {
+    "name": "Hitler Wears Hermes 8: Side B",
+    "artists": [
+      "Westside Gunn"
+    ],
+    "year": "2021",
+    "score": 9.1,
+    "cover": "/covers/hitler-wears-hermes-8-side-b.jpg",
+    "tracks": 20
+  },
+  {
+    "name": "4 Your Eyez Only",
+    "artists": [
+      "J. Cole"
+    ],
+    "year": "2016",
+    "score": 9.1,
+    "cover": "/covers/4-your-eyez-only.jpg",
+    "tracks": 10
+  },
+  {
+    "name": "Things Fall Apart",
+    "artists": [
+      "The Roots"
+    ],
+    "year": "1999",
+    "score": 9.1,
+    "cover": "/covers/things-fall-apart.jpg",
+    "tracks": 18
+  },
+  {
+    "name": "ii",
+    "artists": [
+      "Denzel Curry",
+      "Kenny Beats"
+    ],
+    "year": "2026",
+    "score": 9.1,
+    "cover": "/covers/ii.jpg",
+    "tracks": 9
+  },
+  {
+    "name": "Take Care",
+    "artists": [
+      "Drake"
+    ],
+    "year": "2011",
+    "score": 9,
+    "cover": "/covers/take-care.jpg",
+    "tracks": 20
+  },
+  {
+    "name": "Flower Boy",
+    "artists": [
+      "Tyler, The Creator"
+    ],
+    "year": "2017",
+    "score": 9,
+    "cover": "/covers/flower-boy.jpg",
+    "tracks": 14
+  },
+  {
+    "name": "God Does Like Ugly",
+    "artists": [
+      "JID"
+    ],
+    "year": "2025",
+    "score": 9,
+    "cover": "/covers/god-does-like-ugly.jpg",
+    "tracks": 15
+  },
+  {
+    "name": "Haram",
+    "artists": [
+      "Armand Hammer & The Alchemist"
+    ],
+    "year": "2021",
+    "score": 8.9,
+    "cover": "/covers/haram.jpg",
+    "tracks": 14
+  },
+  {
+    "name": "HEROES & VILLAINS",
+    "artists": [
+      "Metro Boomin"
+    ],
+    "year": "2022",
+    "score": 8.8,
+    "cover": "/covers/heroes-villains.jpg",
+    "tracks": 15
+  },
+  {
+    "name": "Beloved! Paradise! Jazz!?",
+    "artists": [
+      "McKinley Dixon"
+    ],
+    "year": "2023",
+    "score": 8.8,
+    "cover": "/covers/beloved-paradise-jazz.jpg",
+    "tracks": 10
+  },
+  {
+    "name": "untitled unmastered.",
+    "artists": [
+      "Kendrick Lamar"
+    ],
+    "year": "2016",
+    "score": 8.8,
+    "cover": "/covers/untitled-unmastered.jpg",
+    "tracks": 8
+  },
+  {
+    "name": "DAMN.",
+    "artists": [
+      "Kendrick Lamar"
+    ],
+    "year": "2017",
+    "score": 8.8,
+    "cover": "/covers/damn.jpg",
+    "tracks": 14
+  },
+  {
+    "name": "Birds In The Trap Sing McKnight",
+    "artists": [
+      "Travis Scott"
+    ],
+    "year": "2016",
+    "score": 8.8,
+    "cover": "/covers/birds-in-the-trap-sing-mcknight.jpg",
+    "tracks": 14
+  },
+  {
+    "name": "Nothing Was The Same",
+    "artists": [
+      "Drake"
+    ],
+    "year": "2013",
+    "score": 8.8,
+    "cover": "/covers/nothing-was-the-same.jpg",
+    "tracks": 16
+  },
+  {
+    "name": "I Lay Down My Life For You",
+    "artists": [
+      "JPEGMAFIA"
+    ],
+    "year": "2024",
+    "score": 8.8,
+    "cover": "/covers/i-lay-down-my-life-for-you.jpg",
+    "tracks": 14
+  },
+  {
+    "name": "2014 Forest Hills Drive",
+    "artists": [
+      "J. Cole"
+    ],
+    "year": "2014",
+    "score": 8.8,
+    "cover": "/covers/2014-forest-hills-drive.jpg",
+    "tracks": 13
+  },
+  {
+    "name": "10",
+    "artists": [
+      "Westside Gunn"
+    ],
+    "year": "2022",
+    "score": 8.7,
+    "cover": "/covers/10.jpg",
+    "tracks": 12
+  },
+  {
+    "name": "Culture",
+    "artists": [
+      "Migos"
+    ],
+    "year": "2017",
+    "score": 8.7,
+    "cover": "/covers/culture.jpg",
+    "tracks": 13
+  },
+  {
+    "name": "Mercy",
+    "artists": [
+      "Armand Hammer & The Alchemist"
+    ],
+    "year": "2025",
+    "score": 8.7,
+    "cover": "/covers/mercy.jpg",
+    "tracks": 14
+  },
+  {
+    "name": "DAYTONA",
+    "artists": [
+      "Pusha T"
+    ],
+    "year": "2018",
+    "score": 8.7,
+    "cover": "/covers/daytona.jpg",
+    "tracks": 7
+  },
+  {
+    "name": "And Then You Pray For Me",
+    "artists": [
+      "Westside Gunn"
+    ],
+    "year": "2023",
+    "score": 8.7,
+    "cover": "/covers/and-then-you-pray-for-me.jpg",
+    "tracks": 21
+  },
+  {
+    "name": "Let’s Start Here.",
+    "artists": [
+      "Lil Yachty"
+    ],
+    "year": "2023",
+    "score": 8.7,
+    "cover": "/covers/let-s-start-here.jpg",
+    "tracks": 14
+  },
+  {
+    "name": "Lonerism",
+    "artists": [
+      "Tame Impala"
+    ],
+    "year": "2012",
+    "score": 8.6,
+    "cover": "/covers/lonerism.jpg",
+    "tracks": 13
+  },
+  {
+    "name": "Mr. Morale & The Big Steppers",
+    "artists": [
+      "Kendrick Lamar"
+    ],
+    "year": "2022",
+    "score": 8.6,
+    "cover": "/covers/mr-morale-the-big-steppers.jpg",
+    "tracks": 19
+  },
+  {
+    "name": "Spiral Staircases",
+    "artists": [
+      "Larry June, Curren$y & The Alchemist"
+    ],
+    "year": "2026",
+    "score": 8.6,
+    "cover": "/covers/spiral-staircases.jpg",
+    "tracks": 7
+  },
+  {
+    "name": "DAYS BEFORE RODEO",
+    "artists": [
+      "Travis Scott"
+    ],
+    "year": "2014",
+    "score": 8.6,
+    "cover": "/covers/days-before-rodeo.jpg",
+    "tracks": 12
+  },
+  {
+    "name": "The Life of Pablo",
+    "artists": [
+      "Kanye West"
+    ],
+    "year": "2016",
+    "score": 8.6,
+    "cover": "/covers/the-life-of-pablo.jpg",
+    "tracks": 20
+  },
+  {
+    "name": "$oul $old $eparately",
+    "artists": [
+      "Freddie Gibbs"
+    ],
+    "year": "2022",
+    "score": 8.6,
+    "cover": "/covers/oul-old-eparately.jpg",
+    "tracks": 15
+  },
+  {
+    "name": "Before The World Blows",
+    "artists": [
+      "Erykah Badu",
+      "The Alchemist"
+    ],
+    "year": "2026",
+    "score": 8.5,
+    "cover": "/covers/before-the-world-blows.jpg",
+    "tracks": 16
+  },
+  {
+    "name": "Trainspotting",
+    "artists": [
+      "Rome Streetz & Conductor Williams"
+    ],
+    "year": "2025",
+    "score": 8.5,
+    "cover": "/covers/trainspotting.jpg",
+    "tracks": 14
+  },
+  {
+    "name": "So Much Fun",
+    "artists": [
+      "Young Thug"
+    ],
+    "year": "2019",
+    "score": 8.5,
+    "cover": "/covers/so-much-fun.jpg",
+    "tracks": 24
+  },
+  {
+    "name": "Life of a DON",
+    "artists": [
+      "Don Toliver"
+    ],
+    "year": "2021",
+    "score": 8.5,
+    "cover": "/covers/life-of-a-don.jpg",
+    "tracks": 16
+  },
+  {
+    "name": "Not All Heroes Wear Capes",
+    "artists": [
+      "Metro Boomin"
+    ],
+    "year": "2018",
+    "score": 8.5,
+    "cover": "/covers/not-all-heroes-wear-capes.jpg",
+    "tracks": 13
+  },
+  {
+    "name": "Watch the Throne",
+    "artists": [
+      "JAŸ-Z & Kanye West"
+    ],
+    "year": "2011",
+    "score": 8.5,
+    "cover": "/covers/watch-the-throne.jpg",
+    "tracks": 16
+  },
+  {
+    "name": "Hall & Nash 2",
+    "artists": [
+      "Westside Gunn",
+      "Conway The Machine",
+      "The Alchemist"
+    ],
+    "year": "2023",
+    "score": 8.5,
+    "cover": "/covers/hall-nash-2.jpg",
+    "tracks": 9
+  },
+  {
+    "name": "Monster",
+    "artists": [
+      "Future"
+    ],
+    "year": "2014",
+    "score": 8.5,
+    "cover": "/covers/monster.jpg",
+    "tracks": 13
+  },
+  {
+    "name": "i am > i was",
+    "artists": [
+      "21 Savage"
+    ],
+    "year": "2018",
+    "score": 8.5,
+    "cover": "/covers/i-am-i-was.jpg",
+    "tracks": 15
+  },
+  {
+    "name": "Some Rap Songs",
+    "artists": [
+      "Earl Sweatshirt"
+    ],
+    "year": "2018",
+    "score": 8.4,
+    "cover": "/covers/some-rap-songs.jpg",
+    "tracks": 15
+  },
+  {
+    "name": "WE DON'T TRUST YOU",
+    "artists": [
+      "Future & Metro Boomin"
+    ],
+    "year": "2024",
+    "score": 8.4,
+    "cover": "/covers/we-don-t-trust-you.jpg",
+    "tracks": 17
+  },
+  {
+    "name": "Sock It 2 My Pocket",
+    "artists": [
+      "Rome Streetz"
+    ],
+    "year": "2026",
+    "score": 8.4,
+    "cover": "/covers/sock-it-2-my-pocket.jpg",
+    "tracks": 15
+  },
+  {
+    "name": "Dreamcast Summer Songs",
+    "artists": [
+      "Devon Hendryx"
+    ],
+    "year": "2009",
+    "score": 8.4,
+    "cover": "/covers/dreamcast-summer-songs.jpg",
+    "tracks": 6
+  },
+  {
+    "name": "DS2",
+    "artists": [
+      "Future"
+    ],
+    "year": "2015",
+    "score": 8.4,
+    "cover": "/covers/ds2.jpg",
+    "tracks": 18
+  },
+  {
+    "name": "Doris",
+    "artists": [
+      "Earl Sweatshirt"
+    ],
+    "year": "2013",
+    "score": 8.4,
+    "cover": "/covers/doris.jpg",
+    "tracks": 15
+  },
+  {
+    "name": "LIVE.LOVE.A$AP",
+    "artists": [
+      "A$AP Rocky"
+    ],
+    "year": "2011",
+    "score": 8.3,
+    "cover": "/covers/live-love-a-ap.jpg",
+    "tracks": 29
+  },
+  {
+    "name": "Wolf",
+    "artists": [
+      "Tyler, The Creator"
+    ],
+    "year": "2013",
+    "score": 8.3,
+    "cover": "/covers/wolf.jpg",
+    "tracks": 18
+  },
+  {
+    "name": "JOECHILLWORLD",
+    "artists": [
+      "Devon Hendryx"
+    ],
+    "year": "2010",
+    "score": 8.3,
+    "cover": "/covers/joechillworld.jpg",
+    "tracks": 10
+  },
+  {
+    "name": "HARDSTONE PSYCHO",
+    "artists": [
+      "Don Toliver"
+    ],
+    "year": "2024",
+    "score": 8.2,
+    "cover": "/covers/hardstone-psycho.jpg",
+    "tracks": 20
+  },
+  {
+    "name": "Atrocity Exhibition",
+    "artists": [
+      "Danny Brown"
+    ],
+    "year": "2016",
+    "score": 8.2,
+    "cover": "/covers/atrocity-exhibition.jpg",
+    "tracks": 15
+  },
+  {
+    "name": "SAVAGE MODE II",
+    "artists": [
+      "21 Savage & Metro Boomin"
+    ],
+    "year": "2020",
+    "score": 8.2,
+    "cover": "/covers/savage-mode-ii.jpg",
+    "tracks": 15
+  },
+  {
+    "name": "Let God Sort Em Out",
+    "artists": [
+      "Clipse, Pusha T & Malice"
+    ],
+    "year": "2025",
+    "score": 8.2,
+    "cover": "/covers/let-god-sort-em-out.jpg",
+    "tracks": 13
+  },
+  {
+    "name": "The Documentary III",
+    "artists": [
+      "The Game"
+    ],
+    "year": "2026",
+    "score": 8.2,
+    "cover": "/covers/the-documentary-iii.jpg",
+    "tracks": 24
+  },
+  {
+    "name": "Good Bye & Good Riddance",
+    "artists": [
+      "Juice WRLD"
+    ],
+    "year": "2018",
+    "score": 8.1,
+    "cover": "/covers/good-bye-good-riddance.jpg",
+    "tracks": 16
+  },
+  {
+    "name": "Views",
+    "artists": [
+      "Drake"
+    ],
+    "year": "2016",
+    "score": 8.1,
+    "cover": "/covers/views.jpg",
+    "tracks": 20
+  },
+  {
+    "name": "If You're Reading This It's Too Late",
+    "artists": [
+      "Drake"
+    ],
+    "year": "2015",
+    "score": 8,
+    "cover": "/covers/if-you-re-reading-this-it-s-too-late.jpg",
+    "tracks": 17
+  },
+  {
+    "name": "The Melodic Blue",
+    "artists": [
+      "Baby Keem"
+    ],
+    "year": "2022",
+    "score": 8,
+    "cover": "/covers/the-melodic-blue.jpg",
+    "tracks": 26
+  },
+  {
+    "name": "Die Lit",
+    "artists": [
+      "Playboi Carti"
+    ],
+    "year": "2018",
+    "score": 7.9,
+    "cover": "/covers/die-lit.jpg",
+    "tracks": 19
+  },
+  {
+    "name": "Certified Lover Boy",
+    "artists": [
+      "Drake"
+    ],
+    "year": "2021",
+    "score": 7.8,
+    "cover": "/covers/certified-lover-boy.jpg",
+    "tracks": 21
+  },
+  {
+    "name": "KIDS SEE GHOSTS",
+    "artists": [
+      "KIDS SEE GHOSTS, Kanye West & Kid Cudi"
+    ],
+    "year": "2018",
+    "score": 7.7,
+    "cover": "/covers/kids-see-ghosts.jpg",
+    "tracks": 7
+  },
+  {
+    "name": "CHROMAKOPIA",
+    "artists": [
+      "Tyler, The Creator"
+    ],
+    "year": "2024",
+    "score": 7.7,
+    "cover": "/covers/chromakopia.jpg",
+    "tracks": 14
+  },
+  {
+    "name": "JACKBOYS",
+    "artists": [
+      "JACKBOYS",
+      "Travis Scott"
+    ],
+    "year": "2019",
+    "score": 7.7,
+    "cover": "/covers/jackboys.jpg",
+    "tracks": 7
+  },
+  {
+    "name": "TESTING",
+    "artists": [
+      "A$AP Rocky"
+    ],
+    "year": "2018",
+    "score": 7.6,
+    "cover": "/covers/testing.jpg",
+    "tracks": 15
+  },
+  {
+    "name": "Lil Uzi Vert vs. The World",
+    "artists": [
+      "Lil Uzi Vert"
+    ],
+    "year": "2016",
+    "score": 7.6,
+    "cover": "/covers/lil-uzi-vert-vs-the-world.jpg",
+    "tracks": 9
+  },
+  {
+    "name": "Ca$ino",
+    "artists": [
+      "Baby Keem"
+    ],
+    "year": "2026",
+    "score": 7.6,
+    "cover": "/covers/ca-ino.jpg",
+    "tracks": 11
+  },
+  {
+    "name": "Heels Have Eyes 2",
+    "artists": [
+      "Westside Gunn"
+    ],
+    "year": "2025",
+    "score": 7.5,
+    "cover": "/covers/heels-have-eyes-2.jpg",
+    "tracks": 12
+  },
+  {
+    "name": "Donda",
+    "artists": [
+      "Kanye West"
+    ],
+    "year": "2021",
+    "score": 7.5,
+    "cover": "/covers/donda.jpg",
+    "tracks": 32
+  },
+  {
+    "name": "Veteran",
+    "artists": [
+      "JPEGMAFIA"
+    ],
+    "year": "2018",
+    "score": 7.5,
+    "cover": "/covers/veteran.jpg",
+    "tracks": 19
+  },
+  {
+    "name": "Whole Lotta Red",
+    "artists": [
+      "Playboi Carti"
+    ],
+    "year": "2020",
+    "score": 7.4,
+    "cover": "/covers/whole-lotta-red.jpg",
+    "tracks": 24
+  },
+  {
+    "name": "ye",
+    "artists": [
+      "Kanye West"
+    ],
+    "year": "2018",
+    "score": 7.4,
+    "cover": "/covers/ye.jpg",
+    "tracks": 7
+  },
+  {
+    "name": "Deadbeat",
+    "artists": [
+      "Tame Impala"
+    ],
+    "year": "2025",
+    "score": 7.4,
+    "cover": "/covers/deadbeat.jpg",
+    "tracks": 12
+  },
+  {
+    "name": "Luv Is Rage 2",
+    "artists": [
+      "Lil Uzi Vert"
+    ],
+    "year": "2017",
+    "score": 7.3,
+    "cover": "/covers/luv-is-rage-2.jpg",
+    "tracks": 20
+  },
+  {
+    "name": "Playboi Carti",
+    "artists": [
+      "Playboi Carti"
+    ],
+    "year": "2017",
+    "score": 7.3,
+    "cover": "/covers/playboi-carti.jpg",
+    "tracks": 31
+  },
+  {
+    "name": "All My Heroes Are Cornballs",
+    "artists": [
+      "JPEGMAFIA"
+    ],
+    "year": "2019",
+    "score": 7.2,
+    "cover": "/covers/all-my-heroes-are-cornballs.jpg",
+    "tracks": 18
+  },
+  {
+    "name": "GNX",
+    "artists": [
+      "Kendrick Lamar"
+    ],
+    "year": "2024",
+    "score": 7.1,
+    "cover": "/covers/gnx.jpg",
+    "tracks": 12
+  },
+  {
+    "name": "OCTANE",
+    "artists": [
+      "Don Toliver"
+    ],
+    "year": "2026",
+    "score": 7,
+    "cover": "/covers/octane.jpg",
+    "tracks": 18
+  },
+  {
+    "name": "VULTURES 1",
+    "artists": [
+      "¥$",
+      "Kanye West",
+      "Ty Dolla $ign"
+    ],
+    "year": "2024",
+    "score": 7,
+    "cover": "/covers/vultures-1.jpg",
+    "tracks": 15
+  },
+  {
+    "name": "Huncho Jack, Jack Huncho",
+    "artists": [
+      "Huncho Jack",
+      "Travis Scott",
+      "Quavo"
+    ],
+    "year": "2017",
+    "score": 6.5,
+    "cover": "/covers/huncho-jack-jack-huncho.jpg",
+    "tracks": 13
+  },
+  {
+    "name": "Don't Be Dumb",
+    "artists": [
+      "A$AP Rocky"
+    ],
+    "year": "2026",
+    "score": 6.4,
+    "cover": "/covers/don-t-be-dumb.jpg",
+    "tracks": 18
+  },
+  {
+    "name": "american dream",
+    "artists": [
+      "21 Savage"
+    ],
+    "year": "2024",
+    "score": 6.4,
+    "cover": "/covers/american-dream.jpg",
+    "tracks": 15
+  },
+  {
+    "name": "A Great Chaos",
+    "artists": [
+      "Ken Carson"
+    ],
+    "year": "2023",
+    "score": 6.1,
+    "cover": "/covers/a-great-chaos.jpg",
+    "tracks": 25
+  },
+  {
+    "name": "NO STYLIST",
+    "artists": [
+      "Destroy Lonely"
+    ],
+    "year": "2022",
+    "score": 6,
+    "cover": "/covers/no-stylist.jpg",
+    "tracks": 19
+  },
+  {
+    "name": "ICEMAN",
+    "artists": [
+      "Drake"
+    ],
+    "year": "2026",
+    "score": 5.9,
+    "cover": "/covers/iceman.jpg",
+    "tracks": 18
+  },
+  {
+    "name": "MUSIC",
+    "artists": [
+      "Playboi Carti"
+    ],
+    "year": "2025",
+    "score": 5.8,
+    "cover": "/covers/music.jpg",
+    "tracks": 67
+  },
+  {
+    "name": "Bully",
+    "artists": [
+      "Kanye West"
+    ],
+    "year": "2026",
+    "score": 5.4,
+    "cover": "/covers/bully.jpg",
+    "tracks": 18
+  },
+  {
+    "name": "Experimental Rap",
+    "artists": [
+      "JPEGMAFIA"
+    ],
+    "year": "2026",
+    "score": 5.1,
+    "cover": "/covers/experimental-rap.jpg",
+    "tracks": 25
+  },
+  {
+    "name": "JESUS IS KING",
+    "artists": [
+      "Kanye West"
+    ],
+    "year": "2019",
+    "score": 4.8,
+    "cover": "/covers/jesus-is-king.jpg",
+    "tracks": 11
+  },
+  {
+    "name": "xperiment",
+    "artists": [
+      "Ken Carson"
+    ],
+    "year": "2026",
+    "score": 4.6,
+    "cover": "/covers/xperiment.jpg",
+    "tracks": 23
+  },
+  {
+    "name": "Donda 2",
+    "artists": [
+      "Kanye West"
+    ],
+    "year": "2022",
+    "score": 4.5,
+    "cover": "/covers/donda-2.jpg",
+    "tracks": 16
+  },
+  {
+    "name": "The Real Me",
+    "artists": [
+      "Future"
+    ],
+    "year": "2026",
+    "score": 4.1,
+    "cover": "/covers/the-real-me.jpg",
+    "tracks": 22
+  },
+  {
+    "name": "JACKBOYS 2",
+    "artists": [
+      "JACKBOYS",
+      "Travis Scott"
+    ],
+    "year": "2025",
+    "score": 3.9,
+    "cover": "/covers/jackboys-2.jpg",
+    "tracks": 17
+  },
+  {
+    "name": "Pink Tape",
+    "artists": [
+      "Lil Uzi Vert"
+    ],
+    "year": "2023",
+    "score": 3.8,
+    "cover": "/covers/pink-tape.jpg",
+    "tracks": 26
+  },
+  {
+    "name": "VULTURES 2",
+    "artists": [
+      "¥$, Kanye West & Ty Dolla $ign"
+    ],
+    "year": "2024",
+    "score": 3,
+    "cover": "/covers/vultures-2.jpg",
+    "tracks": 16
+  },
+  {
+    "name": "Jump Out",
+    "artists": [
+      "OsamaSon"
+    ],
+    "year": "2025",
+    "score": 1.5,
+    "cover": "/covers/jump-out.jpg",
+    "tracks": 18
+  },
+  {
+    "name": "REST IN BASS",
+    "artists": [
+      "Che"
+    ],
+    "year": "2025",
+    "score": 1.2,
+    "cover": "/covers/rest-in-bass.jpg",
+    "tracks": 32
+  },
+  {
+    "name": "$TARFACE",
+    "artists": [
+      "$TARFACE",
+      "Tyga"
+    ],
+    "year": "2026",
+    "score": 0,
+    "cover": "/covers/tarface.jpg",
+    "tracks": 10
+  }
+]

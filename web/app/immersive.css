@@ -1,0 +1,205 @@
+/* ── The room reacts ──────────────────────────────────────────────────────
+   --level and --pulse are written every frame from the AnalyserNode.
+   --accent is written whenever a new record starts. Registering them lets the
+   colour cross-fade instead of snapping. */
+
+@property --accent     { syntax: '<color>'; inherits: true; initial-value: #e2aa4a; }
+@property --accent-soft{ syntax: '<color>'; inherits: true; initial-value: rgba(226,170,74,0.34); }
+@property --level      { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --pulse      { syntax: '<number>'; inherits: true; initial-value: 0; }
+
+:root {
+  --accent-rgb: 226, 170, 74;
+  transition: --accent 900ms var(--ease), --accent-soft 900ms var(--ease);
+}
+
+/* ── Film grain ───────────────────────────────────────────────────────────
+   The single cheapest thing that stops a dark page reading as flat vector. */
+
+.grain {
+  position: fixed;
+  inset: -120px;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.42;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain-drift 5.2s steps(6) infinite;
+}
+@keyframes grain-drift {
+  0%   { transform: translate(0, 0) }
+  16%  { transform: translate(-14px, 9px) }
+  33%  { transform: translate(11px, -13px) }
+  50%  { transform: translate(-9px, -8px) }
+  66%  { transform: translate(13px, 10px) }
+  83%  { transform: translate(-12px, 6px) }
+  100% { transform: translate(0, 0) }
+}
+
+/* A vignette keeps attention centre-screen and gives the page a lens. */
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 59;
+  pointer-events: none;
+  background: radial-gradient(125% 88% at 50% 42%,
+      transparent 38%, rgba(0,0,0,0.30) 76%, rgba(0,0,0,0.62) 100%);
+}
+
+/* The whole page breathes with the low end while something is playing. */
+.roomlight {
+  position: fixed;
+  left: 50%;
+  top: -32vh;
+  width: 128vw;
+  height: 92vh;
+  translate: -50% 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(closest-side,
+      rgba(var(--accent-rgb), calc(0.16 + var(--pulse) * 0.26)) 0%,
+      rgba(var(--accent-rgb), 0.05) 52%, transparent 78%);
+  filter: blur(28px);
+  scale: calc(1 + var(--pulse) * 0.07);
+  opacity: calc(0.55 + var(--level) * 0.45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain { animation: none }
+  .roomlight { scale: 1 }
+}
+
+/* ── Reveal ───────────────────────────────────────────────────────────────
+   One authored entrance, from an already-visible default so nothing is ever
+   trapped invisible if the observer never fires. */
+
+.rv { opacity: 1 }
+@media (scripting: enabled) {
+  .rv {
+    opacity: 0;
+    transform: translateY(26px);
+    filter: blur(6px);
+    transition:
+      opacity 900ms var(--ease),
+      transform 900ms var(--ease),
+      filter 900ms var(--ease);
+    transition-delay: var(--d, 0ms);
+  }
+  .rv.in { opacity: 1; transform: none; filter: none }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rv { opacity: 1; transform: none; filter: none; transition: none }
+}
+
+/* ── The dock ─────────────────────────────────────────────────────────────
+   Hardware, not a toast: a glass slab that sits on the page. */
+
+.dock {
+  position: fixed;
+  z-index: 70;
+  left: 50%;
+  bottom: 26px;
+  translate: -50% 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px 12px 12px;
+  width: min(560px, calc(100vw - 32px));
+  border-radius: 22px;
+  background:
+    linear-gradient(148deg, rgba(255,255,255,0.16), rgba(255,255,255,0.05) 58%, rgba(255,255,255,0.09)),
+    rgba(14,14,18,0.82);
+  border: 1px solid rgba(255,255,255,0.16);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,0.34),
+    inset 0 -1px 0 rgba(255,255,255,0.06),
+    0 30px 70px rgba(0,0,0,0.62),
+    0 0 0 1px rgba(var(--accent-rgb), calc(0.10 + var(--level) * 0.34)),
+    0 12px 54px rgba(var(--accent-rgb), calc(0.10 + var(--pulse) * 0.30));
+  backdrop-filter: blur(22px) saturate(1.5);
+  animation: dock-in 720ms var(--ease) both;
+}
+@keyframes dock-in {
+  from { opacity: 0; transform: translateY(26px) scale(0.96) }
+  to   { opacity: 1; transform: none }
+}
+
+.dock-art {
+  position: relative;
+  width: 54px; height: 54px;
+  flex: none;
+  border: 0; padding: 0;
+  border-radius: 13px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #000;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.5);
+}
+.dock-art img { width: 100%; height: 100%; object-fit: cover; display: block }
+.dock-play {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  background: rgba(0,0,0,0.46);
+  opacity: 0;
+  transition: opacity 260ms var(--ease);
+}
+.dock-art:hover .dock-play, .dock-art:focus-visible .dock-play { opacity: 1 }
+.dock:has(.dock-art) .dock-play svg { width: 22px; height: 22px; fill: #fff; color: #fff }
+.spin { animation: spin 900ms linear infinite }
+@keyframes spin { to { transform: rotate(360deg) } }
+
+.dock-body { flex: 1; min-width: 0; display: grid; gap: 8px }
+.dock-meta { display: flex; align-items: baseline; gap: 9px; min-width: 0 }
+.dock-meta strong {
+  font-size: 0.925rem; font-weight: 620; letter-spacing: -0.012em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.dock-meta span {
+  font-size: 0.78rem; color: var(--fg-4); flex: none;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 42%;
+}
+
+.dock-bar {
+  height: 4px; border-radius: 99px; cursor: pointer;
+  background: rgba(255,255,255,0.13);
+  overflow: hidden;
+}
+.dock-bar i {
+  display: block; height: 100%; width: 100%;
+  transform-origin: left;
+  border-radius: 99px;
+  background: linear-gradient(90deg, rgba(var(--accent-rgb),0.7), var(--accent));
+}
+.dock-bar:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px }
+
+.dock-x {
+  flex: none; width: 30px; height: 30px;
+  display: grid; place-items: center;
+  border: 0; border-radius: 9px; cursor: pointer;
+  background: transparent; color: var(--fg-4);
+  transition: color 200ms, background 200ms;
+}
+.dock-x:hover { color: var(--fg); background: rgba(255,255,255,0.09) }
+.dock-x svg { width: 15px; height: 15px }
+
+/* ── Meter ────────────────────────────────────────────────────────────────*/
+
+.meter {
+  flex: none;
+  display: flex; align-items: center; gap: 2.5px;
+  height: 30px;
+}
+.meter i {
+  display: block; width: 2.5px; height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(180deg, var(--accent), rgba(var(--accent-rgb), 0.42));
+  transform: scaleY(0.06);
+  transform-origin: center;
+  transition: transform 90ms linear;
+}
+
+@media (max-width: 780px) {
+  .dock { bottom: 14px; gap: 12px; padding: 10px 12px 10px 10px }
+  .meter { display: none }
+  .dock-art { width: 46px; height: 46px }
+}

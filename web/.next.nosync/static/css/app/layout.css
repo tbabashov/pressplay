@@ -1,0 +1,341 @@
+/*!***************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules.nosync/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!./node_modules.nosync/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/globals.css ***!
+  \***************************************************************************************************************************************************************************************************************************************************************************/
+/* Press Play Rankings — the listening room, after dark.
+   Tokens mirror the TikTok exporter's world (see DESIGN.md). */
+
+:root {
+  --ink:        #08080a;
+  --ink-raised: #101014;
+
+  /* Overwritten per-section from whatever album is on screen. */
+  --accent:      #e2aa4a;
+  --accent-soft: rgba(226, 170, 74, 0.34);
+
+  --fg:    #ffffff;
+  --fg-2:  rgba(255, 255, 255, 0.78);
+  --fg-3:  rgba(255, 255, 255, 0.68);
+  --fg-4:  rgba(255, 255, 255, 0.52);
+
+  --glass: linear-gradient(148deg,
+      rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.085) 38%,
+      rgba(255,255,255,0.05) 72%, rgba(255,255,255,0.105) 100%);
+  --glass-line: 1.5px solid rgba(255,255,255,0.22);
+  --glass-shadow:
+      inset 0 1.5px 0 rgba(255,255,255,0.5),
+      inset 0 -1.5px 0 rgba(255,255,255,0.09),
+      0 26px 64px rgba(0,0,0,0.42);
+
+  --r-sm: 16px; --r-md: 24px; --r-lg: 32px; --r-xl: 46px;
+  --shell: 1180px;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  background: var(--ink);
+  color: var(--fg);
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* --- browser surfaces, themed rather than left to the browser --- */
+::selection { background: var(--accent); color: #0b0b0d; }
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-track { background: var(--ink); }
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.14);
+  border-radius: 99px;
+  border: 3px solid var(--ink);
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.26); }
+* { scrollbar-color: rgba(255,255,255,0.18) var(--ink); scrollbar-width: thin; }
+input, textarea { caret-color: var(--accent); }
+
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+img { display: block; max-width: 100%; }
+
+/* --- shared primitives --- */
+.shell { width: 100%; max-width: var(--shell); margin: 0 auto; padding: 0 28px; }
+@media (max-width: 640px) { .shell { padding: 0 20px; } }
+
+.glass {
+  background: var(--glass);
+  border: var(--glass-line);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(26px) saturate(180%);
+  -webkit-backdrop-filter: blur(26px) saturate(180%);
+}
+
+.tnum { font-feature-settings: "tnum"; font-variant-numeric: tabular-nums; }
+
+/* Display type: width axis carries the voice, weight carries the hierarchy. */
+.display {
+  font-weight: 800;
+  font-stretch: 112%;
+  letter-spacing: -0.04em;
+  line-height: 0.94;
+  text-wrap: balance;
+}
+
+.measure { max-width: 68ch; }
+
+/*!*****************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules.nosync/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[2]!./node_modules.nosync/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[10].use[3]!./app/immersive.css ***!
+  \*****************************************************************************************************************************************************************************************************************************************************************************/
+/* ── The room reacts ──────────────────────────────────────────────────────
+   --level and --pulse are written every frame from the AnalyserNode.
+   --accent is written whenever a new record starts. Registering them lets the
+   colour cross-fade instead of snapping. */
+
+@property --accent     { syntax: '<color>'; inherits: true; initial-value: #e2aa4a; }
+@property --accent-soft{ syntax: '<color>'; inherits: true; initial-value: rgba(226,170,74,0.34); }
+@property --level      { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --pulse      { syntax: '<number>'; inherits: true; initial-value: 0; }
+
+:root {
+  --accent-rgb: 226, 170, 74;
+  transition: --accent 900ms var(--ease), --accent-soft 900ms var(--ease);
+}
+
+/* ── Film grain ───────────────────────────────────────────────────────────
+   The single cheapest thing that stops a dark page reading as flat vector. */
+
+.grain {
+  position: fixed;
+  inset: -120px;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.42;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain-drift 5.2s steps(6) infinite;
+}
+@keyframes grain-drift {
+  0%   { transform: translate(0, 0) }
+  16%  { transform: translate(-14px, 9px) }
+  33%  { transform: translate(11px, -13px) }
+  50%  { transform: translate(-9px, -8px) }
+  66%  { transform: translate(13px, 10px) }
+  83%  { transform: translate(-12px, 6px) }
+  100% { transform: translate(0, 0) }
+}
+
+/* A vignette keeps attention centre-screen and gives the page a lens. */
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 59;
+  pointer-events: none;
+  background: radial-gradient(125% 88% at 50% 42%,
+      transparent 38%, rgba(0,0,0,0.30) 76%, rgba(0,0,0,0.62) 100%);
+}
+
+/* The whole page breathes with the low end while something is playing. */
+.roomlight {
+  position: fixed;
+  left: 50%;
+  top: -32vh;
+  width: 128vw;
+  height: 92vh;
+  translate: -50% 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(closest-side,
+      rgba(var(--accent-rgb), calc(0.16 + var(--pulse) * 0.26)) 0%,
+      rgba(var(--accent-rgb), 0.05) 52%, transparent 78%);
+  filter: blur(28px);
+  scale: calc(1 + var(--pulse) * 0.07);
+  opacity: calc(0.55 + var(--level) * 0.45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain { animation: none }
+  .roomlight { scale: 1 }
+}
+
+/* ── Reveal ───────────────────────────────────────────────────────────────
+   One authored entrance, from an already-visible default so nothing is ever
+   trapped invisible if the observer never fires. */
+
+.rv { opacity: 1 }
+@media (scripting: enabled) {
+  .rv {
+    opacity: 0;
+    transform: translateY(26px);
+    filter: blur(6px);
+    transition:
+      opacity 900ms var(--ease),
+      transform 900ms var(--ease),
+      filter 900ms var(--ease);
+    transition-delay: var(--d, 0ms);
+  }
+  .rv.in { opacity: 1; transform: none; filter: none }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rv { opacity: 1; transform: none; filter: none; transition: none }
+}
+
+/* ── The dock ─────────────────────────────────────────────────────────────
+   Hardware, not a toast: a glass slab that sits on the page. */
+
+.dock {
+  position: fixed;
+  z-index: 70;
+  left: 50%;
+  bottom: 26px;
+  translate: -50% 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px 12px 12px;
+  width: min(560px, calc(100vw - 32px));
+  border-radius: 22px;
+  background:
+    linear-gradient(148deg, rgba(255,255,255,0.16), rgba(255,255,255,0.05) 58%, rgba(255,255,255,0.09)),
+    rgba(14,14,18,0.82);
+  border: 1px solid rgba(255,255,255,0.16);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,0.34),
+    inset 0 -1px 0 rgba(255,255,255,0.06),
+    0 30px 70px rgba(0,0,0,0.62),
+    0 0 0 1px rgba(var(--accent-rgb), calc(0.10 + var(--level) * 0.34)),
+    0 12px 54px rgba(var(--accent-rgb), calc(0.10 + var(--pulse) * 0.30));
+  -webkit-backdrop-filter: blur(22px) saturate(1.5);
+          backdrop-filter: blur(22px) saturate(1.5);
+  animation: dock-in 720ms var(--ease) both;
+}
+@keyframes dock-in {
+  from { opacity: 0; transform: translateY(26px) scale(0.96) }
+  to   { opacity: 1; transform: none }
+}
+
+.dock-art {
+  position: relative;
+  width: 54px; height: 54px;
+  flex: none;
+  border: 0; padding: 0;
+  border-radius: 13px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #000;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.5);
+}
+.dock-art img { width: 100%; height: 100%; object-fit: cover; display: block }
+.dock-play {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  background: rgba(0,0,0,0.46);
+  opacity: 0;
+  transition: opacity 260ms var(--ease);
+}
+.dock-art:hover .dock-play, .dock-art:focus-visible .dock-play { opacity: 1 }
+.dock:has(.dock-art) .dock-play svg { width: 22px; height: 22px; fill: #fff; color: #fff }
+.spin { animation: spin 900ms linear infinite }
+@keyframes spin { to { transform: rotate(360deg) } }
+
+.dock-body { flex: 1 1; min-width: 0; display: grid; grid-gap: 8px; gap: 8px }
+.dock-meta { display: flex; align-items: baseline; gap: 9px; min-width: 0 }
+.dock-meta strong {
+  font-size: 0.925rem; font-weight: 620; letter-spacing: -0.012em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.dock-meta span {
+  font-size: 0.78rem; color: var(--fg-4); flex: none;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 42%;
+}
+
+.dock-bar {
+  height: 4px; border-radius: 99px; cursor: pointer;
+  background: rgba(255,255,255,0.13);
+  overflow: hidden;
+}
+.dock-bar i {
+  display: block; height: 100%; width: 100%;
+  transform-origin: left;
+  border-radius: 99px;
+  background: linear-gradient(90deg, rgba(var(--accent-rgb),0.7), var(--accent));
+}
+.dock-bar:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px }
+
+.dock-x {
+  flex: none; width: 30px; height: 30px;
+  display: grid; place-items: center;
+  border: 0; border-radius: 9px; cursor: pointer;
+  background: transparent; color: var(--fg-4);
+  transition: color 200ms, background 200ms;
+}
+.dock-x:hover { color: var(--fg); background: rgba(255,255,255,0.09) }
+.dock-x svg { width: 15px; height: 15px }
+
+/* ── Meter ────────────────────────────────────────────────────────────────*/
+
+.meter {
+  flex: none;
+  display: flex; align-items: center; gap: 2.5px;
+  height: 30px;
+}
+.meter i {
+  display: block; width: 2.5px; height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(180deg, var(--accent), rgba(var(--accent-rgb), 0.42));
+  transform: scaleY(0.06);
+  transform-origin: center;
+  transition: transform 90ms linear;
+}
+
+@media (max-width: 780px) {
+  .dock { bottom: 14px; gap: 12px; padding: 10px 12px 10px 10px }
+  .meter { display: none }
+  .dock-art { width: 46px; height: 46px }
+}
+
+/*!******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules.nosync/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[2].use[1]!./node_modules.nosync/next/dist/build/webpack/loaders/next-font-loader/index.js??ruleSet[1].rules[14].oneOf[2].use[2]!./node_modules.nosync/next/font/google/target.css?{"path":"app/layout.jsx","import":"Archivo","arguments":[{"subsets":["latin"],"axes":["wdth"],"display":"swap","variable":"--font-archivo"}],"variableName":"archivo"} ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/* vietnamese */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-display: swap;
+  src: url(/_next/static/media/8a053b136321ec99-s.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-display: swap;
+  src: url(/_next/static/media/2a8fe189f1a8dd0c-s.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-display: swap;
+  src: url(/_next/static/media/c214ffb7f5362987-s.p.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}@font-face {font-family: 'Archivo Fallback';src: local("Arial");ascent-override: 88.96%;descent-override: 21.28%;line-gap-override: 0.00%;size-adjust: 98.70%
+}.__className_afd4a3 {font-family: 'Archivo', 'Archivo Fallback';font-style: normal
+}.__variable_afd4a3 {--font-archivo: 'Archivo', 'Archivo Fallback'
+}
+
