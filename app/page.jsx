@@ -92,8 +92,8 @@ export default async function Landing () {
         <section className="band-photo">
           <CoverBand
             albums={wall}
-            heading="Ninety records, one instrument."
-            sub="Rap, jazz, classical, country, dub, techno. If it has a tracklist it can be scored, and the same six numbers come out the other side."
+            heading="Whatever you put on, scored the same way."
+            sub="Rap, jazz, classical, country, dub, techno. One instrument, applied honestly, for as many records as you care to sit with. The number that comes out is yours to defend."
           />
         </section>
 
