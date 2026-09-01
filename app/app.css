@@ -608,11 +608,19 @@ body:has(.app) .vignette { opacity: 0.5; }
 @media (max-width: 620px) {
   .exp-grid { --pw: 150px; --ps: 0.13888; }
 }
+/* The label and its button read as one line, not as two things pinned to
+   opposite edges. Under space-between the gap between them was whatever the
+   label did not use — 57px on one card and 105px on the next — so no two
+   captions in the row looked alike. */
 .exp-meta {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 10px; margin-top: 10px;
+  display: flex; align-items: center; justify-content: flex-start;
+  gap: 9px; margin-top: 10px;
 }
-.exp-meta span { font-size: 12.6px; color: var(--fg-4); }
+.exp-meta span {
+  font-size: 12.6px; color: var(--fg-4);
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.exp-meta button { flex: none; }
 .exp-meta button {
   padding: 5px 11px; border-radius: 8px;
   font-size: 11.6px; font-weight: 640; letter-spacing: 0.03em;

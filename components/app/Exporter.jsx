@@ -217,6 +217,13 @@ export default function Exporter ({ data, paid = false }) {
     // every title card ships with the editing chrome drawn over the artist.
     const opts = {
       width: W, height: H, pixelRatio: 1, cacheBust: true,
+      // Every cover reaches the page as /api/art?u=<the real url>, and the
+      // rasteriser keys its inlined-image cache on the part of the URL before
+      // the question mark unless told otherwise. So all of them hashed to
+      // "/api/art", the first one fetched was reused for the rest, and a
+      // ranking slide downloaded with the same cover on all six rows while the
+      // page it was captured from showed six different ones.
+      includeQueryParams: true,
       filter: n => !n?.dataset || n.dataset.noExport === undefined
     }
     // Two passes: the first warms fonts and images so the second is complete.

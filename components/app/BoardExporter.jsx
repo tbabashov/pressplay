@@ -89,8 +89,12 @@ export default function BoardExporter ({ data, paid = false }) {
   const shoot = async i => {
     const node = stage.current?.querySelector(`[data-frame="${i}"]`)
     if (!node) throw new Error('That slide is not on the page.')
-    await toPng(node, { width: W, height: H, pixelRatio: 1, cacheBust: true })
-    return toPng(node, { width: W, height: H, pixelRatio: 1, cacheBust: true })
+    // includeQueryParams: covers arrive as /api/art?u=<the real url>, and the
+    // rasteriser otherwise keys its image cache on the part before the query,
+    // so every cover on a board would come out as whichever loaded first.
+    const opts = { width: W, height: H, pixelRatio: 1, cacheBust: true, includeQueryParams: true }
+    await toPng(node, opts)
+    return toPng(node, opts)
   }
   const save = (url, name) => {
     const a = document.createElement('a')
