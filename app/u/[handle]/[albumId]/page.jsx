@@ -134,7 +134,7 @@ export default async function PublicReview ({ params }) {
       {r.tracks.length > 0 && (
         <section className="pr-block">
           <h2 className="pr-h2">Every song</h2>
-          <ol className="pr-tracks">
+          <ol className="pr-tracks glass-list">
             {r.tracks.map(t => {
               const c = ratingColor(t.score)
               return (
@@ -149,7 +149,10 @@ export default async function PublicReview ({ params }) {
                   {t.durationMs > 0 && (
                     <span className="pr-dur tnum">{fmtDuration(t.durationMs)}</span>
                   )}
-                  <span className="pr-chip tnum" style={{ background: c.bg, color: c.fg }}>
+                  <span
+                    className="pr-chip tnum"
+                    style={{ background: c.bg, color: c.fg, boxShadow: c.glow ? `0 0 26px ${c.glow}` : undefined }}
+                  >
                     {scoreText(t.score)}
                   </span>
                 </li>

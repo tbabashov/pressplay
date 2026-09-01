@@ -66,7 +66,9 @@ export default function Search () {
 
       {state === 'loading' && (
         <ul className="grid" aria-label="Loading results">
-          {Array.from({ length: 12 }, (_, i) => <li key={i} className="tile tile-ghost" />)}
+          {Array.from({ length: 12 }, (_, i) => (
+            <li key={i}><span className="tile"><span className="tile-shot"><span className="tile-art tile-ghost" /></span></span></li>
+          ))}
         </ul>
       )}
 
@@ -81,10 +83,12 @@ export default function Search () {
           {results.map(a => (
             <li key={a.id}>
               <button className="tile" onClick={() => router.push(`/app/rate/${encodeURIComponent(a.id)}`)}>
-                <span className="tile-art">
-                  {a.cover
-                    ? <img src={a.cover} alt="" loading="lazy" />
-                    : <span className="tile-blank" aria-hidden="true" />}
+                <span className="tile-shot">
+                  <span className="tile-art">
+                    {a.cover
+                      ? <img src={a.cover} alt="" loading="lazy" />
+                      : <span className="tile-blank" aria-hidden="true" />}
+                  </span>
                 </span>
                 <strong>{a.name}</strong>
                 <span className="tile-sub">{a.artist}</span>

@@ -93,7 +93,7 @@ export default function Discography ({ initial, artists }) {
           {byArtist.map(g => (
             <section key={g.artist}>
               <h2>{g.artist}<em>{g.albums.length}</em></h2>
-              <ul>
+              <ul className="glass-list">
                 {g.albums.map(a => (
                   <li key={a.id}>
                     {a.cover

@@ -224,27 +224,45 @@
 
 /* ── The scoring panel, overlapping the sleeve ────────────────────────────*/
 
-/* Changes the record on the stand. Same hairline as every other secondary
-   control on the site, sized down because it is a caption to the sleeve. */
+/* Changes the record on the stand. An icon on the same hairline the other
+   secondary controls use, sitting at the corner of the sleeve. */
 .rig-swap {
-  position: absolute; right: 13%; top: calc(100% + 16px);
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 8px 14px; border-radius: 10px;
-  font-size: 0.72rem; font-weight: 620; letter-spacing: 0.01em;
+  position: absolute; right: 13%; top: calc(100% + 14px);
+  width: 42px; height: 42px; border-radius: 12px;
+  display: grid; place-items: center;
   color: var(--fg-3);
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.16);
-  transition: color 200ms var(--ease), background 200ms var(--ease), box-shadow 200ms var(--ease);
+  transition: color 200ms var(--ease), background 200ms var(--ease),
+              box-shadow 200ms var(--ease), opacity 200ms var(--ease);
 }
-.rig-swap:hover {
+.rig-swap:hover:not(:disabled) {
   color: var(--fg);
-  background: rgba(255,255,255,0.05);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.28);
+  background: rgba(255,255,255,0.06);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.3);
 }
-.rig-swap svg { width: 13px; height: 13px; transition: transform 320ms var(--ease); }
-.rig-swap:hover svg { transform: translateX(3px); }
+.rig-swap:disabled { opacity: 0.4; cursor: default; }
+.rig-swap svg { width: 19px; height: 19px; transition: transform 420ms var(--ease); }
+.rig-swap:hover:not(:disabled) svg { transform: rotate(180deg); }
+
+/* The sleeve and the disc use the translate property, so an animation on
+   transform here would fight the pointer tilt on the rig above them. */
+@keyframes rec-out {
+  to { translate: -78px 0; opacity: 0; }
+}
+@keyframes rec-in {
+  from { translate: 78px 0; opacity: 0; }
+}
+.rig.swap-out .sleeve { animation: rec-out 250ms var(--ease) forwards; }
+.rig.swap-in .sleeve { animation: rec-in 430ms var(--ease); }
+.rig.swap-out .disc, .rig.swap-out .rig-reflect { animation: rec-out 250ms var(--ease) forwards; }
+.rig.swap-in .disc, .rig.swap-in .rig-reflect { animation: rec-in 430ms var(--ease); }
+
 @media (prefers-reduced-motion: reduce) {
   .rig-swap, .rig-swap svg { transition: none }
-  .rig-swap:hover svg { transform: none }
+  .rig-swap:hover:not(:disabled) svg { transform: none }
+  .rig.swap-out .sleeve, .rig.swap-in .sleeve,
+  .rig.swap-out .disc, .rig.swap-in .disc,
+  .rig.swap-out .rig-reflect, .rig.swap-in .rig-reflect { animation: none }
 }
 
 .card {
@@ -869,12 +887,6 @@
 
 .account { display: flex; align-items: center; gap: 10px; }
 .account-name { font-size: 14.5px; font-weight: 600; letter-spacing: -0.012em; }
-.account-role {
-  font-size: 10.5px; font-weight: 620; letter-spacing: 0.055em; text-transform: uppercase;
-  color: var(--accent); padding: 3px 7px; border-radius: 999px;
-  background: rgba(var(--accent-rgb), 0.14);
-  box-shadow: inset 0 0 0 1px rgba(var(--accent-rgb), 0.3);
-}
 .account-out {
   font-size: 13.5px; color: var(--fg-4);
   transition: color 220ms var(--ease);
@@ -1138,9 +1150,8 @@
 }
 .cmt-by em { font-style: normal; font-size: 11.6px; font-weight: 500; color: var(--fg-4); }
 .cmt-op {
-  font-size: 9.6px; font-weight: 660; letter-spacing: 0.06em; text-transform: uppercase;
-  color: var(--accent); padding: 2.5px 6px; border-radius: 999px;
-  background: rgba(var(--accent-rgb), 0.15);
+  font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--accent);
 }
 .cmt-text { margin: 6px 0 10px; font-size: 13.6px; line-height: 1.56; color: var(--fg-2); }
 

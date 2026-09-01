@@ -24,7 +24,7 @@ export default async function Feed () {
           <Link className="btn-ghost" href="/browse">Browse raters</Link>
         </div>
       ) : (
-        <ul className="fd-list">
+        <ul className="fd-list glass-list">
           {items.map(item => {
             const c = item.final === null ? null : ratingColor(item.final)
             return (

@@ -50,11 +50,25 @@ export default function Hero ({ albums = [], children }) {
 
   // Always lands somewhere else: drawing from the other albums rather than the
   // whole list means the button can never appear to do nothing.
-  const swap = () => setI(n => {
-    if (albums.length < 2) return n
+  const [phase, setPhase] = useState(null)   // 'out' while it leaves, 'in' as it arrives
+  const timers = useRef([])
+
+  useEffect(() => () => timers.current.forEach(clearTimeout), [])
+
+  const swap = () => {
+    if (phase || albums.length < 2) return
     const pick = Math.floor(Math.random() * (albums.length - 1))
-    return pick >= n ? pick + 1 : pick
-  })
+    const next = pick >= i ? pick + 1 : pick
+
+    // The sleeve slides out, the record under it changes while nothing is on
+    // screen, then the new one slides in from the other side.
+    setPhase('out')
+    timers.current.push(setTimeout(() => {
+      setI(next)
+      setPhase('in')
+      timers.current.push(setTimeout(() => setPhase(null), 430))
+    }, 250))
+  }
 
   // Before anything plays, the room is still lit by the record on the stand.
   useEffect(() => {
@@ -139,7 +153,7 @@ export default function Hero ({ albums = [], children }) {
         </div>
 
         <div className="hero-stage">
-          <div className={`rig${spinning ? ' spinning' : ''}${live ? ' out' : ''}`}>
+          <div className={`rig${spinning ? ' spinning' : ''}${live ? ' out' : ''}${phase ? ` swap-${phase}` : ''}`}>
             <div className="disc" aria-hidden="true">
               <div className="disc-face" />
               <img className="disc-label" src={album.cover} alt="" />
@@ -166,11 +180,17 @@ export default function Hero ({ albums = [], children }) {
             </button>
           </div>
 
-          <button className="rig-swap" onClick={swap}>
-            Swap the record
-            <svg viewBox="0 0 15 15" fill="none" aria-hidden="true">
-              <path d="M3 7.5h9m0 0L8.5 4M12 7.5 8.5 11" stroke="currentColor"
-                strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+          <button
+            className="rig-swap"
+            onClick={swap}
+            disabled={Boolean(phase)}
+            aria-label="Put a different record on"
+            title="Put a different record on"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 8.5h13m0 0-3.4-3.4M17 8.5l-3.4 3.4M20 15.5H7m0 0 3.4-3.4M7 15.5l3.4 3.4"
+                fill="none" stroke="currentColor" strokeWidth="1.9"
+                strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
 
