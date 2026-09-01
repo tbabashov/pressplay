@@ -1,6 +1,7 @@
 import { auth } from '@/auth'
 import { listReviews, saveReview, countToday, getReview } from '@/lib/db'
 import { normaliseCriteria } from '@/lib/preferences'
+import { normaliseScale } from '@/lib/scales'
 
 const LIMITS = { member: 3, owner: Infinity }
 
@@ -61,7 +62,10 @@ export async function POST (req) {
     published: has('published') ? !!body.published : !!existing?.published,
     criteriaModel: has('criteriaModel')
       ? normaliseCriteria(body.criteriaModel)
-      : (existing?.criteriaModel ?? null)
+      : (existing?.criteriaModel ?? null),
+    scaleModel: has('scaleModel')
+      ? normaliseScale(body.scaleModel)
+      : (existing?.scaleModel ?? null)
   })
   return Response.json({ review: saved })
 }

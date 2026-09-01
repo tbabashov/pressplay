@@ -1398,3 +1398,44 @@ body:has(.app) .vignette { opacity: 0.5; }
 .sp-none { padding: 14px; font-size: 13px; color: var(--fg-4); }
 .sp .rm-supers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .sp-compact .rm-supers, .set .rm-supers { grid-template-columns: minmax(0, 1fr); }
+
+/* --- scale builder --- */
+.sb { display: grid; gap: 14px; }
+.sb-na {
+  display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 10px; align-items: center;
+  padding: 11px 14px; border-radius: 11px; cursor: pointer;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
+}
+.sb-na input { width: 16px; height: 16px; accent-color: var(--accent); }
+.sb-na span { font-size: 13.6px; font-weight: 560; }
+.sb-na em { grid-column: 2; font-style: normal; font-size: 11.8px; color: var(--fg-4); }
+.sb-tiers { max-height: 380px; overflow-y: auto; }
+.sb-tiers li {
+  display: grid; grid-template-columns: 46px minmax(0, 1fr) 34px;
+  gap: 11px; align-items: center;
+  padding: 7px 12px; border-bottom: 1px solid rgba(255,255,255,0.055);
+}
+.sb-tiers li:last-child { border-bottom: 0; }
+.sb-chip {
+  display: grid; place-items: center; height: 28px; border-radius: 8px;
+  font-size: 12.8px; font-weight: 780;
+}
+.sb-chip[data-house] {
+  background: rgba(255,255,255,0.08); color: var(--fg-3);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
+}
+.sb-tiers input[type="text"], .sb-tiers li > input:not([type="color"]) {
+  width: 100%; padding: 7px 10px; border-radius: 8px;
+  background: rgba(255,255,255,0.045);
+  border: 1px solid rgba(255,255,255,0.11);
+  color: var(--fg); font: inherit; font-size: 13.2px;
+}
+.sb-tiers li > input:not([type="color"]):focus {
+  outline: none; border-color: rgba(var(--accent-rgb), 0.6);
+}
+.sb-colour {
+  width: 30px; height: 30px; padding: 0; border: 0; border-radius: 8px;
+  background: none; cursor: pointer;
+}
+.sb-note { font-size: 12.2px; line-height: 1.55; color: var(--fg-4); max-width: 60ch; }
+.rm-preset.on { color: var(--fg); box-shadow: inset 0 0 0 1px rgba(var(--accent-rgb), 0.6); background: rgba(var(--accent-rgb), 0.1); }

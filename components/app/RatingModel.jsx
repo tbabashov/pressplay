@@ -7,10 +7,13 @@ import {
   LABEL_MAX, keyFromLabel, clampLabel
 } from '@/lib/preferences'
 import SuperlativePicker from './SuperlativePicker'
+import ScaleBuilder from './ScaleBuilder'
+import { normaliseScale, DEFAULT_SCALE } from '@/lib/scales'
 
 export default function RatingModel ({ initial }) {
   const [criteria, setCriteria] = useState(initial.criteria)
   const [supers, setSupers] = useState(initial.superlatives)
+  const [scale, setScale] = useState(initial.scale || DEFAULT_SCALE)
   const [busy, setBusy] = useState(false)
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState('')
@@ -54,12 +57,13 @@ export default function RatingModel ({ initial }) {
       const res = await fetch('/api/preferences', {
         method: 'PUT',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ criteria: cleaned, superlatives: supers })
+        body: JSON.stringify({ criteria: cleaned, superlatives: supers, scale: normaliseScale(scale) })
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'That did not save.')
       setCriteria(data.preferences.criteria)
       setSupers(data.preferences.superlatives)
+      setScale(data.preferences.scale)
       setSaved(true)
       router.refresh()
     } catch (e) { setError(e.message) } finally { setBusy(false) }
@@ -67,6 +71,16 @@ export default function RatingModel ({ initial }) {
 
   return (
     <form className="rm" onSubmit={submit}>
+      <section className="rm-block">
+        <h2 className="rm-h2">Scale</h2>
+        <p className="rm-note">
+          What a song can be given, and what each rung is called. The eleven with a Majestic on
+          top is the ladder this site was built on, not a rule: pick another, rename the rungs,
+          or colour them yourself.
+        </p>
+        <ScaleBuilder scale={scale} onChange={touch(setScale)} />
+      </section>
+
       <section className="rm-block">
         <h2 className="rm-h2">Criteria</h2>
         <p className="rm-note">

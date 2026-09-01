@@ -5,8 +5,9 @@ import { usePlayer } from '../audio/Player'
 import Meter from '../audio/Meter'
 import { dominant } from '../../lib/palette'
 import { ratingColor } from '../../lib/rating-colors'
-import { NA, MAX_SCORE } from '../../lib/rating-scale'
+import { NA } from '../../lib/rating-scale'
 import { superlativeByKey, DEFAULT_PREFERENCES, SUPERLATIVE_MAX } from '../../lib/preferences'
+import { DEFAULT_SCALE } from '../../lib/scales'
 import AlbumDetails from './AlbumDetails'
 import SuperlativePicker from './SuperlativePicker'
 import { fmtTime } from '../../lib/music'
@@ -14,25 +15,27 @@ import { toSnapshot } from '../../lib/album-shape'
 
 // Accepts 0-11, a decimal, or a dash for N/A. Anything else is simply ignored
 // rather than bounced with an error, so typing never fights the user.
-function parseScore (raw) {
+function parseScore (raw, max, allowNA = true) {
   const s = String(raw).trim()
   if (s === '') return null
-  if (s === '-' || s === '–' || s.toLowerCase() === 'n' || s.toLowerCase() === 'na') return NA
+  if (s === '-' || s === '–' || s.toLowerCase() === 'n' || s.toLowerCase() === 'na') {
+    return allowNA ? NA : undefined
+  }
   const n = Number(s)
   if (!Number.isFinite(n)) return undefined
-  return Math.min(MAX_SCORE, Math.max(0, n))
+  return Math.min(max, Math.max(0, n))
 }
 
 // ratingColor returns { bg, fg }: bg may be a gradient, which is fine behind a
 // chip but never as a text colour, so the headline number falls back to the
 // room accent whenever its tier is a gradient.
-const tierStyle = v => {
-  const c = ratingColor(v)
+const tierStyle = (v, scale) => {
+  const c = ratingColor(v, scale)
   return { background: c.bg, color: c.fg, borderColor: 'transparent' }
 }
-const finalStyle = v => {
+const finalStyle = (v, scale) => {
   if (v === null) return undefined
-  const c = ratingColor(Math.round(v))
+  const c = ratingColor(Math.round(v), scale)
   return {
     background: c.bg,
     color: c.fg,
@@ -53,6 +56,11 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
   // The rater's own instrument, not a fixed five. Renaming one keeps its key,
   // so scores already filed under it stay attached.
   const editAlbum = next => { setAlbum(next); setSave({ state: 'idle', message: '' }) }
+
+  // The scale is the rater's, so the ceiling, the tier names and the colours
+  // all come from it rather than from a fixed 0 to 11.
+  const scale = preferences.scale || DEFAULT_SCALE
+  const MAX_SCORE = scale.max
 
   const CRITERIA = preferences.criteria.map(c => [c.key, c.label])
 
@@ -107,7 +115,7 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
   const touch = fn => (...a) => { setSave(s => (s.state === 'saved' ? { state: 'idle', message: '' } : s)); fn(...a) }
 
   const setScore = touch((id, raw) => {
-    const v = parseScore(raw)
+    const v = parseScore(raw, MAX_SCORE, scale.na !== false)
     if (v === undefined) return
     setScores(s => (v === null ? (({ [id]: _, ...rest }) => rest)(s) : { ...s, [id]: v }))
   })
@@ -155,6 +163,7 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
           scores, criteria, finalOverride: override, final,
           selections, nowPlaying,
           criteriaModel: preferences.criteria,
+          scaleModel: scale,
           album: toSnapshot(album)
         })
       })
@@ -207,7 +216,9 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
           Edit details
         </button>
 
-        <p className="rater-hint">0 to 11, or a dash for N/A.</p>
+        <p className="rater-hint">
+          0 to {MAX_SCORE}{scale.na ? ', or a dash for N/A' : ''}.
+        </p>
       </aside>
 
       <AlbumDetails
@@ -276,7 +287,7 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
                   title="0 to 11, or a dash for N/A"
                   inputMode="decimal"
                   aria-label={`Score for ${t.title}`}
-                  style={has ? tierStyle(v) : undefined}
+                  style={has ? tierStyle(v, scale) : undefined}
                 />
               </li>
             )
@@ -307,7 +318,7 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
             <span>Final</span>
             <strong
               className={`tnum${final === null ? ' is-empty' : ''}`}
-              style={finalStyle(final)}
+              style={finalStyle(final, scale)}
             >
               {final === null ? '—' : final.toFixed(1)}
             </strong>
