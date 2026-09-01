@@ -116,21 +116,11 @@ export default function Hero ({ albums = [], children }) {
 
   const demo = scoresFor(album.name)
 
-  // Fixed indices, so the server and client agree on the background shelf.
-  const shelf = [7, 19, 28, 34, 41].map(n => albums[n % albums.length]).filter(Boolean)
-
   return (
     <header className="hero" ref={stage}>
       <div className="room" aria-hidden="true">
         <div className="room-wall" />
         <div className="room-beam" />
-        <div className="room-shelf">
-          {shelf.map((a, n) => (
-            <img key={a.cover} src={a.cover} alt="" style={{ '--i': n }} />
-          ))}
-        </div>
-        <div className="room-floor" />
-        <div className="room-horizon" />
         <div className="room-dust">
           {[[8,22,17],[21,64,23],[37,12,29],[52,48,19],[63,78,25],[74,31,21],[88,58,27],[94,18,18]]
             .map(([x, y, d], i) => (
@@ -184,7 +174,6 @@ export default function Hero ({ albums = [], children }) {
             className="rig-swap"
             onClick={swap}
             disabled={Boolean(phase)}
-            aria-label="Put a different record on"
             title="Put a different record on"
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -192,6 +181,7 @@ export default function Hero ({ albums = [], children }) {
                 fill="none" stroke="currentColor" strokeWidth="1.9"
                 strokeLinecap="round" strokeLinejoin="round" />
             </svg>
+            Another record
           </button>
 
           <div className="card">
