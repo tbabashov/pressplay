@@ -16,9 +16,20 @@ export async function PUT (req) {
   let body
   try { body = await req.json() } catch { return Response.json({ error: 'Bad request.' }, { status: 400 }) }
 
-  // Whatever arrives is normalised before it is stored, so a bad list cannot
-  // reach the rating screen and break scoring for every album at once.
-  const preferences = normalisePreferences(body)
+  // Only the keys actually sent are taken. A settings screen that PUTs its own
+  // three fields would otherwise reset every key it does not know about, which
+  // is how the hidden album list would vanish the next time anyone touched a
+  // criterion. Whatever arrives is still normalised before it is stored, so a
+  // bad list cannot reach the rating screen and break scoring for every album.
+  const stored = await getPreferences(session.user.email)
+  const base = stored ? normalisePreferences(stored) : DEFAULT_PREFERENCES
+  const has = k => Object.prototype.hasOwnProperty.call(body ?? {}, k)
+  const preferences = normalisePreferences({
+    criteria: has('criteria') ? body.criteria : base.criteria,
+    superlatives: has('superlatives') ? body.superlatives : base.superlatives,
+    scale: has('scale') ? body.scale : base.scale,
+    hiddenAlbums: has('hiddenAlbums') ? body.hiddenAlbums : base.hiddenAlbums
+  })
   await savePreferences(session.user.email, preferences)
   return Response.json({ preferences })
 }
