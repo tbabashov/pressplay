@@ -56,24 +56,17 @@ export default function ArtistImages ({ images, onChange }) {
           <div className="cut-item" key={i}>
             <div className="cut-thumb"><img src={im.src} alt="" /></div>
             <div className="cut-ctrls">
-              <label>
-                <span>Size</span>
-                <input type="range" min="0.4" max="2.2" step="0.05" value={im.scale}
-                  onChange={e => patch(i, { scale: Number(e.target.value) })}
-                  aria-label={`Cut-out ${i + 1} size`} />
-              </label>
-              <label>
-                <span>Across</span>
-                <input type="range" min="-260" max="260" step="4" value={im.x}
-                  onChange={e => patch(i, { x: Number(e.target.value) })}
-                  aria-label={`Cut-out ${i + 1} horizontal position`} />
-              </label>
-              <label>
-                <span>Up</span>
-                <input type="range" min="-220" max="220" step="4" value={-im.y}
-                  onChange={e => patch(i, { y: -Number(e.target.value) })}
-                  aria-label={`Cut-out ${i + 1} vertical position`} />
-              </label>
+              <strong>Cut-out {i + 1}</strong>
+              <span>
+                {im.scale && Math.abs(im.scale - 1) > 0.01
+                  ? `${Math.round(im.scale * 100)}%`
+                  : 'Original size'}
+                {(im.x || im.y) ? ' · moved' : ''}
+              </span>
+              <button type="button" className="cut-reset"
+                onClick={() => patch(i, { x: 0, y: 0, scale: 1 })}>
+                Reset position
+              </button>
             </div>
             <button className="cut-x" onClick={() => drop(i)} aria-label={`Remove cut-out ${i + 1}`}>
               <svg viewBox="0 0 24 24"><path d="M6.5 6.5l11 11m0-11l-11 11" fill="none"
@@ -92,6 +85,8 @@ export default function ArtistImages ({ images, onChange }) {
             onChange={e => add(e.target.files)} />
           <p className="cut-hint">
             Cut-outs stand in the dome on the title card. Up to three, background already removed.
+            Drag one on the title card to move it, drag a corner or scroll on it to resize, and
+            double click to put it back.
           </p>
         </>
       )}

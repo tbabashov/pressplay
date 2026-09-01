@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { toPng } from 'html-to-image'
 import { extractPalette, fallbackPalette, paletteFromColor } from '../../lib/rating-colors'
 import { SafeZoneOverlay } from '../../lib/export/shell.jsx'
@@ -96,13 +96,33 @@ export default function Exporter ({ data, paid = false }) {
     return Array.from({ length: count }, (_, i) => t.slice(i * per, (i + 1) * per))
   }, [data, settings.perPage])
 
+  // Dragging fires on every pointer move, so the picture follows the hand
+  // immediately and the write waits until the hand stops. Without that a single
+  // drag would be a hundred POSTs.
+  const nudgeTimer = useRef(null)
+  const nudgePending = useRef(null)
+
+  const nudgeCutout = useCallback((index, patch) => {
+    setCutouts(prev => {
+      const next = prev.map((c, i) => (i === index ? { ...c, ...patch } : c))
+      nudgePending.current = next
+      return next
+    })
+    clearTimeout(nudgeTimer.current)
+    nudgeTimer.current = setTimeout(() => {
+      if (nudgePending.current) saveCutouts(nudgePending.current)
+    }, 650)
+  }, [])
+
+  useEffect(() => () => clearTimeout(nudgeTimer.current), [])
+
   const frames = useMemo(() => {
     if (!palette) return []
     const on = k => settings.include[k] !== false
     const out = []
     if (on('title')) out.push({
       key: 'title', label: 'Title card',
-      node: <TitleFrame data={data} palette={palette} theme={theme} images={cutouts} lockCutouts />
+      node: <TitleFrame data={data} palette={palette} theme={theme} images={cutouts} onImageChange={nudgeCutout} />
     })
     if (on('songs')) pages.forEach((tracks, i) => out.push({
       key: `songs-${i}`,
