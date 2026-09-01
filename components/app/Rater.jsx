@@ -10,6 +10,7 @@ import { superlativeByKey, DEFAULT_PREFERENCES, SUPERLATIVE_MAX } from '../../li
 import { DEFAULT_SCALE } from '../../lib/scales'
 import ImageInput from './ImageInput'
 import SuperlativePicker from './SuperlativePicker'
+import FeatureInput from './FeatureInput'
 import { fmtTime } from '../../lib/music'
 import { toSnapshot } from '../../lib/album-shape'
 
@@ -332,14 +333,10 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
                       onChange={e => editTrack(t.id, { title: e.target.value })}
                       placeholder="Song title" aria-label={`Title of track ${t.n}`}
                     />
-                    <input
-                      className="trk-ft"
-                      value={(t.features || []).join(', ')}
-                      onChange={e => editTrack(t.id, {
-                        features: e.target.value.split(',').map(x => x.trim()).filter(Boolean)
-                      })}
-                      placeholder="Features, separated by commas"
-                      aria-label={`Features on track ${t.n}`}
+                    <FeatureInput
+                      value={t.features || []}
+                      onChange={features => editTrack(t.id, { features })}
+                      label={`Features on track ${t.n}`}
                     />
                   </span>
                 ) : (
