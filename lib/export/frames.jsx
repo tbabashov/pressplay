@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { styleOf } from './styles.js'
 import { ratingColor, scoreText, SCALE_ROWS, fmtRuntime, fmtDuration } from '../rating-colors.js'
 import { NA, fmtScore } from '../rating-scale.js'
@@ -35,15 +35,55 @@ const SPREAD = { 1: [0], 2: [-215, 215], 3: [-300, 0, 300] }
 const spreadFor = (n, i) => (SPREAD[n] || SPREAD[3])[i] ?? (i - (n - 1) / 2) * 260
 
 export const CUTOUT_BASE_H = 520
-// A floor of 0.05 meant one clumsy drag could shrink a cut-out to a speck too
-// small to grab hold of again, with no way back except knowing about the double
-// click. Bounded at both ends now: it can still be a third of its size or three
-// and a half times it, which is far more range than the dome can use.
-const clampScale = v => Math.min(3.5, Math.max(0.3, v))
-const round2 = v => Math.round(v * 100) / 100
 
-const HANDLE = 56 // frame pixels — the preview is ~0.27 scale, so ~15px on screen
-const CORNERS = [[0, 0], [1, 0], [0, 1], [1, 1]]
+// The box can never be smaller than this or larger than that, in frame pixels.
+// Clamping the height rather than the scale means the limit is the same
+// whatever shape the picture is, and a clamp can never invert the box the way
+// letting a dragged edge cross its anchor would.
+const MIN_H = 90
+const MAX_H = 1750
+
+const HANDLE = 56 // frame pixels — the preview is ~0.2 scale, so ~11px on screen
+const HIT = 96    // the pointer target is larger than the thing you can see
+
+// Handles are named by the two edges they sit on. Everything else — where they
+// are drawn, which corner is anchored, which cursor is shown — is derived from
+// this one description, so a handle cannot end up drawn in one place and
+// anchored to another.
+const HANDLES = [
+  { id: 'nw', ex: 0, ey: 0, cursor: 'nwse-resize' },
+  { id: 'ne', ex: 1, ey: 0, cursor: 'nesw-resize' },
+  { id: 'sw', ex: 0, ey: 1, cursor: 'nesw-resize' },
+  { id: 'se', ex: 1, ey: 1, cursor: 'nwse-resize' }
+]
+
+// ---- the one geometry ----------------------------------------------------
+//
+// What is stored on a cut-out is x, y and scale: an offset from the middle of
+// the dome, a height above its floor, and a size. What a resize needs is a
+// rectangle. Rather than keep both and let them drift, there is one conversion
+// each way and everything else works in rectangles.
+//
+// host is the positioned box the cut-out lives in. Reading it live is what
+// makes this correct under zoom, scrolling, a resized window and the CSS scale
+// the preview is drawn at, without any of them being special cased.
+
+const rectOf = (img, aspect, spread, host) => {
+  const h = CUTOUT_BASE_H * (img.scale ?? 1)
+  const w = h * aspect
+  return {
+    w,
+    h,
+    left: host.w / 2 + spread + (img.x ?? 0) - w / 2,
+    top: host.h - (24 + (img.y ?? 0)) - h
+  }
+}
+
+const imgOf = (rect, spread, host) => ({
+  scale: rect.h / CUTOUT_BASE_H,
+  x: rect.left + rect.w / 2 - host.w / 2 - spread,
+  y: host.h - (rect.top + rect.h) - 24
+})
 
 // A cut-out that can be dragged and scaled straight on the preview. Unlocked it
 // gets a transform box with corner handles; those carry data-no-export so the
@@ -55,39 +95,176 @@ function ArtistCutout ({ img, index, count, onChange, locked }) {
   const live = useRef(img)
   live.current = img
   const editable = !!onChange && !locked
+  const spread = spreadFor(count, index)
+
   // Only the cut-out you are working on shows its handles and answers the
   // wheel. Every cut-out grabbing the wheel meant the page could not be
   // scrolled past one, and four sets of handles on one slide read as clutter.
   const [active, setActive] = useState(false)
-  // The picture's own proportions, read off the file once it has loaded. The
-  // box needs an explicit width: left is a percentage and right is auto, so an
-  // auto width is shrink to fit against "containing block minus left", and a
-  // cut-out dragged or grown towards the right edge had its box clamped to a
-  // sliver while the picture overflowed it. The dashed border, the handles and
-  // the width the resize maths reads all collapsed with it.
+
+  // The picture's own proportions. Read in a ref callback as well as on load,
+  // because a cached image is already complete before React attaches onLoad and
+  // that handler then never fires: the width stayed unknown, the box fell back
+  // to shrink-to-fit against whatever room was left, and the cut-out rendered
+  // as a tall thin sliver of a person.
   const [aspect, setAspect] = useState(null)
+  const readAspect = useCallback(node => {
+    if (!node) return
+    const read = () => {
+      const { naturalWidth: w, naturalHeight: h } = node
+      if (w && h) setAspect(w / h)
+    }
+    if (node.complete) read()
+    node.addEventListener('load', read)
+    return () => node.removeEventListener('load', read)
+  }, [])
 
-  useEffect(() => {
-    if (!editable) setActive(false)
-  }, [editable])
+  useEffect(() => { if (!editable) setActive(false) }, [editable])
 
-  // Screen pixels to frame pixels. The preview is CSS scaled, and offsetHeight
-  // can be 0 for a frame while the image is still loading, which would divide
-  // to Infinity and leave the cut-out refusing to move until a reload.
-  const frameScale = el => {
-    const raw = el.getBoundingClientRect().height / (el.offsetHeight || 1)
-    return Number.isFinite(raw) && raw > 0.01 ? raw : 1
+  // Pointer coordinates into the coordinates the geometry is written in, done
+  // once per event and never again. offsetParent is the box the cut-out's left
+  // and top are measured against, and its rect against its own offset size is
+  // the CSS scale actually applied to the preview.
+  const space = () => {
+    const el = wrap.current
+    const host = el?.offsetParent
+    if (!el || !host) return null
+    // The factor between frame pixels and what is on the glass, measured off a
+    // quantity this component sets itself: the box's height is exactly
+    // CUTOUT_BASE_H * scale frame pixels, so its rect divided by that is the
+    // factor, whatever combination of CSS scale, page zoom and layout produced
+    // it. Deriving it from offsetWidth instead put the two halves of the sum in
+    // different coordinate spaces the moment a page zoom was involved, and the
+    // cut-out jumped hundreds of pixels on the first move.
+    const frameH = CUTOUT_BASE_H * (live.current.scale ?? 1)
+    const er = el.getBoundingClientRect()
+    const k = frameH > 0 ? er.height / frameH : 1
+    if (!Number.isFinite(k) || k <= 0.0001) return null
+    // The host's own size in frame pixels, through that same factor, so the
+    // rest of the geometry never touches a second coordinate system.
+    const r = host.getBoundingClientRect()
+    return { r, w: r.width / k, h: r.height / k, k }
   }
+
+  const toFrame = (e, sp) => ({
+    x: (e.clientX - sp.r.left) / sp.k,
+    y: (e.clientY - sp.r.top) / sp.k
+  })
+
+  // One update per pointer event, carrying every field that changed together.
+  // Setting the position in one render and the size in the next is what lets a
+  // handle visibly come away from the picture for a frame.
+  const apply = (rect, sp) => onChange(index, imgOf(rect, spread, sp))
+
+  const begin = (e, handle) => {
+    const sp = space()
+    if (!sp || !aspect) return
+    const rect = rectOf(live.current, aspect, spread, sp)
+    const p = toFrame(e, sp)
+
+    drag.current = {
+      id: e.pointerId,
+      handle,                    // locked for the whole gesture, never re-detected
+      rect,                      // the geometry at the moment of the grab
+      p,                         // where the pointer was, in frame coordinates
+      // Where the pointer sat relative to the corner it grabbed. Without this
+      // the box jumps by that much on the first move, because the corner is
+      // snapped to the pointer instead of following it.
+      off: handle
+        ? {
+            x: (handle.ex ? rect.left + rect.w : rect.left) - p.x,
+            y: (handle.ey ? rect.top + rect.h : rect.top) - p.y
+          }
+        : { x: 0, y: 0 }
+    }
+    setActive(true)
+    wrap.current?.focus?.()
+    e.preventDefault()
+    e.stopPropagation()
+  }
+
+  // Move, up and cancel live on the window for as long as a gesture is running,
+  // added once and removed on the way out. On the element they missed every
+  // release that happened somewhere else, and the gesture stayed live: the next
+  // idle mouse movement went on dragging the cut-out across the slide with no
+  // button held down.
+  useEffect(() => {
+    if (!editable) return
+    const move = e => {
+      const d = drag.current
+      if (!d || d.id !== e.pointerId) return
+      const sp = space()
+      if (!sp) return
+      const p = toFrame(e, sp)
+      e.preventDefault()
+
+      if (!d.handle) {
+        apply({ ...d.rect, left: d.rect.left + (p.x - d.p.x), top: d.rect.top + (p.y - d.p.y) }, sp)
+        return
+      }
+
+      const { ex, ey } = d.handle
+      const r0 = d.rect
+      // The corner opposite the one being dragged. It is where the new box is
+      // built from, so it stays exactly where it was by construction rather
+      // than by a correction applied afterwards.
+      const ax = ex ? r0.left : r0.left + r0.w
+      const ay = ey ? r0.top : r0.top + r0.h
+      // The grabbed corner, following the pointer at the offset it was caught.
+      const cx = p.x + d.off.x
+      const cy = p.y + d.off.y
+      // Distance from the anchor, counted positive in the direction that grows.
+      const dx = ex ? cx - ax : ax - cx
+      const dy = ey ? cy - ay : ay - cy
+
+      // One factor for both axes: a cut-out is a photograph of a person, and
+      // scaling the two independently is what turned them into a seven foot
+      // sliver. The larger of the two demands wins, so the corner keeps up with
+      // whichever way the hand is actually moving.
+      const k = Math.max(dx / r0.w, dy / r0.h)
+      const h = Math.min(MAX_H, Math.max(MIN_H, r0.h * k))
+      const w = h * aspect
+
+      apply({
+        w,
+        h,
+        left: ex ? ax : ax - w,
+        top: ey ? ay : ay - h
+      }, sp)
+    }
+
+    const end = e => {
+      const d = drag.current
+      if (!d || (e.pointerId !== undefined && d.id !== e.pointerId)) return
+      drag.current = null
+      document.body.style.removeProperty('cursor')
+    }
+
+    window.addEventListener('pointermove', move, { passive: false })
+    window.addEventListener('pointerup', end)
+    window.addEventListener('pointercancel', end)
+    // A gesture must not outlive the component, or the listeners it needs.
+    return () => {
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerup', end)
+      window.removeEventListener('pointercancel', end)
+      drag.current = null
+      document.body.style.removeProperty('cursor')
+    }
+  }, [editable, index, onChange, aspect, spread])
 
   useEffect(() => {
     const el = wrap.current
     if (!el || !editable || !active) return
     // React's synthetic wheel handler cannot preventDefault, so the page would
-    // scroll away underneath the gesture; bind it natively instead.
+    // scroll away underneath the gesture; bind it natively instead. Scaling on
+    // the wheel keeps the feet planted, which is what the stored shape does
+    // when only the size changes.
     const onWheel = e => {
       e.preventDefault()
-      const cur = live.current.scale ?? 1
-      onChange(index, { scale: round2(clampScale(cur * (1 - e.deltaY * 0.0015))) })
+      const cur = (live.current.scale ?? 1) * CUTOUT_BASE_H
+      const next = Math.min(MAX_H, Math.max(MIN_H, cur * (1 - e.deltaY * 0.0015)))
+      onChange(index, { scale: next / CUTOUT_BASE_H })
     }
     el.addEventListener('wheel', onWheel, { passive: false })
     return () => el.removeEventListener('wheel', onWheel)
@@ -96,81 +273,14 @@ function ArtistCutout ({ img, index, count, onChange, locked }) {
   // Clicking anywhere else puts the handles away.
   useEffect(() => {
     if (!active) return
-    const away = e => { if (!wrap.current?.contains(e.target)) setActive(false) }
+    const away = e => {
+      if (drag.current) return
+      if (!wrap.current?.contains(e.target)) setActive(false)
+    }
     document.addEventListener('pointerdown', away)
     return () => document.removeEventListener('pointerdown', away)
   }, [active])
 
-  function startMove (e) {
-    const el = wrap.current
-    setActive(true)
-    el.focus?.()
-    drag.current = {
-      kind: 'move', id: e.pointerId, sx: e.clientX, sy: e.clientY,
-      x: img.x ?? 0, y: img.y ?? 0, s: frameScale(el)
-    }
-    el.setPointerCapture(e.pointerId)
-    e.preventDefault()
-  }
-
-  function startResize (e, fx, fy) {
-    const el = wrap.current
-    const r = el.getBoundingClientRect()
-    const s = frameScale(el)
-    // The handles are named by the edge they sit on: fx 0 is the left side,
-    // fy 0 is the top. Resizing anchors the opposite corner, the way every
-    // image editor does.
-    const cx = fx ? r.x : r.x + r.width
-    const cy = fy ? r.y : r.y + r.height
-    const vx = e.clientX - cx
-    const vy = e.clientY - cy
-    const d0 = Math.max(24, Math.hypot(vx, vy))
-    drag.current = {
-      kind: 'resize', id: e.pointerId, fx, fy, cx, cy, d0,
-      // The pointer is projected onto the diagonal it was grabbed on, so a
-      // drag across the box scales it and a drag along the box's own edge
-      // barely does. Raw distance from the anchor grew on any movement at
-      // all, including the ones meant to be moving nothing.
-      ux: vx / d0, uy: vy / d0,
-      scale: img.scale ?? 1, x: img.x ?? 0, y: img.y ?? 0,
-      // Frame pixel geometry at the moment of the grab, so the anchored
-      // corner can be held still while the size changes.
-      w: r.width / s, h: r.height / s
-    }
-    el.setPointerCapture(e.pointerId)
-    e.stopPropagation()
-    e.preventDefault()
-  }
-
-  function onPointerMove (e) {
-    const d = drag.current
-    if (!d || d.id !== e.pointerId) return
-    if (d.kind === 'move') {
-      onChange(index, {
-        x: Math.round(d.x + (e.clientX - d.sx) / d.s),
-        y: Math.round(d.y - (e.clientY - d.sy) / d.s) // bottom-anchored: down is less
-      })
-      return
-    }
-
-    const proj = (e.clientX - d.cx) * d.ux + (e.clientY - d.cy) * d.uy
-    const scale = clampScale(d.scale * Math.max(0.05, proj / d.d0))
-    // The box is laid out from its bottom centre, so growing it moves both the
-    // corner under the cursor and the one opposite. Position is corrected by
-    // the difference, which is what keeps the anchored corner where it was and
-    // the grabbed corner under the pointer instead of sliding away from it.
-    const k = scale / d.scale
-    const w = d.w * k
-    const h = d.h * k
-    onChange(index, {
-      scale: round2(scale),
-      x: Math.round(d.fx ? d.x + (w - d.w) / 2 : d.x + (d.w - w) / 2),
-      y: Math.round(d.fy ? d.y + d.h - h : d.y)
-    })
-  }
-
-  // Arrow keys for the last few pixels, which a mouse cannot place on a preview
-  // this small, and a reset that does not depend on knowing about double click.
   function onKeyDown (e) {
     if (!editable) return
     const step = e.shiftKey ? 24 : 4
@@ -182,46 +292,52 @@ function ArtistCutout ({ img, index, count, onChange, locked }) {
     }
     if (e.key === '+' || e.key === '=' || e.key === '-') {
       e.preventDefault()
-      const by = e.key === '-' ? 0.94 : 1.06
-      onChange(index, { scale: round2(clampScale((img.scale ?? 1) * by)) })
+      const cur = (img.scale ?? 1) * CUTOUT_BASE_H
+      const next = Math.min(MAX_H, Math.max(MIN_H, cur * (e.key === '-' ? 0.94 : 1.06)))
+      onChange(index, { scale: next / CUTOUT_BASE_H })
     }
     if (e.key === 'Escape') setActive(false)
   }
 
   const showChrome = editable && active
+  const h = CUTOUT_BASE_H * (img.scale ?? 1)
 
   return (
     <div
       ref={wrap}
       tabIndex={editable ? 0 : undefined}
       onFocus={editable ? () => setActive(true) : undefined}
-      onPointerDown={editable ? startMove : undefined}
-      onPointerMove={editable ? onPointerMove : undefined}
-      onPointerUp={editable ? e => { if (drag.current?.id === e.pointerId) drag.current = null } : undefined}
+      onPointerDown={editable ? e => begin(e, null) : undefined}
       onKeyDown={editable ? onKeyDown : undefined}
       onDoubleClick={editable ? () => onChange(index, { x: 0, y: 0, scale: 1 }) : undefined}
       style={{
         position: 'absolute',
-        left: `calc(50% + ${spreadFor(count, index) + (img.x ?? 0)}px)`,
+        // Drawn from the stored shape by the same formula the drag converts
+        // through, so what is on screen and what a gesture works on cannot
+        // disagree. The handles are children of this box, which is the only
+        // way to be sure they never come away from it.
+        left: `calc(50% + ${spread + (img.x ?? 0)}px)`,
         bottom: 24 + (img.y ?? 0),
         transform: 'translateX(-50%)',
-        // height drives the size and width follows the aspect ratio, so scaling
-        // up always makes the picture bigger instead of padding the box
-        height: Math.round(CUTOUT_BASE_H * (img.scale ?? 1)),
-        width: aspect ? Math.round(CUTOUT_BASE_H * (img.scale ?? 1) * aspect) : undefined,
+        height: h,
+        width: aspect ? h * aspect : undefined,
         cursor: editable ? 'grab' : undefined,
         outline: 'none',
-        touchAction: editable ? 'none' : undefined
+        touchAction: editable ? 'none' : undefined,
+        userSelect: editable ? 'none' : undefined,
+        WebkitUserSelect: editable ? 'none' : undefined
       }}
     >
       <img
+        ref={readAspect}
         src={img.src} alt="" draggable={false}
-        onLoad={e => {
-          const { naturalWidth: w, naturalHeight: h } = e.currentTarget
-          if (w && h) setAspect(w / h)
-        }}
+        onDragStart={e => e.preventDefault()}
         style={{
           display: 'block', height: '100%', width: aspect ? '100%' : 'auto',
+          // Until the proportions are known the picture is fitted rather than
+          // stretched, so a first paint can letterbox but can never distort.
+          objectFit: 'contain',
+          pointerEvents: 'none',
           filter: 'drop-shadow(0 34px 56px rgba(0,0,0,0.55))'
         }}
       />
@@ -240,25 +356,29 @@ function ArtistCutout ({ img, index, count, onChange, locked }) {
             border: '5px dashed rgba(var(--ink-rgb), 0.9)',
             boxShadow: '0 0 0 3px rgba(0,0,0,0.45), inset 0 0 0 3px rgba(0,0,0,0.45)'
           }} />
-          {CORNERS.map(([fx, fy]) => (
+          {HANDLES.map(hd => (
             <div
-              key={`${fx}${fy}`} data-no-export="1"
-              onPointerDown={e => startResize(e, fx, fy)}
+              key={hd.id} data-no-export="1"
+              onPointerDown={e => { begin(e, hd); document.body.style.cursor = hd.cursor }}
               style={{
                 position: 'absolute',
-                // tucked just inside the corners rather than centred on them:
-                // the cut-out is anchored to the frame's bottom edge, so
-                // handles straddling the corner get clipped away by the frame
-                left: fx ? undefined : 0,
-                right: fx ? 0 : undefined,
-                top: fy ? undefined : 0,
-                bottom: fy ? 0 : undefined,
-                width: HANDLE, height: HANDLE, borderRadius: 12,
-                background: 'var(--ink)', border: '5px solid rgba(0,0,0,0.55)',
-                cursor: fx === fy ? 'nwse-resize' : 'nesw-resize',
-                touchAction: 'none'
+                // Centred on the corner they control, derived from the box
+                // itself rather than nudged into place with offsets.
+                left: `${hd.ex * 100}%`,
+                top: `${hd.ey * 100}%`,
+                transform: 'translate(-50%, -50%)',
+                width: HIT, height: HIT,
+                display: 'grid', placeItems: 'center',
+                cursor: hd.cursor,
+                touchAction: 'none',
+                zIndex: 2
               }}
-            />
+            >
+              <span style={{
+                width: HANDLE, height: HANDLE, borderRadius: 12,
+                background: 'var(--ink)', border: '5px solid rgba(0,0,0,0.55)'
+              }} />
+            </div>
           ))}
         </>
       )}
