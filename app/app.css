@@ -537,22 +537,53 @@ body:has(.app) .vignette { opacity: 0.5; }
 /* Previews are a fixed width so the scale factor is an exact ratio of 1080.
    A length divided by a number is still a length, which scale() will not take,
    so the two values are kept in step here rather than computed in CSS. */
+/* A row you push along rather than a grid that wraps: seven portrait frames
+   wrapped onto three lines is a page you scroll past rather than a set you
+   look through. */
+.exp-rail-wrap { position: relative; }
 .exp-grid {
   --pw: 216px;
   --ps: 0.2;
   list-style: none;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, var(--pw));
-  justify-content: start;
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding-bottom: 6px;
+  justify-content: flex-start;
   gap: 26px 20px;
 }
+.exp-grid::-webkit-scrollbar { display: none; }
+.exp-grid > li { flex: none; scroll-snap-align: center; }
 .exp-shot {
   width: var(--pw);
   aspect-ratio: 1080 / 1920;
   border-radius: 14px; overflow: hidden;
   background: #000;
+  cursor: zoom-in;
   box-shadow: 0 20px 46px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.09);
+  transition: transform 320ms var(--ease), box-shadow 320ms var(--ease);
 }
+.exp-shot:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 30px 62px rgba(0,0,0,0.66), 0 0 0 1px rgba(var(--accent-rgb), 0.5);
+}
+.exp-shot:focus-visible { outline: 2.5px solid var(--accent); outline-offset: 4px; }
+
+/* Full size: the frame is live DOM, so it is scaled up rather than stretched
+   from a thumbnail, which would be a blur. */
+.sv-frame {
+  width: calc((100dvh - 190px) * 1080 / 1920);
+  max-width: min(560px, 92vw);
+  aspect-ratio: 1080 / 1920;
+  border-radius: 18px; overflow: hidden; background: #000;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+}
+.sv-scale {
+  transform: scale(calc(var(--svs, 0.42)));
+}
+.sv-png { padding: 9px 18px; font-size: 13.4px; }
 .exp-scale {
   width: 1080px; height: 1920px;
   transform-origin: top left;

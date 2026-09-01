@@ -46,6 +46,8 @@ export default function Exporter ({ data, paid = false }) {
   const [settings, setSettings] = useState(DEFAULTS)
   const [panel, setPanel] = useState(false)
   const [stylePanel, setStylePanel] = useState(false)
+  const [viewing, setViewing] = useState(null)   // index of the slide opened full size
+  const rail = useRef(null)
   const [cutouts, setCutouts] = useState(data.review.artistImages || [])
   const [saveState, setSaveState] = useState('idle')
   const [busy, setBusy] = useState(null)
@@ -89,10 +91,14 @@ export default function Exporter ({ data, paid = false }) {
   // A long tracklist becomes several pages rather than one unreadable one.
   const pages = useMemo(() => {
     const t = data.review.album.tracks
-    const cap = settings.perPage === 'auto' ? 14 : Number(settings.perPage)
+    const auto = settings.perPage === 'auto'
+    const cap = auto ? 14 : Number(settings.perPage)
     const count = Math.max(1, Math.ceil(t.length / cap))
-    // Level the pages so the last one is never a lonely single row.
-    const per = Math.ceil(t.length / count)
+    // On auto the pages are levelled so the last one is never a lonely single
+    // row. A number that was actually chosen is honoured instead: levelling a
+    // request for twelve down to eight is the setting overruling the person who
+    // set it, which is not what a setting is for.
+    const per = auto ? Math.ceil(t.length / count) : cap
     return Array.from({ length: count }, (_, i) => t.slice(i * per, (i + 1) * per))
   }, [data, settings.perPage])
 
@@ -115,6 +121,7 @@ export default function Exporter ({ data, paid = false }) {
   }, [])
 
   useEffect(() => () => clearTimeout(nudgeTimer.current), [])
+
 
   const frames = useMemo(() => {
     if (!palette) return []
@@ -160,6 +167,19 @@ export default function Exporter ({ data, paid = false }) {
   }, [palette, theme, data, pages, settings.include, settings.scale, settings.discPerPage, settings.autoDiscography, cutouts])
 
   // Cut-outs belong to the review, not to this page, so they persist.
+  useEffect(() => {
+    if (viewing === null) return
+    const onKey = e => {
+      if (e.key === 'Escape') setViewing(null)
+      if (e.key === 'ArrowRight') setViewing(v => (v + 1) % frames.length)
+      if (e.key === 'ArrowLeft') setViewing(v => (v - 1 + frames.length) % frames.length)
+    }
+    document.addEventListener('keydown', onKey)
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = prev }
+  }, [viewing, frames.length])
+
   const saveCutouts = async next => {
     setCutouts(next)
     setSaveState('saving')
@@ -269,10 +289,22 @@ export default function Exporter ({ data, paid = false }) {
 
       {error && <p className="notice notice-bad">{error}</p>}
 
-      <ul className="exp-grid">
+      <div className="exp-rail-wrap">
+        <button className="sl-arrow sl-prev" aria-label="Scroll the slides left"
+          onClick={() => rail.current?.scrollBy({ left: -rail.current.clientWidth * 0.8, behavior: 'smooth' })}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5" fill="none"
+            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </button>
+
+        <ul className="exp-grid" ref={rail}>
         {frames.map((f, i) => (
           <li key={f.key}>
-            <div className="exp-shot">
+            <div
+              className="exp-shot" role="button" tabIndex={0}
+              onClick={() => setViewing(i)}
+              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setViewing(i) } }}
+              aria-label={`${f.label}. Open it full size.`}
+            >
               <div className="exp-scale">
                 <div style={{ width: W, height: H, overflow: 'hidden', position: 'relative' }}>
                   {f.node}
@@ -288,7 +320,64 @@ export default function Exporter ({ data, paid = false }) {
             </div>
           </li>
         ))}
-      </ul>
+        </ul>
+
+        <button className="sl-arrow sl-next" aria-label="Scroll the slides right"
+          onClick={() => rail.current?.scrollBy({ left: rail.current.clientWidth * 0.8, behavior: 'smooth' })}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5.5 16 12l-6.5 6.5" fill="none"
+            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </button>
+      </div>
+
+      {viewing !== null && frames[viewing] && (
+        <div className="sv" role="dialog" aria-modal="true" aria-label={frames[viewing].label}>
+          <button className="sv-scrim" onClick={() => setViewing(null)} aria-label="Close" />
+          <button className="sv-arrow sv-prev" aria-label="Previous slide"
+            onClick={() => setViewing(v => (v - 1 + frames.length) % frames.length)}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5" fill="none"
+              stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </button>
+
+          <figure className="sv-figure">
+            {/* The frame is live DOM, not a picture, so it is shown at a bigger
+                scale rather than blown up from a thumbnail. */}
+            <div
+              className="sv-frame"
+              ref={el => {
+                if (!el) return
+                // Fit the 1080px frame to the width the viewport allows.
+                const k = el.clientWidth / W
+                el.style.setProperty('--svs', String(k))
+              }}
+            >
+              <div className="exp-scale sv-scale">
+                <div style={{ width: W, height: H, overflow: 'hidden', position: 'relative' }}>
+                  {frames[viewing].node}
+                  {settings.safeZones && <SafeZoneOverlay />}
+                </div>
+              </div>
+            </div>
+            <figcaption>
+              {frames[viewing].label}
+              <em>{viewing + 1} of {frames.length}</em>
+              <button className="btn-primary sv-png" onClick={() => one(viewing)} disabled={!!busy}>
+                {busy === frames[viewing].key ? 'Rendering…' : 'Download PNG'}
+              </button>
+            </figcaption>
+          </figure>
+
+          <button className="sv-arrow sv-next" aria-label="Next slide"
+            onClick={() => setViewing(v => (v + 1) % frames.length)}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5.5 16 12l-6.5 6.5" fill="none"
+              stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </button>
+
+          <button className="sv-close" onClick={() => setViewing(null)} aria-label="Close">
+            <svg viewBox="0 0 24 24"><path d="M6.5 6.5l11 11m0-11l-11 11" fill="none"
+              stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" /></svg>
+          </button>
+        </div>
+      )}
 
       {/* The frames are rendered full size off-screen; the grid above only scales them. */}
       <div ref={stage} className="exp-stage" aria-hidden="true">
