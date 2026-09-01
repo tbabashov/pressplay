@@ -50,12 +50,15 @@ export const metadata = {
   description:
     'Rate an album properly. Score every song on a scale you build, weigh six criteria, ' +
     'and land on one number you can defend. Then export it as the post.',
+  robots: { index: true, follow: true },
+  // The account's own mark, so a tab and a shared link carry it.
+  icons: { icon: '/photos/mark.png', apple: '/photos/mark.png' },
   openGraph: {
     title: 'Press Play Rankings',
     description: 'Every song scored. Six criteria weighed. One number you can defend.',
-    type: 'website'
-  },
-  robots: { index: true, follow: true }
+    type: 'website',
+    images: ['/photos/mark.png']
+  }
 }
 
 export const viewport = {
