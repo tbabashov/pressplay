@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { auth } from '@/auth'
 import { listReviews } from '@/lib/db'
 import LibraryGrid from '@/components/app/LibraryGrid'
+import AlbumTint from '@/components/app/AlbumTint'
 import { projectReview } from '@/lib/library-shape'
 
 export const metadata = { title: 'Library' }
@@ -23,7 +24,10 @@ export default async function Library () {
           <Link className="btn-ghost" href="/app">Find an album</Link>
         </div>
       ) : (
-        <LibraryGrid reviews={reviews} />
+        <>
+          <AlbumTint cover={reviews.find(r => r.cover)?.cover} />
+          <LibraryGrid reviews={reviews} />
+        </>
       )}
     </>
   )

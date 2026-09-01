@@ -4,6 +4,7 @@ import { listReviews, getSnapshot } from '@/lib/db'
 import { rank, withDeltas } from '@/lib/standings'
 import { projectReview } from '@/lib/library-shape'
 import Board from '@/components/app/Board'
+import AlbumTint from '@/components/app/AlbumTint'
 
 export const metadata = { title: 'Leaderboard' }
 export const dynamic = 'force-dynamic'
@@ -29,7 +30,10 @@ export default async function BoardPage () {
           <Link className="btn-ghost" href="/app">Find an album</Link>
         </div>
       ) : (
-        <Board rows={rows} snapshot={snapshot} />
+        <>
+          <AlbumTint cover={rows.find(r => r.cover)?.cover} />
+          <Board rows={rows} snapshot={snapshot} />
+        </>
       )}
     </>
   )

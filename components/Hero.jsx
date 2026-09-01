@@ -55,17 +55,15 @@ export default function Hero ({ albums = [], children }) {
 
   useEffect(() => () => timers.current.forEach(clearTimeout), [])
 
-  const swap = () => {
+  // The sleeve leaves the way it is going, the record changes while nothing is
+  // on screen, and the next one arrives from the opposite edge.
+  const step = d => {
     if (phase || albums.length < 2) return
-    const pick = Math.floor(Math.random() * (albums.length - 1))
-    const next = pick >= i ? pick + 1 : pick
-
-    // The sleeve slides out, the record under it changes while nothing is on
-    // screen, then the new one slides in from the other side.
-    setPhase('out')
+    const next = (i + d + albums.length) % albums.length
+    setPhase(d > 0 ? 'out-left' : 'out-right')
     timers.current.push(setTimeout(() => {
       setI(next)
-      setPhase('in')
+      setPhase(d > 0 ? 'in-right' : 'in-left')
       timers.current.push(setTimeout(() => setPhase(null), 430))
     }, 250))
   }
@@ -170,19 +168,20 @@ export default function Hero ({ albums = [], children }) {
             </button>
           </div>
 
-          <button
-            className="rig-swap"
-            onClick={swap}
-            disabled={Boolean(phase)}
-            title="Put a different record on"
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M4 8.5h13m0 0-3.4-3.4M17 8.5l-3.4 3.4M20 15.5H7m0 0 3.4-3.4M7 15.5l3.4 3.4"
-                fill="none" stroke="currentColor" strokeWidth="1.9"
-                strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            Another record
-          </button>
+          <div className="rig-pager">
+            <button onClick={() => step(-1)} disabled={Boolean(phase)} aria-label="Previous record">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M14.5 5.5 8 12l6.5 6.5" fill="none" stroke="currentColor"
+                  strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            <button onClick={() => step(1)} disabled={Boolean(phase)} aria-label="Next record">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M9.5 5.5 16 12l-6.5 6.5" fill="none" stroke="currentColor"
+                  strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </div>
 
           <div className="card">
             <div className="card-head">

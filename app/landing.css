@@ -224,47 +224,42 @@
 
 /* ── The scoring panel, overlapping the sleeve ────────────────────────────*/
 
-/* Changes the record on the stand. It sits on the sleeve's top edge so there
-   is no question what it acts on, and it says what it does. */
-.rig-swap {
-  position: absolute; right: 0; bottom: calc(100% + 14px); z-index: 4;
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 9px 15px; border-radius: 11px;
-  font-size: 0.74rem; font-weight: 640; letter-spacing: 0.01em;
-  color: var(--fg-2);
-  background: rgba(10,10,13,0.5);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18);
-  transition: color 200ms var(--ease), background 200ms var(--ease),
-              box-shadow 200ms var(--ease), opacity 200ms var(--ease);
+/* Changing the record. Under the sleeve, aligned to its edge, so the pair
+   reads as the controls for the thing directly above them. */
+.rig-pager {
+  order: 2;
+  display: flex; gap: 8px;
+  margin-right: 12%;
 }
-.rig-swap:hover:not(:disabled) {
+.rig-pager button {
+  width: 38px; height: 34px; border-radius: 9px;
+  display: grid; place-items: center;
+  color: var(--fg-3);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.16);
+  transition: color 180ms var(--ease), background 180ms var(--ease),
+              box-shadow 180ms var(--ease), opacity 180ms var(--ease);
+}
+.rig-pager button:hover:not(:disabled) {
   color: var(--fg);
-  background: rgba(255,255,255,0.1);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.34);
+  background: rgba(255,255,255,0.06);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.3);
 }
-.rig-swap:disabled { opacity: 0.4; cursor: default; }
-.rig-swap svg { width: 15px; height: 15px; transition: transform 420ms var(--ease); }
-.rig-swap:hover:not(:disabled) svg { transform: rotate(180deg); }
+.rig-pager button:disabled { opacity: 0.35; cursor: default; }
+.rig-pager svg { width: 16px; height: 16px; }
 
-@keyframes rec-out {
-  to { translate: -78px 0; opacity: 0; }
-}
-@keyframes rec-in {
-  from { translate: 78px 0; opacity: 0; }
-}
-.rig.swap-out .sleeve { animation: rec-out 250ms var(--ease) forwards; }
-.rig.swap-in .sleeve { animation: rec-in 430ms var(--ease); }
-.rig.swap-out .disc, .rig.swap-out .rig-reflect { animation: rec-out 250ms var(--ease) forwards; }
-.rig.swap-in .disc, .rig.swap-in .rig-reflect { animation: rec-in 430ms var(--ease); }
+@keyframes rec-out-left  { to   { translate: -84px 0; opacity: 0; } }
+@keyframes rec-out-right { to   { translate:  84px 0; opacity: 0; } }
+@keyframes rec-in-right  { from { translate:  84px 0; opacity: 0; } }
+@keyframes rec-in-left   { from { translate: -84px 0; opacity: 0; } }
+
+.rig.swap-out-left  .sleeve, .rig.swap-out-left  .disc { animation: rec-out-left  250ms var(--ease) forwards; }
+.rig.swap-out-right .sleeve, .rig.swap-out-right .disc { animation: rec-out-right 250ms var(--ease) forwards; }
+.rig.swap-in-right  .sleeve, .rig.swap-in-right  .disc { animation: rec-in-right  430ms var(--ease); }
+.rig.swap-in-left   .sleeve, .rig.swap-in-left   .disc { animation: rec-in-left   430ms var(--ease); }
 
 @media (prefers-reduced-motion: reduce) {
-  .rig-swap, .rig-swap svg { transition: none }
-  .rig-swap:hover:not(:disabled) svg { transform: none }
-  .rig.swap-out .sleeve, .rig.swap-in .sleeve,
-  .rig.swap-out .disc, .rig.swap-in .disc,
-  .rig.swap-out .rig-reflect, .rig.swap-in .rig-reflect { animation: none }
+  .rig-pager button { transition: none }
+  .rig[class*="swap-"] .sleeve, .rig[class*="swap-"] .disc { animation: none }
 }
 
 .card {

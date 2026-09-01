@@ -4,6 +4,7 @@ import { listReviews } from '@/lib/db'
 import { taste } from '@/lib/taste'
 import { ratingColor, scoreText } from '@/lib/rating-colors'
 import { TIERS } from '@/lib/rating-scale'
+import AlbumTint from '@/components/app/AlbumTint'
 
 export const metadata = { title: 'Taste' }
 export const dynamic = 'force-dynamic'
@@ -31,6 +32,7 @@ export default async function Stats () {
 
   return (
     <>
+      <AlbumTint cover={t.best?.cover} />
       <div className="page-head"><h1>Your taste</h1></div>
 
       <dl className="ts-figures">
