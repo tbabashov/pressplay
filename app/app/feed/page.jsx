@@ -26,7 +26,7 @@ export default async function Feed () {
       ) : (
         <ul className="fd-list glass-list">
           {items.map(item => {
-            const c = item.final === null ? null : ratingColor(item.final)
+            const c = item.final === null ? null : ratingColor(Math.round(item.final), item.scaleModel)
             return (
               <li key={`${item.by.handle}:${item.albumId}`} className="fd-item">
                 <Link href={`/u/${item.by.handle}/${encodeURIComponent(item.albumId)}`} className="fd-link">

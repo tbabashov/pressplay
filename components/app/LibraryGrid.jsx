@@ -109,7 +109,7 @@ export default function LibraryGrid ({ reviews }) {
 
       <ul className="grid">
         {shown.map(r => {
-          const c = r.final === null || r.final === undefined ? null : ratingColor(r.final, r.scaleModel)
+          const c = r.final === null || r.final === undefined ? null : ratingColor(Math.round(r.final), r.scaleModel)
           const asking = confirm === r.albumId
           const meta = sort === 'length' ? fmtRuntime(r.runtimeMs)
             : sort === 'songs' ? `${r.songs} songs`

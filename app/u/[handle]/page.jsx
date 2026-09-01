@@ -89,7 +89,7 @@ export default async function RaterProfile ({ params }) {
           <h2 className="rp-h2 display">The leaderboard</h2>
           <ol className="rp-board glass-list">
             {albums.map(a => {
-              const c = a.final === null ? null : ratingColor(a.final)
+              const c = a.final === null ? null : ratingColor(Math.round(a.final), a.scaleModel)
               return (
                 <li key={a.albumId} className="rp-row">
                   <span className="rp-rank tnum">{a.rank}</span>

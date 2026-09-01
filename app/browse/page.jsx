@@ -59,7 +59,7 @@ export default async function Browse () {
 
               <ul className="br-top">
                 {top.map(a => {
-                  const c = a.final === null ? null : ratingColor(a.final)
+                  const c = a.final === null ? null : ratingColor(Math.round(a.final), a.scaleModel)
                   return (
                     <li key={a.albumId}>
                       <Link href={`/u/${profile.handle}/${encodeURIComponent(a.albumId)}`} title={`${a.albumName} by ${a.artist}`}>
