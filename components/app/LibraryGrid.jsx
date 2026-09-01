@@ -118,16 +118,26 @@ export default function LibraryGrid ({ reviews }) {
           return (
             <li key={r.albumId} className="lib-item">
               <Link className="tile" href={`/app/rate/${encodeURIComponent(r.albumId)}`}>
-                <span className="tile-art">
-                  {r.cover ? <img src={r.cover} alt="" loading="lazy" /> : <span className="tile-blank" />}
+                {/* The chip breaks the corner of the sleeve rather than sitting
+                    inside it, which is how it reads on the exported frames. */}
+                <span className="tile-shot">
+                  <span className="tile-art">
+                    {r.cover ? <img src={r.cover} alt="" loading="lazy" /> : <span className="tile-blank" />}
+                  </span>
                   {c && (
-                    <span className="tile-score tnum" style={{ background: c.bg, color: c.fg }}>
+                    <span
+                      className="tile-score tnum"
+                      style={{ background: c.bg, color: c.fg, boxShadow: c.glow ? `0 0 26px ${c.glow}` : undefined }}
+                    >
                       {Number(r.final).toFixed(1)}
                     </span>
                   )}
                 </span>
                 <strong>{r.albumName || 'Untitled'}</strong>
-                <span className="tile-sub">{r.artist}{meta ? ` · ${meta}` : ''}</span>
+                <span className="tile-sub">
+                  {r.artist}
+                  {meta && <em className="tile-meta">{meta}</em>}
+                </span>
               </Link>
 
               <button className="lib-x" onClick={() => setConfirm(asking ? null : r.albumId)}

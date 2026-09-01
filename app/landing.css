@@ -224,6 +224,29 @@
 
 /* ── The scoring panel, overlapping the sleeve ────────────────────────────*/
 
+/* Changes the record on the stand. Same hairline as every other secondary
+   control on the site, sized down because it is a caption to the sleeve. */
+.rig-swap {
+  position: absolute; right: 13%; top: calc(100% + 16px);
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 14px; border-radius: 10px;
+  font-size: 0.72rem; font-weight: 620; letter-spacing: 0.01em;
+  color: var(--fg-3);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.16);
+  transition: color 200ms var(--ease), background 200ms var(--ease), box-shadow 200ms var(--ease);
+}
+.rig-swap:hover {
+  color: var(--fg);
+  background: rgba(255,255,255,0.05);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.28);
+}
+.rig-swap svg { width: 13px; height: 13px; transition: transform 320ms var(--ease); }
+.rig-swap:hover svg { transform: translateX(3px); }
+@media (prefers-reduced-motion: reduce) {
+  .rig-swap, .rig-swap svg { transition: none }
+  .rig-swap:hover svg { transform: none }
+}
+
 .card {
   position: absolute;
   left: -4%; bottom: -7%;
@@ -530,11 +553,6 @@
    ══════════════════════════════════════════════════════════════════════════ */
 
 .hero-copy { position: relative; z-index: 2; }
-.hero-pick {
-  margin-top: 22px;
-  font-size: 12.6px; letter-spacing: 0.01em; color: var(--fg-4);
-}
-@media (max-width: 980px) { .hero-pick { display: none } }
 
 .band-alt {
   background:
@@ -913,41 +931,13 @@
 .room-shelf {
   position: absolute; right: -8%; bottom: 11%;
   display: flex; align-items: flex-end; gap: 14px;
-  pointer-events: auto;   /* the room is inert; the shelf is not */
+  filter: blur(6px) saturate(0.62) brightness(0.5);
+  opacity: 0.7;
 }
-.shelf-sleeve {
-  display: block; padding: 0;
-  transform:
-    rotate(calc((var(--i) - 2) * 3.4deg))
-    translateY(calc(var(--i) * -9px));
-  filter: blur(5px) saturate(0.62) brightness(0.5);
-  opacity: 0.72;
-  transition:
-    filter 460ms var(--ease),
-    opacity 460ms var(--ease),
-    transform 460ms var(--ease);
-}
-.shelf-sleeve img {
+.room-shelf img {
   width: 168px; height: 168px; border-radius: 3px; object-fit: cover;
+  transform: rotate(calc((var(--i) - 2) * 3.4deg)) translateY(calc(var(--i) * -9px));
   box-shadow: 0 26px 44px rgba(0,0,0,0.86), inset 0 0 0 1px rgba(255,255,255,0.06);
-}
-.shelf-sleeve:hover, .shelf-sleeve:focus-visible {
-  outline: none;
-  filter: blur(0) saturate(1) brightness(1);
-  opacity: 1;
-  z-index: 2;
-  transform:
-    rotate(calc((var(--i) - 2) * 1.6deg))
-    translateY(calc(var(--i) * -9px - 20px))
-    scale(1.05);
-}
-.shelf-sleeve:focus-visible img { box-shadow: 0 0 0 2.5px var(--accent), 0 26px 44px rgba(0,0,0,0.86); }
-.shelf-sleeve:active { transform:
-  rotate(calc((var(--i) - 2) * 1.6deg))
-  translateY(calc(var(--i) * -9px - 12px))
-  scale(1.01); }
-@media (prefers-reduced-motion: reduce) {
-  .shelf-sleeve { transition: none }
 }
 
 /* Where the wall stops and the surface begins. */

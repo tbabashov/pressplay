@@ -67,7 +67,7 @@ export default function Board ({ rows, snapshot }) {
 
       {error && <p className="notice notice-bad">{error}</p>}
 
-      <ol className="board">
+      <ol className="board glass-list">
         {shown.map(r => {
           const c = ratingColor(r.final)
           return (
@@ -81,7 +81,10 @@ export default function Board ({ rows, snapshot }) {
                   <em>{r.artist}</em>
                 </span>
               </Link>
-              <span className="bd-score tnum" style={{ background: c.bg, color: c.fg }}>
+              <span
+                className="bd-score tnum"
+                style={{ background: c.bg, color: c.fg, boxShadow: c.glow ? `0 0 30px ${c.glow}` : undefined }}
+              >
                 {r.final.toFixed(1)}
               </span>
             </li>

@@ -44,22 +44,17 @@ export default function Hero ({ albums = [], children }) {
   const art = useRef(null)
 
   // Fixed on the server, randomised after mount, so the markup cannot disagree.
-  const [shelf, setShelf] = useState([7, 19, 28, 34, 41])
-
   useEffect(() => {
-    if (albums.length < 7) return
-    const onShelf = new Set([7, 19, 28, 34, 41].map(n => n % albums.length))
-    const free = albums.map((_, n) => n).filter(n => !onShelf.has(n))
-    setI(free[Math.floor(Math.random() * free.length)] ?? 0)
+    if (albums.length > 1) setI(Math.floor(Math.random() * albums.length))
   }, [albums])
 
-  // A swap, not a jump: whatever was on the stand takes the slot of whatever
-  // came off the shelf, so the shelf never shows the record already playing.
-  const take = slot => {
-    const wanted = shelf[slot]
-    setShelf(prev => prev.map((v, n) => (n === slot ? i : v)))
-    setI(wanted)
-  }
+  // Always lands somewhere else: drawing from the other albums rather than the
+  // whole list means the button can never appear to do nothing.
+  const swap = () => setI(n => {
+    if (albums.length < 2) return n
+    const pick = Math.floor(Math.random() * (albums.length - 1))
+    return pick >= n ? pick + 1 : pick
+  })
 
   // Before anything plays, the room is still lit by the record on the stand.
   useEffect(() => {
@@ -107,31 +102,22 @@ export default function Hero ({ albums = [], children }) {
 
   const demo = scoresFor(album.name)
 
+  // Fixed indices, so the server and client agree on the background shelf.
+  const shelf = [7, 19, 28, 34, 41].map(n => albums[n % albums.length]).filter(Boolean)
+
   return (
     <header className="hero" ref={stage}>
-      <div className="room">
-        <div className="room-wall" aria-hidden="true" />
-        <div className="room-beam" aria-hidden="true" />
+      <div className="room" aria-hidden="true">
+        <div className="room-wall" />
+        <div className="room-beam" />
         <div className="room-shelf">
-          {shelf.map((idx, slot) => {
-            const a = albums[idx % albums.length]
-            if (!a) return null
-            return (
-              <button
-                key={`${slot}-${a.cover}`}
-                className="shelf-sleeve"
-                style={{ '--i': slot }}
-                onClick={() => take(slot)}
-                aria-label={`Put ${a.name} by ${a.artist} on the stand`}
-              >
-                <img src={a.cover} alt="" />
-              </button>
-            )
-          })}
+          {shelf.map((a, n) => (
+            <img key={a.cover} src={a.cover} alt="" style={{ '--i': n }} />
+          ))}
         </div>
-        <div className="room-floor" aria-hidden="true" />
-        <div className="room-horizon" aria-hidden="true" />
-        <div className="room-dust" aria-hidden="true">
+        <div className="room-floor" />
+        <div className="room-horizon" />
+        <div className="room-dust">
           {[[8,22,17],[21,64,23],[37,12,29],[52,48,19],[63,78,25],[74,31,21],[88,58,27],[94,18,18]]
             .map(([x, y, d], i) => (
               <i key={i} style={{ left: `${x}%`, top: `${y}%`, '--d': `${d}s`, '--n': i }} />
@@ -150,7 +136,6 @@ export default function Hero ({ albums = [], children }) {
             slides built for TikTok.
           </p>
           <div className="hero-cta">{children}</div>
-          <p className="hero-pick">Take a record off the shelf to hear it.</p>
         </div>
 
         <div className="hero-stage">
@@ -180,6 +165,14 @@ export default function Hero ({ albums = [], children }) {
               </span>
             </button>
           </div>
+
+          <button className="rig-swap" onClick={swap}>
+            Swap the record
+            <svg viewBox="0 0 15 15" fill="none" aria-hidden="true">
+              <path d="M3 7.5h9m0 0L8.5 4M12 7.5 8.5 11" stroke="currentColor"
+                strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
 
           <div className="card">
             <div className="card-head">
