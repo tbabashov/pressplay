@@ -35,9 +35,11 @@ const SPREAD = { 1: [0], 2: [-215, 215], 3: [-300, 0, 300] }
 const spreadFor = (n, i) => (SPREAD[n] || SPREAD[3])[i] ?? (i - (n - 1) / 2) * 260
 
 export const CUTOUT_BASE_H = 520
-// No ceiling: a cut-out can be blown up as far as you like. The floor only
-// stops it collapsing to nothing.
-const clampScale = v => Math.max(0.05, v)
+// A floor of 0.05 meant one clumsy drag could shrink a cut-out to a speck too
+// small to grab hold of again, with no way back except knowing about the double
+// click. Bounded at both ends now: it can still be a third of its size or three
+// and a half times it, which is far more range than the dome can use.
+const clampScale = v => Math.min(3.5, Math.max(0.3, v))
 const round2 = v => Math.round(v * 100) / 100
 
 const HANDLE = 56 // frame pixels — the preview is ~0.27 scale, so ~15px on screen
@@ -71,22 +73,29 @@ function ArtistCutout ({ img, index, count, onChange, locked }) {
   function startMove (e) {
     const el = wrap.current
     // the preview is CSS-scaled, so convert screen pixels into frame pixels
-    const s = el.getBoundingClientRect().height / el.offsetHeight || 1
+    // The preview is CSS scaled, so screen pixels have to be converted into
+    // frame pixels. offsetHeight can be 0 for one frame while the image is
+    // still loading, and dividing by it gives Infinity, which makes the cut-out
+    // refuse to move at all until the page is reloaded.
+    const raw = el.getBoundingClientRect().height / (el.offsetHeight || 1)
+    const s = Number.isFinite(raw) && raw > 0.01 ? raw : 1
     drag.current = { kind: 'move', id: e.pointerId, sx: e.clientX, sy: e.clientY, x: img.x ?? 0, y: img.y ?? 0, s }
     el.setPointerCapture(e.pointerId)
     e.preventDefault()
   }
 
-  function startResize (e) {
+  function startResize (e, fx, fy) {
     const r = wrap.current.getBoundingClientRect()
-    // scale by how far the pointer moves from the centre, relative to where it
-    // grabbed — the anchor is frozen at grab time so the box growing underneath
-    // can't feed back into the gesture
-    const cx = r.x + r.width / 2
-    const cy = r.y + r.height / 2
+    // Scale about the opposite corner, the way every image editor does. Scaling
+    // about the centre meant a handle grabbed near the middle started from a
+    // tiny distance, so the ratio it divides by exploded and the cut-out either
+    // vanished or filled the frame on the smallest movement.
+    const cx = fx ? r.x : r.x + r.width
+    const cy = fy ? r.y : r.y + r.height
     drag.current = {
       kind: 'resize', id: e.pointerId, cx, cy,
-      d0: Math.hypot(e.clientX - cx, e.clientY - cy) || 1,
+      // Never divide by something near zero, whatever was grabbed.
+      d0: Math.max(24, Math.hypot(e.clientX - cx, e.clientY - cy)),
       scale: img.scale ?? 1
     }
     wrap.current.setPointerCapture(e.pointerId)
@@ -144,7 +153,7 @@ function ArtistCutout ({ img, index, count, onChange, locked }) {
           {CORNERS.map(([fx, fy]) => (
             <div
               key={`${fx}${fy}`} data-no-export="1"
-              onPointerDown={startResize}
+              onPointerDown={e => startResize(e, fx, fy)}
               style={{
                 position: 'absolute',
                 // tucked just inside the corners rather than centred on them:
