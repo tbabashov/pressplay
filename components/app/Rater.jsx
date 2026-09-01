@@ -7,6 +7,7 @@ import { dominant } from '../../lib/palette'
 import { ratingColor } from '../../lib/rating-colors'
 import { NA, MAX_SCORE } from '../../lib/rating-scale'
 import { superlativeByKey, DEFAULT_PREFERENCES } from '../../lib/preferences'
+import AlbumDetails from './AlbumDetails'
 import { fmtTime } from '../../lib/music'
 import { toSnapshot } from '../../lib/album-shape'
 
@@ -41,9 +42,17 @@ const finalStyle = v => {
 // Same-origin so the canvas can read it.
 const proxied = url => (url ? `/api/art?u=${encodeURIComponent(url)}` : null)
 
-export default function Rater ({ album, initial = null, canSave = true, preferences = DEFAULT_PREFERENCES }) {
+export default function Rater ({ album: source, initial = null, canSave = true, preferences = DEFAULT_PREFERENCES }) {
+  // The album is editable, so it is state rather than a prop read straight
+  // through. Corrections are saved on the review's own snapshot with everything
+  // else, which is why they survive the catalogue changing underneath.
+  const [album, setAlbum] = useState(source)
+  const [details, setDetails] = useState(false)
+  useEffect(() => { setAlbum(source) }, [source])
   // The rater's own instrument, not a fixed five. Renaming one keeps its key,
   // so scores already filed under it stay attached.
+  const editAlbum = next => { setAlbum(next); setSave({ state: 'idle', message: '' }) }
+
   const CRITERIA = preferences.criteria.map(c => [c.key, c.label])
   const picks = preferences.superlatives.map(k => superlativeByKey[k]).filter(Boolean)
   const { track, playing, play } = usePlayer()
@@ -168,9 +177,23 @@ export default function Rater ({ album, initial = null, canSave = true, preferen
             <i style={{ transform: `scaleX(${album.tracks.length ? done / album.tracks.length : 0})` }} />
           </div>
           <p>{done} of {album.tracks.length} scored</p>
-          <p className="rater-hint">0 to 11, or a dash for N/A.</p>
         </div>
+
+        <button className="rater-edit" onClick={() => setDetails(true)}>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3Z" fill="none" stroke="currentColor"
+              strokeWidth="1.8" strokeLinejoin="round" />
+          </svg>
+          Edit details
+        </button>
+
+        <p className="rater-hint">0 to 11, or a dash for N/A.</p>
       </aside>
+
+      <AlbumDetails
+        album={album} onChange={editAlbum}
+        open={details} onClose={() => setDetails(false)}
+      />
 
       <div className="rater-main">
         <ol className="tracks">
