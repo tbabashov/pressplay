@@ -1,0 +1,259 @@
+/* Press Play Rankings — the listening room, after dark.
+   Tokens mirror the TikTok exporter's world (see DESIGN.md). */
+
+:root {
+  --ink:        #08080a;
+  --ink-raised: #101014;
+
+  /* Overwritten per-section from whatever album is on screen. */
+  --accent:      #e2aa4a;
+  --accent-soft: rgba(226, 170, 74, 0.34);
+
+  --fg:    #ffffff;
+  --fg-2:  rgba(255, 255, 255, 0.78);
+  --fg-3:  rgba(255, 255, 255, 0.68);
+  --fg-4:  rgba(255, 255, 255, 0.52);
+
+  --glass: linear-gradient(148deg,
+      rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.085) 38%,
+      rgba(255,255,255,0.05) 72%, rgba(255,255,255,0.105) 100%);
+  --glass-line: 1.5px solid rgba(255,255,255,0.22);
+  --glass-shadow:
+      inset 0 1.5px 0 rgba(255,255,255,0.5),
+      inset 0 -1.5px 0 rgba(255,255,255,0.09),
+      0 26px 64px rgba(0,0,0,0.42);
+
+  --r-sm: 16px; --r-md: 24px; --r-lg: 32px; --r-xl: 46px;
+  --shell: 1180px;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  background: var(--ink);
+  color: var(--fg);
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* --- browser surfaces, themed rather than left to the browser --- */
+::selection { background: var(--accent); color: #0b0b0d; }
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-track { background: var(--ink); }
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.14);
+  border-radius: 99px;
+  border: 3px solid var(--ink);
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.26); }
+* { scrollbar-color: rgba(255,255,255,0.18) var(--ink); scrollbar-width: thin; }
+input, textarea { caret-color: var(--accent); }
+
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+img { display: block; max-width: 100%; }
+
+/* --- shared primitives --- */
+.shell { width: 100%; max-width: var(--shell); margin: 0 auto; padding: 0 28px; }
+@media (max-width: 640px) { .shell { padding: 0 20px; } }
+
+.glass {
+  background: var(--glass);
+  border: var(--glass-line);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(26px) saturate(180%);
+  -webkit-backdrop-filter: blur(26px) saturate(180%);
+}
+
+.tnum { font-variant-numeric: tabular-nums; }
+
+/* Display type: its own face, because a headline set in the body font is the
+   thing that makes a page look like every other page. Bricolage's width axis
+   carries the voice, weight carries the hierarchy. */
+.display {
+  font-family: var(--font-display), var(--font-archivo), system-ui, sans-serif;
+  font-weight: 800;
+  font-stretch: 108%;
+  letter-spacing: -0.035em;
+  line-height: 0.95;
+  text-wrap: balance;
+}
+
+.measure { max-width: 68ch; }
+
+/* --- buttons ---
+   Shared, not landing-only: the app shell and the public pages use the same two
+   and previously inherited nothing, because only the landing page loaded them. */
+.btn-primary, .btn-ghost {
+  position: relative;
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 26px; border-radius: 999px;
+  font-size: 15.5px; font-weight: 650; letter-spacing: -0.012em;
+  cursor: pointer; border: 0; text-decoration: none;
+  transition:
+    transform 180ms var(--ease),
+    box-shadow 260ms var(--ease),
+    filter 260ms var(--ease);
+  will-change: transform;
+}
+
+.btn-primary {
+  color: #0a0a0c;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--accent) 74%, white) 0%,
+    var(--accent) 46%,
+    color-mix(in srgb, var(--accent) 84%, black) 100%);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,0.62),
+    inset 0 -1.5px 0 rgba(0,0,0,0.22),
+    inset 0 0 0 1px rgba(0,0,0,0.10),
+    0 2px 0 color-mix(in srgb, var(--accent) 62%, black),
+    0 10px 20px -6px rgba(var(--accent-rgb), 0.5),
+    0 20px 42px -14px rgba(0,0,0,0.8);
+}
+.btn-primary:hover {
+  transform: translateY(-1.5px);
+  filter: brightness(1.06);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,0.7),
+    inset 0 -1.5px 0 rgba(0,0,0,0.22),
+    inset 0 0 0 1px rgba(0,0,0,0.10),
+    0 3.5px 0 color-mix(in srgb, var(--accent) 62%, black),
+    0 16px 30px -8px rgba(var(--accent-rgb), 0.6),
+    0 26px 54px -16px rgba(0,0,0,0.85);
+}
+/* Travel, the way a key does. */
+.btn-primary:active {
+  transform: translateY(1.5px);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,0.4),
+    inset 0 2px 6px rgba(0,0,0,0.3),
+    inset 0 0 0 1px rgba(0,0,0,0.14),
+    0 0 0 color-mix(in srgb, var(--accent) 62%, black),
+    0 6px 14px -6px rgba(var(--accent-rgb), 0.45);
+}
+
+/* Machined out of the surface rather than drawn on top of it. */
+.btn-ghost {
+  color: var(--fg);
+  background: linear-gradient(180deg,
+    rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.035) 52%, rgba(255,255,255,0.015) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.24),
+    inset 0 0 0 1px rgba(255,255,255,0.13),
+    inset 0 -1px 0 rgba(0,0,0,0.3),
+    0 2px 0 rgba(0,0,0,0.34),
+    0 14px 30px -14px rgba(0,0,0,0.8);
+}
+.btn-ghost:hover {
+  transform: translateY(-1.5px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.34),
+    inset 0 0 0 1px rgba(255,255,255,0.24),
+    inset 0 -1px 0 rgba(0,0,0,0.3),
+    0 3.5px 0 rgba(0,0,0,0.34),
+    0 20px 38px -16px rgba(0,0,0,0.85);
+}
+.btn-ghost:active {
+  transform: translateY(1.5px);
+  box-shadow:
+    inset 0 2px 6px rgba(0,0,0,0.4),
+    inset 0 0 0 1px rgba(255,255,255,0.14);
+}
+
+/* The arrow leans toward where it is taking you. */
+.btn-primary svg, .btn-ghost svg { width: 16px; height: 16px; transition: transform 320ms var(--ease); }
+.btn-primary:hover svg, .btn-ghost:hover svg { transform: translateX(3px); }
+
+.btn-primary:focus-visible, .btn-ghost:focus-visible {
+  outline: 2.5px solid var(--accent); outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary, .btn-ghost, .btn-primary svg, .btn-ghost svg { transition: none; }
+  .btn-primary:hover, .btn-ghost:hover, .btn-primary:active, .btn-ghost:active { transform: none; }
+}
+
+.btn-primary-lg { padding: 17px 30px; font-size: 17px; }
+
+/* Shared by the app and the public pages, so it cannot live in either one. */
+.notice { margin-top: 26px; font-size: 14.5px; color: var(--fg-3); }
+.notice a, .notice button { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.notice-bad { color: #ef9ea0; }
+
+/* Inline separator between facts on one line. */
+.rp-dot { margin: 0 8px; opacity: 0.55; }
+
+/* --- account menu ---
+   Used by the marketing nav and the app topbar, so it lives here rather than
+   in either one's stylesheet. */
+.acct { position: relative; }
+.acct-btn {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 5px 11px 5px 5px; border-radius: 999px;
+  color: var(--fg-2); font-size: 14px; font-weight: 560;
+  transition: background 200ms var(--ease), color 200ms var(--ease);
+}
+.acct-btn:hover { background: rgba(255,255,255,0.07); color: var(--fg); }
+.acct-btn[aria-expanded="true"] { background: rgba(255,255,255,0.09); color: var(--fg); }
+.acct-pfp { border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.acct-pfp-blank {
+  width: 28px; height: 28px; display: grid; place-items: center;
+  background: rgba(255,255,255,0.12); font-size: 12.5px; font-weight: 700; color: var(--fg-2);
+}
+.acct-label { white-space: nowrap; }
+.acct-chev {
+  width: 13px; height: 13px; color: var(--fg-4);
+  transition: transform 220ms var(--ease);
+}
+.acct-chev.up { transform: rotate(180deg); }
+
+.acct-menu {
+  position: absolute; right: 0; top: calc(100% + 9px); z-index: 80;
+  min-width: 218px; padding: 7px;
+  border-radius: 14px;
+  background: #16161a;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.1),
+    0 20px 48px rgba(0,0,0,0.6);
+  display: grid; gap: 1px;
+}
+.acct-who {
+  display: grid; gap: 2px;
+  padding: 10px 12px 12px;
+  margin-bottom: 5px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.acct-who strong { font-size: 14px; font-weight: 650; }
+.acct-who span { font-size: 12.2px; color: var(--accent); }
+.acct-owner {
+  justify-self: start; margin-top: 5px;
+  font-style: normal; font-size: 10.5px; font-weight: 700;
+  letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--accent);
+  padding: 2px 7px; border-radius: 5px;
+  background: rgba(var(--accent-rgb), 0.14);
+}
+.acct-menu a, .acct-menu button {
+  display: block; width: 100%; text-align: left;
+  padding: 10px 12px; border-radius: 9px;
+  font-size: 13.8px; color: var(--fg-2);
+  transition: background 160ms var(--ease), color 160ms var(--ease);
+}
+.acct-menu a:hover, .acct-menu button:hover { background: rgba(255,255,255,0.08); color: var(--fg); }
+.acct-out { color: #ef9ea0 !important; }
+.acct-out:hover { background: rgba(239, 158, 160, 0.11) !important; color: #ef9ea0 !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .acct-btn, .acct-chev, .acct-menu a, .acct-menu button { transition: none; }
+}

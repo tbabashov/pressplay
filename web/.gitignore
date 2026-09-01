@@ -1,7 +1,0 @@
-node_modules
-.next
-out
-
-# secrets, never committed
-.env
-.env*.local

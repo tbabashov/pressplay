@@ -5,7 +5,7 @@
 ## World
 
 **A listening room after dark.** The identity already exists and is approved — it lives in the
-TikTok export frames (`src/export/*`) and the web surfaces inherit it rather than replacing it.
+TikTok export frames (`lib/export/*`) and the web surfaces inherit it rather than replacing it.
 
 Deep near-black ground; every screen takes its colour from the album currently in view, so the
 page is lit *by the record*, not by a brand palette. Content sits on crystal-glass panels —
@@ -21,8 +21,8 @@ Ground is `--ink` #08080a rising to #101014. Every album exposes `--accent` / `-
 derived from its cover, set per-section as inline custom properties; nothing is hard-coded to a
 brand hue. Text steps are pure white → 78% → 55% → 38% white.
 
-The default rating ladder is shared with the exporter (`web/lib/rating-colors.js`, copied from
-`src/colors.js` — they must not drift): 0 brown → 5 yellow → 8 blue → 9 purple → 10 blue
+The default rating ladder is shared with the exporter (`lib/rating-colors.js`): 0 brown → 5
+yellow → 8 blue → 9 purple → 10 blue
 gradient → **11 pink gradient with a halo**. The 11 is the product's signature colour and is
 never used decoratively.
 

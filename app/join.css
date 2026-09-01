@@ -1,0 +1,138 @@
+/* The way in. Two halves: what you have to do on the left, what you are joining
+   on the right. The right half is the one thing on the site meant to be
+   replaced later, by a video or a still, without touching the left. */
+
+.jn {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+}
+
+/* ------------------------------------------------------------------ left -- */
+.jn-left {
+  display: flex; flex-direction: column;
+  padding: 34px 6vw 44px;
+  min-width: 0;
+}
+.jn-mark {
+  display: inline-flex; align-items: center; gap: 9px;
+  color: var(--accent); align-self: flex-start;
+}
+.jn-mark strong { font-size: 15px; font-weight: 750; letter-spacing: -0.02em; color: var(--fg); }
+
+.jn-panel {
+  margin: auto 0;
+  width: 100%; max-width: 384px;
+  padding: 48px 0;
+}
+.jn-h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); }
+.jn-sub { margin-top: 12px; font-size: 14.8px; line-height: 1.6; color: var(--fg-3); }
+
+.jn-google {
+  margin-top: 30px; width: 100%;
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 13px 20px; border-radius: 12px;
+  font-size: 15px; font-weight: 600;
+  background: #fff; color: #12121a;
+  transition: transform 180ms var(--ease), box-shadow 200ms var(--ease);
+  box-shadow: 0 2px 0 rgba(0,0,0,0.34), 0 14px 30px -14px rgba(0,0,0,0.8);
+}
+.jn-google:hover { transform: translateY(-1.5px); box-shadow: 0 3.5px 0 rgba(0,0,0,0.34), 0 20px 38px -16px rgba(0,0,0,0.85); }
+.jn-google:active { transform: translateY(1.5px); }
+.jn-google:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+.jn-or {
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 14px;
+  margin: 26px 0 22px;
+}
+.jn-or::before, .jn-or::after {
+  content: ''; height: 1px; background: rgba(255,255,255,0.13);
+}
+.jn-or span { font-size: 12.4px; color: var(--fg-4); }
+
+.jn-form { display: grid; gap: 15px; }
+.jn-field { display: grid; gap: 7px; }
+.jn-field span { font-size: 12.6px; font-weight: 600; color: var(--fg-3); }
+.jn-field input {
+  width: 100%; padding: 12px 14px; border-radius: 11px;
+  background: rgba(255,255,255,0.045);
+  border: 1px solid rgba(255,255,255,0.13);
+  color: var(--fg); font: inherit; font-size: 14.8px;
+  transition: border-color 200ms var(--ease), background 200ms var(--ease);
+}
+.jn-field input::placeholder { color: var(--fg-4); }
+.jn-field input:focus {
+  outline: none; background: rgba(255,255,255,0.065);
+  border-color: rgba(var(--accent-rgb), 0.55);
+}
+
+.jn-error {
+  font-size: 13.4px; color: #ef9ea0; line-height: 1.5;
+  padding: 10px 13px; border-radius: 10px;
+  background: rgba(239, 158, 160, 0.09);
+  box-shadow: inset 0 0 0 1px rgba(239, 158, 160, 0.24);
+}
+
+.jn-submit { width: 100%; justify-content: center; margin-top: 4px; }
+.jn-submit:disabled { opacity: 0.65; cursor: not-allowed; }
+
+.jn-swap { margin-top: 22px; font-size: 13.8px; color: var(--fg-4); }
+.jn-swap button {
+  color: var(--accent); font-weight: 600;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.jn-legal { font-size: 12.2px; color: var(--fg-4); line-height: 1.55; max-width: 42ch; }
+
+/* ----------------------------------------------------------------- right -- */
+.jn-right {
+  position: relative; overflow: hidden;
+  background: var(--ink-raised);
+  border-left: 1px solid rgba(255,255,255,0.07);
+}
+.jn-grid {
+  position: absolute; inset: -6% -6% -6% -6%;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  transform: rotate(-8deg) scale(1.16);
+}
+.jn-grid img {
+  width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 10px;
+  /* Every other column sits low, so the grid reads as a wall rather than a table. */
+  translate: 0 0;
+}
+.jn-grid img:nth-child(4n+2) { translate: 0 26px; }
+.jn-grid img:nth-child(4n+3) { translate: 0 -18px; }
+.jn-grid img:nth-child(4n+4) { translate: 0 12px; }
+
+.jn-veil {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, rgba(8,8,10,0.5) 0%, rgba(8,8,10,0.34) 42%, rgba(8,8,10,0.95) 100%),
+    radial-gradient(120% 80% at 50% 30%, transparent 30%, rgba(8,8,10,0.7) 100%);
+}
+
+.jn-quote {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 0 clamp(28px, 4vw, 54px) clamp(34px, 5vw, 58px);
+}
+.jn-quote p { font-size: clamp(1.5rem, 2.6vw, 2.2rem); }
+.jn-quote cite {
+  display: block; margin-top: 14px;
+  font-style: normal; font-size: 14.4px; line-height: 1.6; color: var(--fg-3);
+  max-width: 44ch;
+}
+
+@media (max-width: 900px) {
+  .jn { grid-template-columns: minmax(0, 1fr); }
+  /* On a phone the panel is the page. The wall becomes a band above it rather
+     than a column nobody would scroll past. */
+  .jn-right { order: -1; height: 30vh; min-height: 200px; }
+  .jn-quote { padding-bottom: 22px; }
+  .jn-quote p { font-size: 1.35rem; }
+  .jn-quote cite { display: none; }
+  .jn-left { padding: 26px 24px 40px; }
+  .jn-panel { padding: 30px 0; max-width: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .jn-google { transition: none; }
+  .jn-google:hover, .jn-google:active { transform: none; }
+}

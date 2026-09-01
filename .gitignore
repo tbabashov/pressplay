@@ -1,9 +1,18 @@
-node_modules/
-dist/
-.env
-data/
-.DS_Store
+node_modules
+.next
+out
 
-# Next.js app
-web/node_modules
-web/.next
+# secrets, never committed
+.env
+.env*.local
+
+# local review store (file driver)
+.data/
+
+# The .nosync suffix is the trick that keeps iCloud out of these directories.
+# Both the real name and the suffixed one have to be ignored.
+.next.nosync
+node_modules.nosync
+*.nosync
+
+.DS_Store

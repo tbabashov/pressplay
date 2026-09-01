@@ -8,12 +8,12 @@ web
 
 ## Stack
 
-Next.js (App Router) + Postgres via Prisma — the user's decision, chosen over keeping the
-current Vite SPA + Express + JSON file because the product now needs server rendering for
-public review pages, Google OAuth, and a social graph. Postgres host is not yet provisioned
-(see Capabilities and Constraints); local development uses a Prisma-portable schema.
+Next.js (App Router) + Postgres. The old Vite SPA, its Express server and its JSON file
+store were removed once everything in them had been migrated; the Next app now lives at the
+repository root and is the only application. Postgres is reached through a connection string
+(`DATABASE_URL`); without one the app falls back to a JSON file for local development only.
 
-The existing export-frame renderer (`src/export/*`) is ported, not rewritten. The user has
+The export-frame renderer (`lib/export/*`) was ported, not rewritten. The user has
 explicitly approved its output and it is not in scope for redesign.
 
 ## Users
@@ -90,8 +90,10 @@ indefinitely. Tiers are to be modelled and enforced, and tier assignment is manu
 now. No payment provider is to be integrated, and no pricing may be stated anywhere until
 the user sets it.
 
-**Technical constraints:** `data/db.json` is 64MB because covers and artist cut-outs are
-stored as base64 data URLs — blob storage is required, not optional. No Postgres, Docker or
+**Technical constraints:** the old store was 64MB because covers and artist cut-outs were
+inlined as base64 data URLs. On migration those were written out as real files under
+`public/disc/` and `public/artists/`, which is why the current store is 8.6MB. Album covers
+saved during rating are still inlined, so blob storage remains the right end state. No Postgres, Docker or
 Homebrew on the development machine. The user has a Google Cloud project (for OAuth) and no
 domain or host yet.
 
@@ -109,14 +111,14 @@ generic SaaS layout is an explicit anti-goal.
 Real, and sufficient — nothing needs inventing:
 
 - **165 rated albums, 2,421 scored songs, 110 marked N/A, 392 elevens awarded, 93 artists,
-  release years 1982–2026** (`data/db.json`).
+  release years 1982–2026**, plus 249 hand-entered discography albums.
 - Every album's cover art, and the real leaderboard: Piñata 10.72, Cheat Codes 10.68,
   Late Registration 10.63, The College Dropout 10.62, Bandana 10.51.
 - 38 transparent artist cut-out PNGs the owner has already prepared.
 - Exported TikTok slides in the owner's possession, five of which ship at
-  `web/public/slides/`.
+  `public/slides/`.
 - A public TikTok account where the slides are posted. **Handle not yet supplied**: the site
-  uses a placeholder in one constant at the top of `web/app/page.jsx`.
+  uses a placeholder in one constant at the top of `app/page.jsx`.
 
 **Absences that must not be fabricated:** no other users, no testimonials, no traffic or
 engagement numbers, no press, no pricing, no launch date. Photography beyond album art does

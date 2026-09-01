@@ -1,0 +1,257 @@
+'use client'
+
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { toPng } from 'html-to-image'
+import { extractPalette, fallbackPalette, paletteFromColor } from '../../lib/rating-colors'
+import { SafeZoneOverlay } from '../../lib/export/shell.jsx'
+import ExportSettings, { SWATCHES } from './ExportSettings'
+import { STYLES, STYLE_LIST } from '../../lib/export/styles.js'
+import ArtistImages from './ArtistImages'
+import {
+  TitleFrame, TracksFrame, CriteriaFrame, ComparisonFrame, DiscographyFrame
+} from '../../lib/export/frames.jsx'
+
+const W = 1080
+const H = 1920
+const STORE = 'ppr.export.settings'
+
+// Stored preferences cannot grant a style the account does not include.
+const freeFallback = id =>
+  STYLES[id]?.tier === 'paid' ? (STYLE_LIST.find(s => s.tier === 'free')?.id || 'paper') : id
+
+const DEFAULTS = {
+  gradient: true, glass: true, align: 'top', textSize: 'auto', featureDrop: 2,
+  accent: 'auto', perPage: 'auto', scale: 'first', safeZones: false,
+  style: 'signature', watermark: true, handle: '@the.press.play',
+  autoDiscography: true,
+  bg: null, dome: true, discPerPage: 9,
+  include: { title: true, songs: true, criteria: true, rank: true, discography: true }
+}
+
+function loadSettings () {
+  if (typeof window === 'undefined') return DEFAULTS
+  try {
+    const raw = window.localStorage.getItem(STORE)
+    if (!raw) return DEFAULTS
+    const saved = JSON.parse(raw)
+    return { ...DEFAULTS, ...saved, include: { ...DEFAULTS.include, ...(saved.include || {}) } }
+  } catch { return DEFAULTS }
+}
+
+export default function Exporter ({ data, paid = false }) {
+  const [coverPalette, setCoverPalette] = useState(null)
+  // Start from defaults so server and client markup agree, then adopt whatever
+  // was saved once mounted.
+  const [settings, setSettings] = useState(DEFAULTS)
+  const [panel, setPanel] = useState(false)
+  const [cutouts, setCutouts] = useState(data.review.artistImages || [])
+  const [saveState, setSaveState] = useState('idle')
+  const [busy, setBusy] = useState(null)
+  const [error, setError] = useState('')
+  const stage = useRef(null)
+
+  useEffect(() => {
+    const saved = loadSettings()
+    // Stored preferences cannot grant what the plan does not include.
+    if (!paid) { saved.style = freeFallback(saved.style); saved.watermark = true }
+    setSettings(saved)
+  }, [paid])
+
+  const set = (key, value) => setSettings(s => {
+    const next = { ...s, [key]: value }
+    try { window.localStorage.setItem(STORE, JSON.stringify(next)) } catch {}
+    return next
+  })
+  const reset = () => {
+    setSettings(DEFAULTS)
+    try { window.localStorage.removeItem(STORE) } catch {}
+  }
+
+  const theme = settings
+
+  useEffect(() => {
+    extractPalette(data.review.album.coverProxied)
+      .then(p => setCoverPalette(p || fallbackPalette()))
+      .catch(() => setCoverPalette(fallbackPalette()))
+  }, [data])
+
+  // An accent choice replaces the palette the cover produced.
+  const palette = useMemo(() => {
+    if (!coverPalette) return null
+    if (settings.accent === 'auto') return coverPalette
+    const hex = SWATCHES.find(([id]) => id === settings.accent)?.[2]
+    if (!hex) return coverPalette
+    try { return paletteFromColor(hex) || coverPalette } catch { return coverPalette }
+  }, [coverPalette, settings.accent])
+
+  // A long tracklist becomes several pages rather than one unreadable one.
+  const pages = useMemo(() => {
+    const t = data.review.album.tracks
+    const cap = settings.perPage === 'auto' ? 14 : Number(settings.perPage)
+    const count = Math.max(1, Math.ceil(t.length / cap))
+    // Level the pages so the last one is never a lonely single row.
+    const per = Math.ceil(t.length / count)
+    return Array.from({ length: count }, (_, i) => t.slice(i * per, (i + 1) * per))
+  }, [data, settings.perPage])
+
+  const frames = useMemo(() => {
+    if (!palette) return []
+    const on = k => settings.include[k] !== false
+    const out = []
+    if (on('title')) out.push({
+      key: 'title', label: 'Title card',
+      node: <TitleFrame data={data} palette={palette} theme={theme} images={cutouts} lockCutouts />
+    })
+    if (on('songs')) pages.forEach((tracks, i) => out.push({
+      key: `songs-${i}`,
+      label: pages.length > 1 ? `Songs ${i + 1} of ${pages.length}` : 'Every song, scored',
+      node: <TracksFrame data={data} palette={palette} theme={theme} tracks={tracks}
+              showScale={settings.scale === 'every' || (settings.scale === 'first' && i === 0)}
+              dense={tracks.length > 12} />
+    }))
+    if (on('criteria')) out.push({ key: 'criteria', label: 'The criteria', node: <CriteriaFrame data={data} palette={palette} theme={theme} /> })
+    if (on('rank') && data.ladder?.length) out.push({ key: 'rank', label: 'Where it lands', node: <ComparisonFrame data={data} palette={palette} theme={theme} /> })
+    // A discography of any size has to be split, or the grid runs off the frame.
+    if (on('discography')) data.discographies?.forEach((g0, gi) => {
+      // The catalogue fill is built server-side either way; dropping it here
+      // keeps the toggle instant instead of costing a page reload.
+      const albums = settings.autoDiscography === false
+        ? g0.albums.filter(a => a.source !== 'auto')
+        : g0.albums
+      if (!albums.length) return
+      const g = { ...g0, albums }
+      const per = Number(settings.discPerPage) || 9
+      const pages = Math.max(1, Math.ceil(albums.length / per))
+      const size = Math.ceil(albums.length / pages)
+      const counts = { rated: albums.filter(a => a.rated).length, total: albums.length }
+      for (let i = 0; i < pages; i++) {
+        const slice = { ...g, albums: g.albums.slice(i * size, (i + 1) * size) }
+        out.push({
+          key: `disc-${gi}-${i}`,
+          label: pages > 1 ? `${g.artist} discography ${i + 1} of ${pages}` : `${g.artist} discography`,
+          node: <DiscographyFrame group={slice} page={i + 1} pages={pages} counts={counts}
+                  currentAlbumName={data.review.album.name} palette={palette} theme={theme} />
+        })
+      }
+    })
+    return out
+  }, [palette, theme, data, pages, settings.include, settings.scale, settings.discPerPage, settings.autoDiscography, cutouts])
+
+  // Cut-outs belong to the review, not to this page, so they persist.
+  const saveCutouts = async next => {
+    setCutouts(next)
+    setSaveState('saving')
+    try {
+      const r = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ albumId: data.review.albumId, artistImages: next })
+      })
+      setSaveState(r.ok ? 'saved' : 'error')
+    } catch { setSaveState('error') }
+  }
+
+  const shoot = async i => {
+    const node = stage.current?.querySelector(`[data-frame="${i}"]`)
+    if (!node) throw new Error('That slide is not on the page.')
+    // Two passes: the first warms fonts and images so the second is complete.
+    await toPng(node, { width: W, height: H, pixelRatio: 1, cacheBust: true })
+    return toPng(node, { width: W, height: H, pixelRatio: 1, cacheBust: true })
+  }
+
+  const save = (url, name) => {
+    const a = document.createElement('a')
+    a.href = url
+    a.download = name
+    a.click()
+  }
+
+  const slug = `${data.review.album.artist || data.review.album.artists?.[0] || 'album'}-${data.review.album.name}`
+    .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+
+  const one = async i => {
+    setError(''); setBusy(frames[i].key)
+    try { save(await shoot(i), `${slug}-${String(i + 1).padStart(2, '0')}.png`) }
+    catch (e) { setError(e.message || 'Could not render that slide.') }
+    finally { setBusy(null) }
+  }
+
+  const all = async () => {
+    setError(''); setBusy('all')
+    try {
+      for (let i = 0; i < frames.length; i++) {
+        save(await shoot(i), `${slug}-${String(i + 1).padStart(2, '0')}.png`)
+        await new Promise(r => setTimeout(r, 320))   // browsers throttle rapid downloads
+      }
+    } catch (e) {
+      setError(e.message || 'Could not render the slides.')
+    } finally { setBusy(null) }
+  }
+
+  if (!palette) return <p className="notice">Reading the colours off the cover…</p>
+
+  return (
+    <div className="exp">
+      <div className="exp-bar">
+        <button className="chip chip-set" onClick={() => setPanel(true)}>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 15.4a3.4 3.4 0 1 0 0-6.8 3.4 3.4 0 0 0 0 6.8Z" fill="none" stroke="currentColor" strokeWidth="1.9" />
+            <path d="M19.4 13.5a1.5 1.5 0 0 0 .3 1.65l.06.06a1.8 1.8 0 1 1-2.55 2.55l-.06-.06a1.5 1.5 0 0 0-2.55 1.06V19a1.8 1.8 0 1 1-3.6 0v-.1a1.5 1.5 0 0 0-2.61-1 1.5 1.5 0 0 0-.33.98l.06.06a1.8 1.8 0 1 1-2.55-2.55l.06-.06A1.5 1.5 0 0 0 4.5 13.5H4.4a1.8 1.8 0 1 1 0-3.6h.1a1.5 1.5 0 0 0 1-2.61 1.5 1.5 0 0 0-.98-.33l-.06.06A1.8 1.8 0 1 1 7.01 4.47l.06.06a1.5 1.5 0 0 0 1.65.3h.07A1.5 1.5 0 0 0 9.7 3.5V3.4a1.8 1.8 0 0 1 3.6 0v.1a1.5 1.5 0 0 0 2.55 1.06l.06-.06a1.8 1.8 0 1 1 2.55 2.55l-.06.06a1.5 1.5 0 0 0-.3 1.65v.07a1.5 1.5 0 0 0 1.37.92h.1a1.8 1.8 0 0 1 0 3.6h-.1a1.5 1.5 0 0 0-1.37.92Z" fill="none" stroke="currentColor" strokeWidth="1.6" />
+          </svg>
+          Settings
+        </button>
+        <span className="exp-summary">
+          {frames.length} slide{frames.length === 1 ? '' : 's'}
+          {settings.accent !== 'auto' && ' · custom colour'}
+          {settings.safeZones && ' · safe zones on'}
+        </span>
+        <button className="btn-primary" onClick={all} disabled={!!busy || frames.length === 0}>
+          {busy === 'all' ? 'Rendering…' : `Download all ${frames.length}`}
+        </button>
+      </div>
+
+      <ExportSettings
+        open={panel} onClose={() => setPanel(false)}
+        settings={settings} set={set} onReset={reset} paid={paid}
+      />
+
+      {settings.include.title !== false && (
+        <section className="exp-cuts">
+          <h2>Artist cut-outs</h2>
+          <ArtistImages images={cutouts} onChange={saveCutouts} />
+          {saveState === 'error' && <p className="cut-error">Could not save the cut-outs.</p>}
+        </section>
+      )}
+
+      {error && <p className="notice notice-bad">{error}</p>}
+
+      <ul className="exp-grid">
+        {frames.map((f, i) => (
+          <li key={f.key}>
+            <div className="exp-shot">
+              <div className="exp-scale">
+                <div style={{ width: W, height: H, overflow: 'hidden', position: 'relative' }}>
+                  {f.node}
+                  {settings.safeZones && <SafeZoneOverlay />}
+                </div>
+              </div>
+            </div>
+            <div className="exp-meta">
+              <span>{f.label}</span>
+              <button onClick={() => one(i)} disabled={!!busy}>
+                {busy === f.key ? 'Rendering…' : 'PNG'}
+              </button>
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      {/* The frames are rendered full size off-screen; the grid above only scales them. */}
+      <div ref={stage} className="exp-stage" aria-hidden="true">
+        {frames.map((f, i) => (
+          <div key={f.key} data-frame={i} style={{ width: W, height: H, overflow: 'hidden' }}>{f.node}</div>
+        ))}
+      </div>
+    </div>
+  )
+}
