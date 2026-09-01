@@ -58,6 +58,33 @@ export function frameBackground (palette, theme) {
   return styleOf(theme).bg(palette, theme)
 }
 
+// Ink is fixed per style, which is right until someone picks their own
+// background. Choosing a pale colour on a dark style left near-white text on a
+// near-white frame, which is what "it does not adjust the font colour" was.
+// When a colour has been picked, the ink follows its brightness instead.
+const HEX = /^#?([0-9a-f]{3}|[0-9a-f]{6})$/i
+function luminance (hex) {
+  const m = HEX.exec(String(hex || '').trim())
+  if (!m) return null
+  let h = m[1]
+  if (h.length === 3) h = h.split('').map(c => c + c).join('')
+  const [r, g, b] = [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16) / 255)
+  // Perceived brightness, not a plain average: the eye reads green far more
+  // strongly than blue, so a pure blue and a pure green of the same average
+  // are nothing alike to look at.
+  const lin = v => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)
+  return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b)
+}
+
+export function inkFor (theme) {
+  const style = styleOf(theme)
+  const l = theme?.bg ? luminance(theme.bg) : null
+  if (l === null) return { ink: style.ink, inkRgb: style.inkRgb }
+  return l > 0.42
+    ? { ink: '#14121a', inkRgb: '20, 18, 26' }
+    : { ink: '#f7f7fa', inkRgb: '255, 255, 255' }
+}
+
 export function surfaceStyle (theme, opts = {}) {
   return styleOf(theme).surface(theme, opts)
 }
@@ -146,8 +173,8 @@ export function FrameShell ({ palette, theme, children, fullBleed, pad }) {
       color: 'var(--ink)',
       // Every frame reads its ink from here, so one set of components renders
       // dark on cream or light on black without a second copy.
-      ['--ink']: styleOf(theme).ink,
-      ['--ink-rgb']: styleOf(theme).inkRgb,
+      ['--ink']: inkFor(theme).ink,
+      ['--ink-rgb']: inkFor(theme).inkRgb,
       // Type voice, so each style reads differently and not just recolours.
       ['--display-weight']: styleOf(theme).type?.displayWeight ?? 800,
       ['--display-track']: styleOf(theme).type?.displayTrack ?? '-1px',

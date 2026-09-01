@@ -61,6 +61,7 @@ function Toggle ({ on, onChange, label }) {
 
 export default function ExportSettings ({ open, onClose, settings, set, onReset, paid = false }) {
   const active = STYLE_LIST.find(s => s.id === settings.style) || STYLE_LIST[0]
+  const has = look => (active.looks || []).includes(look)
   return (
     <>
       <div className={`set-scrim${open ? ' show' : ''}`} onClick={onClose} aria-hidden="true" />
@@ -75,14 +76,29 @@ export default function ExportSettings ({ open, onClose, settings, set, onReset,
 
         <div className="set-body">
           <section>
-            <h3>Look</h3>
-            <Row label="Gradient background" hint="Pools of colour pulled from the cover">
-              <Toggle on={settings.gradient} onChange={v => set('gradient', v)} label="Gradient background" />
-            </Row>
-            {active.glassChoice && (
+            <h3>Look · {active.name}</h3>
+            {/* Only the controls this style actually reads. Gradient is honoured
+                by Press Play alone and glass only where the style offers it, so
+                the other looks were showing switches that did nothing. */}
+            {has('gradient') && (
+              <Row label="Gradient background" hint="Pools of colour pulled from the cover">
+                <Toggle on={settings.gradient} onChange={v => set('gradient', v)} label="Gradient background" />
+              </Row>
+            )}
+            {has('glass') && (
               <Row label="Crystal glass" hint="Frosted panels behind each block">
                 <Toggle on={settings.glass} onChange={v => set('glass', v)} label="Crystal glass" />
               </Row>
+            )}
+            {has('dome') && (
+              <Row label="Crystal dome" hint="The lit arch the cut-outs stand in">
+                <Toggle on={settings.dome !== false} onChange={v => set('dome', v)} label="Crystal dome" />
+              </Row>
+            )}
+            {(active.looks || []).length === 0 && (
+              <p className="style-note">
+                {active.name} is set the way it is. Its colour is yours to change below.
+              </p>
             )}
             <Row label="Background" hint="Overrides the colour taken off the cover">
               <div className="bgpick">
