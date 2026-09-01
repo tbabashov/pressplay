@@ -5,7 +5,8 @@ import { usePlayer } from '../audio/Player'
 import Meter from '../audio/Meter'
 import { dominant } from '../../lib/palette'
 import { ratingColor } from '../../lib/rating-colors'
-import { NA, MAX_SCORE, CRITERIA } from '../../lib/rating-scale'
+import { NA, MAX_SCORE } from '../../lib/rating-scale'
+import { superlativeByKey, DEFAULT_PREFERENCES } from '../../lib/preferences'
 import { fmtTime } from '../../lib/music'
 import { toSnapshot } from '../../lib/album-shape'
 
@@ -40,7 +41,11 @@ const finalStyle = v => {
 // Same-origin so the canvas can read it.
 const proxied = url => (url ? `/api/art?u=${encodeURIComponent(url)}` : null)
 
-export default function Rater ({ album, initial = null, canSave = true }) {
+export default function Rater ({ album, initial = null, canSave = true, preferences = DEFAULT_PREFERENCES }) {
+  // The rater's own instrument, not a fixed five. Renaming one keeps its key,
+  // so scores already filed under it stay attached.
+  const CRITERIA = preferences.criteria.map(c => [c.key, c.label])
+  const picks = preferences.superlatives.map(k => superlativeByKey[k]).filter(Boolean)
   const { track, playing, play } = usePlayer()
   const art = proxied(album.cover)
 
@@ -120,6 +125,7 @@ export default function Rater ({ album, initial = null, canSave = true }) {
           cover: album.cover, year: album.year,
           scores, criteria, finalOverride: override, final,
           selections, nowPlaying,
+          criteriaModel: preferences.criteria,
           album: toSnapshot(album)
         })
       })
@@ -251,24 +257,48 @@ export default function Rater ({ album, initial = null, canSave = true }) {
             />
           </label>
 
-          <div className="picks">
-            {[['bestSong', 'Best song'], ['worstSong', 'Worst song']].map(([key, label]) => (
-              <label className="pick" key={key}>
-                <span>{label}</span>
-                <select value={selections[key] ?? ''} onChange={e => pick(key, e.target.value)}>
-                  <option value="">{key === 'bestSong' && topScored ? `${topScored} (top score)` : 'Not chosen'}</option>
-                  {album.tracks.map(t => <option key={t.id} value={t.title}>{t.title}</option>)}
-                </select>
-              </label>
-            ))}
-            <label className="pick">
-              <span>Now playing</span>
-              <select value={nowPlaying} onChange={touch(e => setNowPlaying(e.target.value))}>
-                <option value="">Not chosen</option>
-                {album.tracks.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
-              </select>
-            </label>
-          </div>
+          {picks.length > 0 && (
+            <div className="picks">
+              {picks.map(p => {
+                if (p.kind === 'trackId') {
+                  return (
+                    <label className="pick" key={p.key}>
+                      <span>{p.label}</span>
+                      <select value={nowPlaying} onChange={touch(e => setNowPlaying(e.target.value))}>
+                        <option value="">Not chosen</option>
+                        {album.tracks.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
+                      </select>
+                    </label>
+                  )
+                }
+                if (p.kind === 'feature') {
+                  // Only the guests actually credited on this record can be its
+                  // best feature, so the list comes off the tracklist.
+                  const guests = [...new Set(album.tracks.flatMap(t => t.features || []))]
+                  return (
+                    <label className="pick" key={p.key}>
+                      <span>{p.label}</span>
+                      <select value={selections[p.key] ?? ''} onChange={e => pick(p.key, e.target.value)}>
+                        <option value="">{guests.length ? 'Not chosen' : 'No features on this record'}</option>
+                        {guests.map(g => <option key={g} value={g}>{g}</option>)}
+                      </select>
+                    </label>
+                  )
+                }
+                return (
+                  <label className="pick" key={p.key}>
+                    <span>{p.label}</span>
+                    <select value={selections[p.key] ?? ''} onChange={e => pick(p.key, e.target.value)}>
+                      <option value="">
+                        {p.key === 'bestSong' && topScored ? `${topScored} (top score)` : 'Not chosen'}
+                      </option>
+                      {album.tracks.map(t => <option key={t.id} value={t.title}>{t.title}</option>)}
+                    </select>
+                  </label>
+                )
+              })}
+            </div>
+          )}
 
           <button
             className={`verdict-save is-${save.state}`}

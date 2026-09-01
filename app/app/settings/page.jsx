@@ -1,9 +1,11 @@
 import Link from 'next/link'
 import { auth } from '@/auth'
-import { getProfile, listReviews } from '@/lib/db'
+import { getProfile, listReviews, getPreferences } from '@/lib/db'
 import { ensureProfile } from '@/lib/ensure-profile'
 import { published } from '@/lib/social-queries'
+import { normalisePreferences, DEFAULT_PREFERENCES } from '@/lib/preferences'
 import ProfileForm from '@/components/social/ProfileForm'
+import RatingModel from '@/components/app/RatingModel'
 
 export const metadata = { title: 'Profile' }
 export const dynamic = 'force-dynamic'
@@ -27,8 +29,12 @@ export default async function Settings () {
     )
   }
 
-  const all = await listReviews(session.user.email)
+  const [all, storedPrefs] = await Promise.all([
+    listReviews(session.user.email),
+    getPreferences(session.user.email)
+  ])
   const live = published(all)
+  const preferences = storedPrefs ? normalisePreferences(storedPrefs) : DEFAULT_PREFERENCES
 
   return (
     <>
@@ -45,6 +51,13 @@ export default async function Settings () {
         handle: profile.handle, name: profile.name || '', bio: profile.bio || '',
         image: profile.image || null
       }} />
+
+      <hr className="set-rule" />
+
+      <div className="page-head set-head">
+        <h1>Your rating model</h1>
+      </div>
+      <RatingModel initial={preferences} />
 
       <div className="set-counts">
         <p>

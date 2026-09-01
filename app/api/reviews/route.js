@@ -1,5 +1,6 @@
 import { auth } from '@/auth'
 import { listReviews, saveReview, countToday, getReview } from '@/lib/db'
+import { normaliseCriteria } from '@/lib/preferences'
 
 const LIMITS = { member: 3, owner: Infinity }
 
@@ -57,7 +58,10 @@ export async function POST (req) {
     final: has('final')
       ? (Number.isFinite(body.final) ? body.final : null)
       : (existing?.final ?? null),
-    published: has('published') ? !!body.published : !!existing?.published
+    published: has('published') ? !!body.published : !!existing?.published,
+    criteriaModel: has('criteriaModel')
+      ? normaliseCriteria(body.criteriaModel)
+      : (existing?.criteriaModel ?? null)
   })
   return Response.json({ review: saved })
 }
