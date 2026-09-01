@@ -481,12 +481,12 @@ function CriterionRow ({ part, theme, last }) {
 }
 
 // Apple-style glass player for the song picked to soundtrack the video.
-function NowPlaying ({ track, album, palette }) {
+function NowPlaying ({ track, album, palette, theme }) {
   const dur = track.durationMs || 0
   const at = Math.round(dur * 0.38)
   const icon = { fill: 'var(--ink)' }
   return (
-    <div style={{ ...surfaceStyle({ glass: true }, { radius: 34 }), padding: '24px 30px 26px' }}>
+    <div style={{ ...surfaceStyle(theme, { radius: 34 }), padding: '24px 30px 26px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 22 }}>
         <img src={album.coverProxied} alt="" style={{ width: 108, height: 108, borderRadius: 20, objectFit: 'cover', boxShadow: '0 14px 34px rgba(0,0,0,0.5)', flexShrink: 0 }} />
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -573,7 +573,7 @@ export function CriteriaFrame ({ data, palette, theme }) {
         </div>
       )}
 
-      {nowTrack && <div style={{ marginTop: 20 }}><NowPlaying track={nowTrack} album={album} palette={palette} /></div>}
+      {nowTrack && <div style={{ marginTop: 20 }}><NowPlaying track={nowTrack} album={album} palette={palette} theme={theme} /></div>}
 
       <Surface theme={theme} radius={36} style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
