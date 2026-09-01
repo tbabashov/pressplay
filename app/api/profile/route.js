@@ -38,6 +38,18 @@ export async function PATCH (req) {
   const patch = {}
   if (body.name !== undefined) patch.name = clampName(body.name)
   if (body.bio !== undefined) patch.bio = clampBio(body.bio)
+  if (body.image !== undefined) {
+    const img = body.image === null ? null : String(body.image)
+    // A picture is either a link out, or a small square this app made. Anything
+    // else, and a profile becomes somewhere to park arbitrary content.
+    if (img !== null && !/^(https:\/\/|\/|data:image\/(png|jpeg|webp);base64,)/.test(img)) {
+      return Response.json({ error: 'That is not an image.', field: 'image' }, { status: 400 })
+    }
+    if (img !== null && img.length > 400_000) {
+      return Response.json({ error: 'That picture is too large.', field: 'image' }, { status: 400 })
+    }
+    patch.image = img
+  }
 
   const profile = Object.keys(patch).length
     ? await upsertProfile(email, patch)

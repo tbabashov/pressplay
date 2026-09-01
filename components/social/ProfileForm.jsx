@@ -4,10 +4,36 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { slugify, HANDLE_MAX, BIO_MAX } from '@/lib/profile'
 
+// A picture is squared off and shrunk in the browser before it is sent. The
+// store is a JSON file that gets parsed on every read, and a full size photo
+// inlined into it is exactly the weight that made the app slow before.
+const AVATAR = 256
+function squareToDataUrl (file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onerror = () => reject(new Error('That file could not be read.'))
+    reader.onload = () => {
+      const img = new Image()
+      img.onerror = () => reject(new Error('That file is not an image.'))
+      img.onload = () => {
+        const side = Math.min(img.width, img.height)
+        const c = document.createElement('canvas')
+        c.width = c.height = AVATAR
+        const ctx = c.getContext('2d')
+        ctx.drawImage(img, (img.width - side) / 2, (img.height - side) / 2, side, side, 0, 0, AVATAR, AVATAR)
+        resolve(c.toDataURL('image/jpeg', 0.82))
+      }
+      img.src = reader.result
+    }
+    reader.readAsDataURL(file)
+  })
+}
+
 export default function ProfileForm ({ profile }) {
   const [name, setName] = useState(profile.name || '')
   const [handle, setHandle] = useState(profile.handle || '')
   const [bio, setBio] = useState(profile.bio || '')
+  const [image, setImage] = useState(profile.image || null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [saved, setSaved] = useState(false)
@@ -20,7 +46,7 @@ export default function ProfileForm ({ profile }) {
       const res = await fetch('/api/profile', {
         method: 'PATCH',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ name, handle, bio })
+        body: JSON.stringify({ name, handle, bio, image })
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'That did not save.')
@@ -34,6 +60,33 @@ export default function ProfileForm ({ profile }) {
 
   return (
     <form className="pf" onSubmit={submit}>
+      <div className="pf-avatar">
+        {image
+          ? <img src={image} alt="" width="72" height="72" referrerPolicy="no-referrer" />
+          : <span className="pf-avatar-blank" aria-hidden="true">
+              {(name || profile.handle || '?')[0].toUpperCase()}
+            </span>}
+        <div className="pf-avatar-do">
+          <label className="pf-upload">
+            Change picture
+            <input
+              type="file" accept="image/png,image/jpeg,image/webp"
+              onChange={async e => {
+                const f = e.target.files?.[0]
+                e.target.value = ''
+                if (!f) return
+                setError('')
+                try { setImage(await squareToDataUrl(f)) } catch (err) { setError(err.message) }
+              }}
+            />
+          </label>
+          {image && (
+            <button type="button" className="pf-clear" onClick={() => setImage(null)}>Remove</button>
+          )}
+          <span className="pf-help">Square, and shrunk to {AVATAR}px before it is saved.</span>
+        </div>
+      </div>
+
       <label className="pf-field">
         <span className="pf-label">Display name</span>
         <input value={name} onChange={e => setName(e.target.value)} maxLength={60}

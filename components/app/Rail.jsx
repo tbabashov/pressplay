@@ -23,15 +23,20 @@ const LINKS = [
   ['/app/settings', 'Profile', 'profile']
 ]
 
-export default function Rail () {
+export default function Rail ({ image, name }) {
   const path = usePathname()
+  const initial = (name || '?').trim()[0]?.toUpperCase() || '?'
   return (
     <nav className="rail" aria-label="Sections">
       {LINKS.map(([href, label, icon]) => {
         const on = href === '/app' ? path === '/app' : path.startsWith(href)
         return (
           <Link key={href} href={href} className={`rail-item${on ? ' on' : ''}`} aria-current={on ? 'page' : undefined}>
-            <svg viewBox="0 0 24 24" aria-hidden="true">{ICONS[icon]}</svg>
+            {icon === 'profile' && (image || name)
+              ? (image
+                  ? <img className="rail-pfp" src={image} alt="" width="20" height="20" referrerPolicy="no-referrer" />
+                  : <span className="rail-pfp rail-pfp-blank" aria-hidden="true">{initial}</span>)
+              : <svg viewBox="0 0 24 24" aria-hidden="true">{ICONS[icon]}</svg>}
             <span>{label}</span>
           </Link>
         )

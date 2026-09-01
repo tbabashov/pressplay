@@ -1158,3 +1158,37 @@ body:has(.app) .vignette { opacity: 0.5; }
 }
 .ts-best { font-size: 13.8px; color: var(--fg-3); }
 .ts-best a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+
+/* The Profile row in the rail is you, so it shows you. */
+.rail-pfp { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; flex: none; }
+.rail-pfp-blank {
+  display: grid; place-items: center;
+  background: rgba(255,255,255,0.14);
+  font-size: 10px; font-weight: 700; color: var(--fg-2);
+}
+
+/* --- profile picture --- */
+.pf-avatar { display: flex; align-items: center; gap: 18px; }
+.pf-avatar img, .pf-avatar-blank {
+  width: 72px; height: 72px; border-radius: 50%; object-fit: cover; flex: none;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
+}
+.pf-avatar-blank {
+  display: grid; place-items: center;
+  background: rgba(255,255,255,0.09);
+  font-size: 27px; font-weight: 700; color: var(--fg-3);
+}
+.pf-avatar-do { display: grid; gap: 7px; justify-items: start; }
+.pf-upload {
+  padding: 9px 16px; border-radius: 10px; cursor: pointer;
+  font-size: 13.4px; font-weight: 620; color: var(--fg-2);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18);
+  transition: color 200ms var(--ease), background 200ms var(--ease);
+}
+.pf-upload:hover { color: var(--fg); background: rgba(255,255,255,0.05); }
+.pf-upload input { display: none; }
+.pf-clear {
+  font-size: 12.6px; color: var(--fg-4);
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.pf-clear:hover { color: #ef9ea0; }

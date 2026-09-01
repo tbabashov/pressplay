@@ -42,7 +42,8 @@ export default async function Settings () {
       </p>
 
       <ProfileForm profile={{
-        handle: profile.handle, name: profile.name || '', bio: profile.bio || ''
+        handle: profile.handle, name: profile.name || '', bio: profile.bio || '',
+        image: profile.image || null
       }} />
 
       <div className="set-counts">

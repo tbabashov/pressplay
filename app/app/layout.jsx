@@ -37,7 +37,7 @@ export default async function AppLayout ({ children }) {
       </header>
 
       <div className="app-body">
-        <Rail />
+        <Rail image={profile?.image || image} name={profile?.name || name} />
         <main className="app-main">{children}</main>
       </div>
     </div>
