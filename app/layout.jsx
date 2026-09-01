@@ -4,6 +4,7 @@ import './immersive.css'
 import PlayerProvider from '../components/audio/Player'
 import NowPlaying from '../components/audio/NowPlaying'
 import Atmosphere from '../components/Atmosphere'
+import ToTop from '../components/ToTop'
 
 // One family, self-hosted at build time. The width axis carries the display voice,
 // so there is no second face and nothing borrowed from the platform sans.
@@ -74,6 +75,7 @@ export default function RootLayout ({ children }) {
           <Atmosphere />
           {children}
           <NowPlaying />
+          <ToTop />
         </PlayerProvider>
       </body>
     </html>
