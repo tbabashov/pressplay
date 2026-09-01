@@ -1,6 +1,8 @@
 import { auth } from '@/auth'
-import { getPreferences, savePreferences } from '@/lib/db'
-import { normalisePreferences, DEFAULT_PREFERENCES } from '@/lib/preferences'
+import { getPreferences, savePreferences, getProfile } from '@/lib/db'
+import { normalisePreferences, DEFAULT_PREFERENCES, DEFAULT_CRITERIA } from '@/lib/preferences'
+import { DEFAULT_SCALE } from '@/lib/scales'
+import { accountTier, limitsFor } from '@/lib/tiers'
 
 export async function GET () {
   const session = await auth()
@@ -30,6 +32,14 @@ export async function PUT (req) {
     scale: has('scale') ? body.scale : base.scale,
     hiddenAlbums: has('hiddenAlbums') ? body.hiddenAlbums : base.hiddenAlbums
   })
+  // Custom criteria and custom scales are what the paid tiers are for, so the
+  // check has to be here and not only on the settings screen. A free account
+  // that sends its own model keeps the built in one rather than being refused:
+  // the rest of the save, the hidden album list included, still goes through.
+  const limits = limitsFor(accountTier(session, await getProfile(session.user.email)))
+  if (!limits.customCriteria) preferences.criteria = DEFAULT_CRITERIA
+  if (!limits.customScales) preferences.scale = DEFAULT_SCALE
+
   await savePreferences(session.user.email, preferences)
   return Response.json({ preferences })
 }

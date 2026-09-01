@@ -6,6 +6,7 @@ import { published } from '@/lib/social-queries'
 import { normalisePreferences, DEFAULT_PREFERENCES } from '@/lib/preferences'
 import ProfileForm from '@/components/social/ProfileForm'
 import RatingModel from '@/components/app/RatingModel'
+import { accountTier, TIER_DETAIL } from '@/lib/tiers'
 
 export const metadata = { title: 'Profile' }
 export const dynamic = 'force-dynamic'
@@ -34,6 +35,7 @@ export default async function Settings () {
     getPreferences(session.user.email)
   ])
   const live = published(all)
+  const tier = accountTier(session, profile)
   const preferences = storedPrefs ? normalisePreferences(storedPrefs) : DEFAULT_PREFERENCES
 
   return (
@@ -58,6 +60,16 @@ export default async function Settings () {
         <h1>Your rating model</h1>
       </div>
       <RatingModel initial={preferences} />
+
+      <hr className="set-rule" />
+
+      <div className="page-head set-head">
+        <h1>Your tier</h1>
+      </div>
+      <p className="set-intro measure">
+        You are on <strong>{TIER_DETAIL[tier].name}</strong>. {TIER_DETAIL[tier].blurb}{' '}
+        <Link href="/app/tiers">See what each tier includes</Link>.
+      </p>
 
       <div className="set-counts">
         <p>

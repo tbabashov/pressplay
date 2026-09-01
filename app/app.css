@@ -1223,8 +1223,81 @@ body:has(.app) .vignette { opacity: 0.5; }
   font-size: 13.8px; font-weight: 600;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.ts-best { font-size: 13.8px; color: var(--fg-3); }
-.ts-best a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+/* The one album the whole page is building towards, so it is a card and not a
+   footnote set smaller than the rows above it. */
+.ts-best {
+  display: grid; grid-template-columns: 84px minmax(0, 1fr) auto;
+  align-items: center; gap: 16px; padding: 14px;
+  border-radius: 14px; color: inherit;
+  background: rgba(255,255,255,0.035);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.09);
+  transition: background 200ms var(--ease), box-shadow 200ms var(--ease);
+}
+.ts-best:hover {
+  background: rgba(255,255,255,0.06);
+  box-shadow: inset 0 0 0 1px rgba(var(--accent-rgb), 0.45);
+}
+.ts-best img, .ts-best-blank {
+  width: 84px; height: 84px; border-radius: 10px; object-fit: cover;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+}
+.ts-best-blank { background: rgba(255,255,255,0.06); }
+.ts-best-id { display: grid; gap: 3px; min-width: 0; }
+.ts-best-id strong {
+  font-size: 19px; font-weight: 680; letter-spacing: -0.025em;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.ts-best-id em { font-style: normal; font-size: 13.4px; color: var(--fg-3); }
+.ts-best-score {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 74px; height: 46px; padding: 0 14px; border-radius: 12px;
+  font-size: 22px; font-weight: 800; letter-spacing: -0.03em;
+}
+
+/* ========================================================== achievements ==
+   Counted off the library rather than stored, so a locked badge can say how
+   far along it is instead of only that it is locked. */
+.ac h2 { display: flex; align-items: baseline; gap: 10px; }
+.ac.ts-block { margin-top: 4px; }
+.ac-count { font-style: normal; font-size: 12px; font-weight: 700; color: var(--accent);
+  letter-spacing: 0.06em; }
+.ac-group { margin-top: 20px; }
+.ac-group h3 {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--fg-4); margin-bottom: 10px;
+}
+.ac-grid {
+  list-style: none; display: grid; gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
+}
+.ac-badge {
+  display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px;
+  align-items: center; padding: 12px 14px; border-radius: 12px;
+  background: rgba(255,255,255,0.028);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.07);
+}
+.ac-badge.on {
+  background: rgba(var(--accent-rgb), 0.09);
+  box-shadow: inset 0 0 0 1px rgba(var(--accent-rgb), 0.34);
+}
+.ac-mark {
+  width: 34px; height: 34px; display: grid; place-items: center;
+  border-radius: 50%; color: var(--fg-4);
+  background: rgba(255,255,255,0.06);
+}
+.ac-badge.on .ac-mark { color: #17140c; background: var(--accent); }
+.ac-mark svg { width: 17px; height: 17px; }
+.ac-id { display: grid; gap: 2px; min-width: 0; }
+.ac-id strong { font-size: 14px; font-weight: 660; letter-spacing: -0.015em; }
+.ac-id em { font-style: normal; font-size: 11.8px; color: var(--fg-4); line-height: 1.4; }
+.ac-state { grid-column: 2; font-size: 11.4px; color: var(--accent); font-weight: 700;
+  letter-spacing: 0.05em; text-transform: uppercase; margin-top: 4px; }
+.ac-progress {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 9px;
+  color: var(--fg-4); text-transform: none; letter-spacing: 0; font-weight: 600;
+}
+.ac-bar { height: 4px; border-radius: 999px; background: rgba(255,255,255,0.1); overflow: hidden; }
+.ac-bar i { display: block; height: 100%; border-radius: 999px; background: var(--accent); opacity: 0.75; }
 
 /* The Profile row in the rail is you, so it shows you. */
 .rail-pfp { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; flex: none; }
@@ -1793,3 +1866,45 @@ body:has(.app) .vignette { opacity: 0.5; }
   .sc-main { grid-column: 2 / -1; }
   .sc-talk { grid-column: 3; }
 }
+
+/* =============================================================== tiers ==
+   Three cards, the one you are on marked. Nothing here takes a payment yet,
+   so the buy button says so rather than pretending to be a checkout. */
+.tr-grid {
+  display: grid; gap: 16px; margin-bottom: 26px;
+  grid-template-columns: repeat(auto-fit, minmax(268px, 1fr));
+}
+.tr-card {
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 20px; border-radius: 16px;
+  background: rgba(255,255,255,0.032);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.09);
+}
+.tr-card.on { box-shadow: inset 0 0 0 1.5px rgba(var(--accent-rgb), 0.55); }
+.tr-card header { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.tr-card h2 { font-size: 17px; font-weight: 700; letter-spacing: -0.02em; }
+.tr-now {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--accent); padding: 3px 8px; border-radius: 999px;
+  background: rgba(var(--accent-rgb), 0.14);
+}
+.tr-blurb { font-size: 13px; color: var(--fg-3); }
+.tr-price { display: flex; align-items: baseline; gap: 7px; margin-top: 2px; }
+.tr-price strong { font-size: 30px; font-weight: 780; letter-spacing: -0.035em; }
+.tr-price em { font-style: normal; font-size: 12.6px; color: var(--fg-4); }
+.tr-year { font-size: 12px; color: var(--fg-4); margin-top: -6px; }
+.tr-perks { list-style: none; display: grid; gap: 8px; margin: 8px 0 4px; }
+.tr-perks li {
+  display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 9px;
+  align-items: start; font-size: 13.2px; color: var(--fg-2); line-height: 1.45;
+}
+.tr-perks svg { width: 14px; height: 14px; margin-top: 3px; color: var(--accent); }
+.tr-state { margin-top: auto; padding-top: 8px; font-size: 12.4px; color: var(--fg-4); }
+/* Not a button. A gold call to action that cannot be pressed reads as broken,
+   and there is genuinely nothing to press yet. */
+.tr-soon {
+  margin-top: auto; padding: 11px 14px; border-radius: 10px; text-align: center;
+  font-size: 12.6px; font-weight: 600; color: var(--fg-4);
+  border: 1px dashed rgba(255,255,255,0.18);
+}
+.tr-note { font-size: 12.8px; color: var(--fg-4); line-height: 1.6; }

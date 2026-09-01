@@ -1,9 +1,12 @@
 import { auth } from '@/auth'
-import { listReviews, saveReview, countToday, getReview } from '@/lib/db'
+import { listReviews, saveReview, countToday, getReview, getProfile } from '@/lib/db'
+import { accountTier, limitsFor } from '@/lib/tiers'
 import { normaliseCriteria } from '@/lib/preferences'
 import { normaliseScale } from '@/lib/scales'
 
-const LIMITS = { member: 3, owner: Infinity }
+// The cap comes from the account's tier now. It used to be a two row table
+// keyed on the session role, which had no way to say anything about an account
+// that had paid for more.
 
 export async function GET () {
   const session = await auth()
@@ -23,12 +26,14 @@ export async function POST (req) {
   // Editing something you already rated never counts against the daily limit.
   const existing = await getReview(email, String(body.albumId))
   if (!existing) {
-    const cap = LIMITS[session.user.role] ?? LIMITS.member
+    const tier = accountTier(session, await getProfile(email))
+    const cap = limitsFor(tier).albumsPerDay
     const used = await countToday(email)
     if (used >= cap) {
-      return Response.json(
-        { error: `That is ${cap} albums today. The limit resets at midnight.`, limit: cap, used },
-        { status: 429 })
+      return Response.json({
+        error: `That is ${cap} albums today. The limit resets at midnight.`,
+        limit: cap, used, tier
+      }, { status: 429 })
     }
   }
 
@@ -38,6 +43,17 @@ export async function POST (req) {
   // silently became a blank one, still counted but with no name and no score.
   const has = k => Object.prototype.hasOwnProperty.call(body, k)
   const take = (k, coerce = v => v) => (has(k) ? coerce(body[k]) : existing?.[k])
+
+  // A gate the page alone enforces is not a gate: anything a request can carry
+  // has to be checked here as well. The values are trimmed to what the tier
+  // allows rather than refused, so a downgrade quietly keeps the first cut-out
+  // instead of failing every save from then on. This sits below has() on
+  // purpose: read above it and it is a temporal dead zone, which throws at
+  // request time while the build stays perfectly happy.
+  const saveLimits = limitsFor(accountTier(session, await getProfile(email)))
+  if (has('artistImages') && Array.isArray(body.artistImages)) {
+    body.artistImages = body.artistImages.slice(0, saveLimits.cutouts)
+  }
 
   const saved = await saveReview({
     ...existing,

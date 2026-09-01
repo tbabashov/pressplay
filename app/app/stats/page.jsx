@@ -1,10 +1,12 @@
 import Link from 'next/link'
 import { auth } from '@/auth'
-import { listReviews } from '@/lib/db'
+import { listReviews, countCommentsBy, voteTotals, listFollowers, reviewId } from '@/lib/db'
 import { taste } from '@/lib/taste'
 import { ratingColor, scoreText } from '@/lib/rating-colors'
 import { TIERS } from '@/lib/rating-scale'
 import AlbumTint from '@/components/app/AlbumTint'
+import Achievements from '@/components/app/Achievements'
+import { achievementsFor } from '@/lib/achievements'
 
 export const metadata = { title: 'Taste' }
 export const dynamic = 'force-dynamic'
@@ -16,7 +18,21 @@ export default async function Stats () {
   const session = await auth()
   if (!session?.user) return null
 
-  const t = taste(await listReviews(session.user.email))
+  const email = session.user.email
+  const reviews = await listReviews(email)
+  const t = taste(reviews)
+
+  // The badges are counted off what is already stored, so this is the only
+  // place that has to fetch anything extra: how many replies were written, how
+  // many upvotes the published ratings drew, and who is following.
+  const ids = reviews.map(r => reviewId(email, r.albumId))
+  const [commentsWritten, votes, followers] = await Promise.all([
+    countCommentsBy(email), voteTotals(ids), listFollowers(email)
+  ])
+  const upvotes = Object.values(votes).reduce((n, v) => n + v.up, 0)
+  const achievements = achievementsFor({
+    reviews, commentsWritten, upvotes, followers: followers.length
+  })
 
   if (t.albums === 0) {
     return (
@@ -26,6 +42,10 @@ export default async function Stats () {
           <p>Rate a few albums and this fills in with what you actually reach for.</p>
           <Link className="btn-ghost" href="/app">Find an album</Link>
         </div>
+        {/* The badges belong here more than anywhere: an account with nothing
+            scored yet is exactly the one that benefits from seeing what the
+            first one is worth. */}
+        <Achievements list={achievements} />
       </>
     )
   }
@@ -130,13 +150,32 @@ export default async function Stats () {
         </ul>
       </section>
 
-      {t.best && (
-        <p className="ts-best">
-          Your highest is{' '}
-          <Link href={`/app/rate/${encodeURIComponent(t.best.albumId)}`}>{t.best.albumName}</Link>{' '}
-          by {t.best.artist}, at {fmt(t.best.final)}.
-        </p>
-      )}
+      {t.best && (() => {
+        // The best thing in the library was a grey sentence at the foot of the
+        // page, set smaller than the artist rows above it. It is the one album
+        // this whole page is building towards, so it gets the cover, the score
+        // in its own colour, and room to be looked at.
+        const col = ratingColor(Math.round(t.best.final))
+        return (
+          <section className="ts-block">
+            <h2 className="ts-h2">Your highest</h2>
+            <Link className="ts-best" href={`/app/rate/${encodeURIComponent(t.best.albumId)}`}>
+              {t.best.cover
+                ? <img src={t.best.cover} alt="" loading="lazy" width="84" height="84" />
+                : <span className="ts-best-blank" aria-hidden="true" />}
+              <span className="ts-best-id">
+                <strong>{t.best.albumName}</strong>
+                <em>{t.best.artist}</em>
+              </span>
+              <span className="ts-best-score tnum" style={{ background: col.bg, color: col.fg }}>
+                {fmt(t.best.final)}
+              </span>
+            </Link>
+          </section>
+        )
+      })()}
+
+      <Achievements list={achievements} />
     </>
   )
 }
