@@ -3,6 +3,7 @@ import Wall from '@/components/Wall'
 import ReviewDemo from '@/components/ReviewDemo'
 import Placeholder from '@/components/Placeholder'
 import CoverBand from '@/components/CoverBand'
+import Slides from '@/components/Slides'
 import { hasAsset } from '@/lib/asset'
 import { SignIn, StartButton } from '@/components/AuthButtons'
 import Nav from '@/components/Nav'
@@ -33,11 +34,13 @@ const SocialIcon = ({ id, size = 18 }) => {
 }
 
 const SLIDES = [
-  { src: '/slides/01-title.png', label: 'Title card' },
-  { src: '/slides/02-songs.png', label: 'Every song, scored' },
-  { src: '/slides/03-criteria.png', label: 'The criteria' },
-  { src: '/slides/04-rank.png', label: 'Where it lands' },
-  { src: '/slides/05-discography.png', label: 'The discography' }
+  { src: '/slides/bp-01.png', label: 'Title card' },
+  { src: '/slides/bp-02.png', label: 'Every song, scored' },
+  { src: '/slides/bp-03.png', label: 'The rest of them' },
+  { src: '/slides/bp-04.png', label: 'The criteria' },
+  { src: '/slides/bp-05.png', label: 'Where it lands' },
+  { src: '/slides/bp-06.png', label: 'The discography' },
+  { src: '/slides/bp-07.png', label: 'The rest of the discography' }
 ]
 
 const STEPS = [
@@ -151,14 +154,7 @@ export default async function Landing () {
               sits under a caption or a button rail. Below is one real export.
             </p>
           </div>
-          <div className="slides" role="list">
-            {SLIDES.map(s => (
-              <figure className="slide" role="listitem" key={s.src}>
-                <img src={s.src} alt={s.label} width="675" height="1200" loading="lazy" />
-                <figcaption>{s.label}</figcaption>
-              </figure>
-            ))}
-          </div>
+          <Slides slides={SLIDES} />
         </section>
 
         <section className="band tiktok" id="tiktok">

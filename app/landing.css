@@ -1230,3 +1230,93 @@
 
 /* The account's own mark, once the file is there. */
 .btn-tiktok-mark { width: 26px; height: 26px; border-radius: 7px; object-fit: cover; }
+
+/* ================================================================ slides ==
+   A row you push along, with any one of them opening full size. */
+.sl { position: relative; margin-top: 42px; }
+.sl-rail {
+  display: flex; gap: 20px;
+  overflow-x: auto; scroll-snap-type: x mandatory;
+  padding: 4px 28px 22px;
+  scrollbar-width: none;
+}
+.sl-rail::-webkit-scrollbar { display: none; }
+.sl-item {
+  flex: none; width: min(280px, 62vw);
+  scroll-snap-align: center;
+  display: grid; gap: 11px; padding: 0;
+  text-align: left; cursor: zoom-in;
+}
+.sl-item img {
+  width: 100%; height: auto; border-radius: var(--r-sm);
+  box-shadow: 0 26px 60px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.08);
+  transition: transform 420ms var(--ease), box-shadow 420ms var(--ease);
+}
+.sl-item:hover img {
+  transform: translateY(-6px);
+  box-shadow: 0 36px 76px rgba(0,0,0,0.7), inset 0 0 0 1px rgba(var(--accent-rgb), 0.5);
+}
+.sl-item:focus-visible img { outline: 2.5px solid var(--accent); outline-offset: 4px; }
+.sl-label { font-size: 13px; color: var(--fg-4); }
+
+.sl-arrow {
+  position: absolute; top: 42%; z-index: 3;
+  width: 46px; height: 46px; border-radius: 50%;
+  display: grid; place-items: center;
+  color: var(--fg-2);
+  background: rgba(10,10,13,0.72);
+  backdrop-filter: blur(14px);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18);
+  transition: color 180ms var(--ease), background 180ms var(--ease), box-shadow 180ms var(--ease);
+}
+.sl-arrow:hover { color: var(--fg); background: rgba(255,255,255,0.12); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.34); }
+.sl-arrow svg { width: 19px; height: 19px; }
+.sl-prev { left: 12px; }
+.sl-next { right: 12px; }
+@media (max-width: 640px) { .sl-arrow { display: none; } .sl-rail { padding-inline: 20px; } }
+
+/* --- full size --- */
+.sv {
+  position: fixed; inset: 0; z-index: 200;
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center;
+  gap: clamp(8px, 2vw, 26px); padding: clamp(16px, 4vh, 46px);
+}
+.sv-scrim {
+  position: absolute; inset: 0; z-index: -1;
+  background: rgba(6,6,9,0.93);
+  backdrop-filter: blur(18px);
+  cursor: zoom-out;
+}
+.sv-figure {
+  margin: 0; display: grid; gap: 14px; justify-items: center;
+  min-height: 0; min-width: 0;
+}
+.sv-figure img {
+  max-height: calc(100dvh - 150px); max-width: 100%;
+  width: auto; height: auto; object-fit: contain;
+  border-radius: var(--r-sm);
+  box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+}
+.sv-figure figcaption {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 14px; color: var(--fg-2);
+}
+.sv-figure em {
+  font-style: normal; font-size: 12.4px; color: var(--fg-4);
+  font-variant-numeric: tabular-nums;
+}
+.sv-arrow, .sv-close {
+  width: 52px; height: 52px; border-radius: 50%;
+  display: grid; place-items: center;
+  color: var(--fg-2);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2);
+  transition: color 180ms var(--ease), background 180ms var(--ease);
+}
+.sv-arrow:hover, .sv-close:hover { color: var(--fg); background: rgba(255,255,255,0.1); }
+.sv-arrow svg, .sv-close svg { width: 21px; height: 21px; }
+.sv-close { position: absolute; top: 22px; right: 22px; width: 44px; height: 44px; }
+@media (max-width: 640px) {
+  .sv { grid-template-columns: 1fr; }
+  .sv-arrow { position: absolute; bottom: 24px; }
+  .sv-prev { left: 26%; } .sv-next { right: 26%; }
+}

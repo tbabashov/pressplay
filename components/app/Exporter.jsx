@@ -176,9 +176,16 @@ export default function Exporter ({ data, paid = false }) {
   const shoot = async i => {
     const node = stage.current?.querySelector(`[data-frame="${i}"]`)
     if (!node) throw new Error('That slide is not on the page.')
+    // The transform box and the corner handles on an editable cut-out carry
+    // data-no-export. Without this filter they are rasterised into the PNG, so
+    // every title card ships with the editing chrome drawn over the artist.
+    const opts = {
+      width: W, height: H, pixelRatio: 1, cacheBust: true,
+      filter: n => !n?.dataset || n.dataset.noExport === undefined
+    }
     // Two passes: the first warms fonts and images so the second is complete.
-    await toPng(node, { width: W, height: H, pixelRatio: 1, cacheBust: true })
-    return toPng(node, { width: W, height: H, pixelRatio: 1, cacheBust: true })
+    await toPng(node, opts)
+    return toPng(node, opts)
   }
 
   const save = (url, name) => {
