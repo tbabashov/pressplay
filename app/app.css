@@ -1451,3 +1451,89 @@ body:has(.app) .vignette { opacity: 0.5; }
   .ad-tracks li { grid-template-columns: 20px minmax(0, 1fr) 34px; row-gap: 6px; }
   .ad-len { grid-column: 2; text-align: left; width: 84px; }
 }
+
+/* ============================================================= edit mode ==
+   One switch at the top rather than a panel: every field on the screen turns
+   into the field that sets it, where it already is. */
+.rater-bar {
+  grid-column: 1 / -1;
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 18px;
+}
+.rater-mode {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 16px; border-radius: 10px;
+  font-size: 13.2px; font-weight: 620; color: var(--fg-3);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.16);
+  transition: color 180ms var(--ease), background 180ms var(--ease), box-shadow 180ms var(--ease);
+}
+.rater-mode:hover { color: var(--fg); background: rgba(255,255,255,0.06); }
+.rater-mode.on {
+  color: #0a0a0c; background: var(--accent); box-shadow: none;
+}
+.rater-mode svg { width: 15px; height: 15px; }
+.rater-mode-note { font-size: 12.4px; color: var(--fg-4); }
+
+/* Editing is a different mode and should look like one. */
+.rater.editing .rater-art,
+.rater.editing .tracks { box-shadow: inset 0 0 0 1px rgba(var(--accent-rgb), 0.35); }
+.rater.editing .tracks { border-radius: var(--r-sm); }
+
+.rater-edits { display: grid; gap: 10px; margin-bottom: 14px; }
+.rater-edits label, .rater-edits-pair label { display: grid; gap: 4px; }
+.rater-edits span { font-size: 11.4px; font-weight: 600; color: var(--fg-4); }
+.rater-edits-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.rater-edits input {
+  width: 100%; padding: 8px 11px; border-radius: 9px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.13);
+  color: var(--fg); font: inherit; font-size: 13.6px;
+}
+.rater-edits input:focus { outline: none; border-color: rgba(var(--accent-rgb), 0.6); }
+
+.trk-edit { display: grid; gap: 4px; }
+.trk-edit input, .trk-len {
+  width: 100%; padding: 6px 9px; border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--fg); font: inherit; font-size: 13.4px;
+}
+.trk-edit .trk-ft { font-size: 12.2px; }
+.trk-edit input:focus, .trk-len:focus { outline: none; border-color: rgba(var(--accent-rgb), 0.6); }
+.trk-len { width: 62px; text-align: center; }
+
+/* --- image input --- */
+.ii { display: grid; gap: 9px; }
+.ii-drop {
+  position: relative; display: grid; place-items: center;
+  aspect-ratio: 1; border-radius: var(--r-sm); overflow: hidden;
+  cursor: pointer; background: rgba(255,255,255,0.04);
+  box-shadow: inset 0 0 0 1.5px rgba(255,255,255,0.14);
+  transition: box-shadow 180ms var(--ease), background 180ms var(--ease);
+}
+.ii-drop.over { box-shadow: inset 0 0 0 2px var(--accent); background: rgba(var(--accent-rgb), 0.1); }
+.ii-drop.busy { opacity: 0.6; cursor: progress; }
+.ii-drop img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.ii-blank { position: absolute; inset: 0; background:
+  repeating-linear-gradient(-45deg, rgba(255,255,255,0.05) 0 6px, transparent 6px 12px); }
+.ii-hint {
+  position: relative; z-index: 2;
+  padding: 6px 12px; border-radius: 8px;
+  font-size: 11.8px; font-weight: 620; color: var(--fg);
+  background: rgba(10,10,13,0.72); backdrop-filter: blur(10px);
+}
+.ii-url { display: grid; gap: 4px; }
+.ii-url span { font-size: 11.4px; color: var(--fg-4); }
+.ii-url input {
+  width: 100%; padding: 7px 10px; border-radius: 8px;
+  background: rgba(255,255,255,0.045);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: var(--fg); font: inherit; font-size: 12.6px;
+}
+.ii-url input:focus { outline: none; border-color: rgba(var(--accent-rgb), 0.6); }
+.ii-clear {
+  justify-self: start; font-size: 12px; color: var(--fg-4);
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.ii-clear:hover { color: #ef9ea0; }
+.ii-error { margin-top: 0; font-size: 12.4px; }

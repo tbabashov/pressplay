@@ -8,13 +8,24 @@ import { ratingColor } from '../../lib/rating-colors'
 import { NA } from '../../lib/rating-scale'
 import { superlativeByKey, DEFAULT_PREFERENCES, SUPERLATIVE_MAX } from '../../lib/preferences'
 import { DEFAULT_SCALE } from '../../lib/scales'
-import AlbumDetails from './AlbumDetails'
+import ImageInput from './ImageInput'
 import SuperlativePicker from './SuperlativePicker'
 import { fmtTime } from '../../lib/music'
 import { toSnapshot } from '../../lib/album-shape'
 
 // Accepts 0-11, a decimal, or a dash for N/A. Anything else is simply ignored
 // rather than bounced with an error, so typing never fights the user.
+// Accepts 3:47, 227 or 1:02:33. Anything unreadable leaves the value alone
+// rather than zeroing a duration somebody typed carefully.
+function clockToSecs (text, fallback) {
+  const t = String(text).trim()
+  if (!t) return 0
+  if (/^\d+$/.test(t)) return Number(t)
+  const parts = t.split(':').map(x => x.trim())
+  if (parts.some(x => !/^\d+$/.test(x))) return fallback
+  return parts.reduce((acc, x) => acc * 60 + Number(x), 0)
+}
+
 function parseScore (raw, max, allowNA = true) {
   const s = String(raw).trim()
   if (s === '') return null
@@ -51,11 +62,20 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
   // through. Corrections are saved on the review's own snapshot with everything
   // else, which is why they survive the catalogue changing underneath.
   const [album, setAlbum] = useState(source)
-  const [details, setDetails] = useState(false)
+  const [editing, setEditing] = useState(false)
   useEffect(() => { setAlbum(source) }, [source])
   // The rater's own instrument, not a fixed five. Renaming one keeps its key,
   // so scores already filed under it stay attached.
   const editAlbum = next => { setAlbum(next); setSave({ state: 'idle', message: '' }) }
+
+  // Track edits keep the runtime honest: a total that disagrees with the songs
+  // above it is worse than no total.
+  const editTrack = (id, patch) => editAlbum({
+    ...album,
+    tracks: album.tracks.map(t => (t.id === id ? { ...t, ...patch } : t)),
+    runtime: album.tracks.reduce(
+      (a, t) => a + Number(t.id === id && patch.duration !== undefined ? patch.duration : t.duration) || 0, 0)
+  })
 
   // The scale is the rater's, so the ceiling, the tier names and the colours
   // all come from it rather than from a fixed 0 to 11.
@@ -183,17 +203,63 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
   }[save.state]
 
   return (
-    <div className="rater">
+    <div className={`rater${editing ? ' editing' : ''}`}>
+      <div className="rater-bar">
+        <button
+          className={`rater-mode${editing ? ' on' : ''}`}
+          onClick={() => setEditing(v => !v)}
+          aria-pressed={editing}
+        >
+          {editing
+            ? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 10 17.5 19 7" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            : <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3Z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /></svg>}
+          {editing ? 'Done' : 'Edit'}
+        </button>
+        {editing && (
+          <span className="rater-mode-note">
+            Everything on this screen is yours to correct. Save when you are done.
+          </span>
+        )}
+      </div>
       <div className="rater-bg" aria-hidden="true">
         <img src={album.cover} alt="" />
       </div>
 
       <aside className="rater-side">
         <div className="rater-art">
-          <img src={album.cover} alt="" />
+          {editing
+            ? <ImageInput
+                value={album.cover || ''}
+                onChange={cover => editAlbum({ ...album, cover })}
+                hint={`${album.artist || 'artist'}-${album.name || 'album'}`}
+                label="Album cover"
+              />
+            : <img src={album.cover} alt="" />}
         </div>
-        <h1 className="rater-title">{album.name}</h1>
-        <p className="rater-by">{album.artist}</p>
+        {editing ? (
+          <div className="rater-edits">
+            <label><span>Album</span>
+              <input value={album.name || ''} onChange={e => editAlbum({ ...album, name: e.target.value })} />
+            </label>
+            <label><span>Artist</span>
+              <input value={album.artist || ''} onChange={e => editAlbum({ ...album, artist: e.target.value })} />
+            </label>
+            <div className="rater-edits-pair">
+              <label><span>Released</span>
+                <input value={album.year || ''} inputMode="numeric"
+                  onChange={e => editAlbum({ ...album, year: e.target.value })} />
+              </label>
+              <label><span>Genre</span>
+                <input value={album.genre || ''} onChange={e => editAlbum({ ...album, genre: e.target.value })} />
+              </label>
+            </div>
+          </div>
+        ) : (
+          <>
+            <h1 className="rater-title">{album.name}</h1>
+            <p className="rater-by">{album.artist}</p>
+          </>
+        )}
         <ul className="rater-meta">
           {album.year && <li><span>Released</span><b>{album.year}</b></li>}
           {album.genre && <li><span>Genre</span><b>{album.genre}</b></li>}
@@ -208,23 +274,12 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
           <p>{done} of {album.tracks.length} scored</p>
         </div>
 
-        <button className="rater-edit" onClick={() => setDetails(true)}>
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3Z" fill="none" stroke="currentColor"
-              strokeWidth="1.8" strokeLinejoin="round" />
-          </svg>
-          Edit details
-        </button>
 
         <p className="rater-hint">
           0 to {MAX_SCORE}{scale.na ? ', or a dash for N/A' : ''}.
         </p>
       </aside>
 
-      <AlbumDetails
-        album={album} onChange={editAlbum}
-        open={details} onClose={() => setDetails(false)}
-      />
 
       <button
         className={`set-scrim${picksPanel ? ' on' : ''}`}
@@ -270,14 +325,43 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
                     : <svg viewBox="0 0 24 24"><path d="M8.5 5.6v12.8a.8.8 0 0 0 1.22.68l10.1-6.4a.8.8 0 0 0 0-1.36L9.72 4.92a.8.8 0 0 0-1.22.68Z" /></svg>}
                 </button>
 
-                <span className="trk-name">
-                  <strong>{t.title}</strong>
-                  {t.features.length > 0 && <em>ft. {t.features.join(', ')}</em>}
-                </span>
+                {editing ? (
+                  <span className="trk-name trk-edit">
+                    <input
+                      value={t.title || ''}
+                      onChange={e => editTrack(t.id, { title: e.target.value })}
+                      placeholder="Song title" aria-label={`Title of track ${t.n}`}
+                    />
+                    <input
+                      className="trk-ft"
+                      value={(t.features || []).join(', ')}
+                      onChange={e => editTrack(t.id, {
+                        features: e.target.value.split(',').map(x => x.trim()).filter(Boolean)
+                      })}
+                      placeholder="Features, separated by commas"
+                      aria-label={`Features on track ${t.n}`}
+                    />
+                  </span>
+                ) : (
+                  <span className="trk-name">
+                    <strong>{t.title}</strong>
+                    {t.features.length > 0 && <em>ft. {t.features.join(', ')}</em>}
+                  </span>
+                )}
 
-                {on && playing
-                  ? <Meter bars={13} className="trk-meter" />
-                  : <span className="trk-time">{fmtTime(t.duration)}</span>}
+                {editing
+                  ? <input
+                      className="trk-len tnum" defaultValue={fmtTime(t.duration)}
+                      onBlur={e => {
+                        const secs = clockToSecs(e.target.value, t.duration)
+                        e.target.value = fmtTime(secs)
+                        editTrack(t.id, { duration: secs })
+                      }}
+                      aria-label={`Length of track ${t.n}`}
+                    />
+                  : on && playing
+                    ? <Meter bars={13} className="trk-meter" />
+                    : <span className="trk-time">{fmtTime(t.duration)}</span>}
 
                 <input
                   className="trk-score"
