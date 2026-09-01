@@ -47,6 +47,16 @@ export default function Exporter ({ data, paid = false }) {
   const [panel, setPanel] = useState(false)
   const [stylePanel, setStylePanel] = useState(false)
   const [viewing, setViewing] = useState(null)   // index of the slide opened full size
+
+  // The frame's width comes from the viewport, so the fit is remeasured when
+  // the window changes rather than only once on open.
+  const fitFrame = useCallback(el => {
+    if (!el) return
+    const fit = () => el.style.setProperty('--svs', String(el.clientWidth / W))
+    fit()
+    const ro = new ResizeObserver(fit)
+    ro.observe(el)
+  }, [])
   // Making the whole slide a zoom target took the cut-out's drag with it: a
   // press meant to move the picture opened the viewer instead. Arranging and
   // looking are separate modes now, and the slides are only zoom targets in the
@@ -363,15 +373,7 @@ export default function Exporter ({ data, paid = false }) {
           <figure className="sv-figure">
             {/* The frame is live DOM, not a picture, so it is shown at a bigger
                 scale rather than blown up from a thumbnail. */}
-            <div
-              className="sv-frame"
-              ref={el => {
-                if (!el) return
-                // Fit the 1080px frame to the width the viewport allows.
-                const k = el.clientWidth / W
-                el.style.setProperty('--svs', String(k))
-              }}
-            >
+            <div className="sv-frame" ref={fitFrame}>
               <div className="exp-scale sv-scale">
                 <div style={{ width: W, height: H, overflow: 'hidden', position: 'relative' }}>
                   {frames[viewing].node}
