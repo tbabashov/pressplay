@@ -12,8 +12,31 @@ import { fileURLToPath } from 'node:url'
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const WRITE = process.argv.includes('--write')
 
-if (!process.env.DATABASE_URL) {
+const URL_IN = process.env.DATABASE_URL || ''
+
+if (!URL_IN) {
   console.error('Set DATABASE_URL first. Nothing was read or written.')
+  process.exit(1)
+}
+
+// The instructions say to paste a connection string in, and the placeholder is
+// pasteable, so it gets pasted. Saying that plainly beats a DNS error naming a
+// host nobody chose.
+if (!/^postgres(ql)?:\/\//i.test(URL_IN)) {
+  console.error('\nThat is not a connection string.\n')
+  console.error('  You passed: ' + URL_IN)
+  console.error('\nIt has to start with postgresql:// and look like this:\n')
+  console.error('  postgresql://postgres.abcdefgh:YOURPASSWORD@aws-0-eu-central-1.pooler.supabase.com:5432/postgres\n')
+  console.error('Supabase: Project Settings -> Database -> Connection string -> Session pooler.')
+  console.error('Swap [YOUR-PASSWORD] for your database password.\n')
+  console.error('Nothing was read or written.')
+  process.exit(1)
+}
+
+if (URL_IN.includes('[YOUR-PASSWORD]') || URL_IN.includes('YOURPASSWORD')) {
+  console.error('\nThe password placeholder is still in the string.')
+  console.error('Replace [YOUR-PASSWORD] with your actual database password.\n')
+  console.error('Nothing was read or written.')
   process.exit(1)
 }
 
