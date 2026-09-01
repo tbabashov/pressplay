@@ -316,10 +316,6 @@ export default function Rater ({ album, initial = null, canSave = true, preferen
                 <path d="M3 7.5h9m0 0L8.5 4M12 7.5 8.5 11" stroke="currentColor"
                   strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              <svg width="14" height="14" viewBox="0 0 15 15" fill="none" aria-hidden="true">
-                <path d="M3 7.5h9m0 0L8.5 4M12 7.5 8.5 11" stroke="currentColor"
-                  strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
             </a>
           )}
           {save.state === 'error' && <p className="verdict-error">{save.message}</p>}

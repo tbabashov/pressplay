@@ -61,7 +61,6 @@ function Toggle ({ on, onChange, label }) {
 
 export default function ExportSettings ({ open, onClose, settings, set, onReset, paid = false }) {
   const active = STYLE_LIST.find(s => s.id === settings.style) || STYLE_LIST[0]
-  const locked = s => s.tier === 'paid' && !paid
   return (
     <>
       <div className={`set-scrim${open ? ' show' : ''}`} onClick={onClose} aria-hidden="true" />
@@ -75,35 +74,6 @@ export default function ExportSettings ({ open, onClose, settings, set, onReset,
         </header>
 
         <div className="set-body">
-          <section>
-            <h3>Style</h3>
-            <div className="styles">
-              {STYLE_LIST.map(st => {
-                const isLocked = locked(st)
-                return (
-                  <button
-                    key={st.id}
-                    className={`style${settings.style === st.id ? ' on' : ''}${isLocked ? ' locked' : ''}`}
-                    onClick={() => !isLocked && set('style', st.id)}
-                    aria-pressed={settings.style === st.id}
-                    aria-disabled={isLocked}
-                  >
-                    <span className={`style-swatch sw-${st.id}`} aria-hidden="true" />
-                    <span className="style-text">
-                      <strong>{st.name}{st.tier === 'paid' && <em>Plus</em>}</strong>
-                      <span>{st.blurb}</span>
-                    </span>
-                  </button>
-                )
-              })}
-            </div>
-            {!paid && (
-              <p className="style-note">
-                Press Play and Aurora come with a subscription. The other three are yours.
-              </p>
-            )}
-          </section>
-
           <section>
             <h3>Look</h3>
             <Row label="Gradient background" hint="Pools of colour pulled from the cover">
@@ -193,15 +163,24 @@ export default function ExportSettings ({ open, onClose, settings, set, onReset,
           </section>
 
           <section>
-            <h3>Watermark</h3>
+            <h3>Credits</h3>
             <Row
-              label="Show the handle"
-              hint={paid ? 'Yours to turn off.' : 'Turning this off needs a subscription.'}
+              label="Press Play credit"
+              hint={paid
+                ? 'Yours to turn off.'
+                : 'A small mark in the corner. Removing it comes with a subscription.'}
             >
               <Toggle
                 on={settings.watermark !== false}
                 onChange={v => { if (paid || v) set('watermark', v) }}
-                label="Watermark"
+                label="Press Play credit"
+              />
+            </Row>
+            <Row label="Your handle" hint="Your own credit across the slide. Optional, and yours either way.">
+              <Toggle
+                on={settings.showHandle !== false}
+                onChange={v => set('showHandle', v)}
+                label="Show your handle"
               />
             </Row>
             <Row label="Handle">

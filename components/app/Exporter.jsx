@@ -5,6 +5,7 @@ import { toPng } from 'html-to-image'
 import { extractPalette, fallbackPalette, paletteFromColor } from '../../lib/rating-colors'
 import { SafeZoneOverlay } from '../../lib/export/shell.jsx'
 import ExportSettings, { SWATCHES } from './ExportSettings'
+import StylePicker from './StylePicker'
 import { STYLES, STYLE_LIST } from '../../lib/export/styles.js'
 import ArtistImages from './ArtistImages'
 import {
@@ -22,7 +23,7 @@ const freeFallback = id =>
 const DEFAULTS = {
   gradient: true, glass: true, align: 'top', textSize: 'auto', featureDrop: 2,
   accent: 'auto', perPage: 'auto', scale: 'first', safeZones: false,
-  style: 'signature', watermark: true, handle: '@the.press.play',
+  style: 'paper', watermark: true, showHandle: false, handle: '@the.press.play',
   autoDiscography: true,
   bg: null, dome: true, discPerPage: 9,
   include: { title: true, songs: true, criteria: true, rank: true, discography: true }
@@ -44,6 +45,7 @@ export default function Exporter ({ data, paid = false }) {
   // was saved once mounted.
   const [settings, setSettings] = useState(DEFAULTS)
   const [panel, setPanel] = useState(false)
+  const [stylePanel, setStylePanel] = useState(false)
   const [cutouts, setCutouts] = useState(data.review.artistImages || [])
   const [saveState, setSaveState] = useState('idle')
   const [busy, setBusy] = useState(null)
@@ -200,6 +202,16 @@ export default function Exporter ({ data, paid = false }) {
           </svg>
           Settings
         </button>
+        <button className="chip chip-set" onClick={() => setStylePanel(true)}>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3.2c-4.85 0-8.8 3.65-8.8 8.15 0 4.5 3.95 8.15 8.8 8.15.82 0 1.48-.63 1.48-1.4 0-.36-.15-.69-.39-.94a1.3 1.3 0 0 1-.37-.9c0-.77.66-1.4 1.48-1.4h1.74c2.68 0 4.86-2.05 4.86-4.58 0-4-3.95-7.08-8.8-7.08Z"
+              fill="none" stroke="currentColor" strokeWidth="1.7" />
+            <circle cx="7.6" cy="11.4" r="1.15" fill="currentColor" />
+            <circle cx="11" cy="7.9" r="1.15" fill="currentColor" />
+            <circle cx="15.2" cy="8.6" r="1.15" fill="currentColor" />
+          </svg>
+          Style
+        </button>
         <span className="exp-summary">
           {frames.length} slide{frames.length === 1 ? '' : 's'}
           {settings.accent !== 'auto' && ' · custom colour'}
@@ -213,6 +225,11 @@ export default function Exporter ({ data, paid = false }) {
       <ExportSettings
         open={panel} onClose={() => setPanel(false)}
         settings={settings} set={set} onReset={reset} paid={paid}
+      />
+
+      <StylePicker
+        open={stylePanel} onClose={() => setStylePanel(false)}
+        settings={settings} set={set} paid={paid}
       />
 
       {settings.include.title !== false && (

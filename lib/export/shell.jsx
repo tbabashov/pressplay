@@ -112,6 +112,27 @@ export function Watermark ({ handle = '@the.press.play' }) {
   )
 }
 
+// The site's own credit. A free export carries it because the frames are the
+// product being given away; a subscription takes it off. It is deliberately
+// small and in the corner: it is a credit, not a brand stamp across the work.
+export function PressPlayMark () {
+  return (
+    <div style={{
+      position: 'absolute', right: 54, bottom: 62,
+      display: 'flex', alignItems: 'center', gap: 8,
+      pointerEvents: 'none', opacity: 0.42
+    }}>
+      <svg width="20" height="20" viewBox="0 0 18 18" aria-hidden="true">
+        <circle cx="9" cy="9" r="8" fill="none" stroke="var(--ink)" strokeWidth="1.7" />
+        <path d="M6.9 5.6v5.8l4.5-2.9z" fill="var(--ink)" />
+      </svg>
+      <span style={{
+        fontSize: 19, fontWeight: 750, letterSpacing: 0.4, color: 'var(--ink)'
+      }}>Press Play</span>
+    </div>
+  )
+}
+
 // ---------- Frame ----------
 export function FrameShell ({ palette, theme, children, fullBleed, pad }) {
   const inset = pad || SAFE
@@ -155,7 +176,8 @@ export function FrameShell ({ palette, theme, children, fullBleed, pad }) {
         {children}
       </div>
 
-      {theme?.watermark !== false && <Watermark handle={theme?.handle} />}
+      {theme?.showHandle !== false && theme?.handle && <Watermark handle={theme.handle} />}
+      {theme?.watermark !== false && <PressPlayMark />}
     </div>
   )
 }
