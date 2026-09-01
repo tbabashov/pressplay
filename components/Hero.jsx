@@ -197,7 +197,7 @@ export default function Hero({ albums = [], children }) {
           <div className="hero-cta">{children}</div>
         </div>
 
-        <div className="hero-stage">
+        <div className={`hero-stage${live ? ' on' : ''}`}>
           <div className="rig-col">
             <div
               className={`rig${spinning ? " spinning" : ""}${live ? " out" : ""}${phase ? ` swap-${phase}` : ""}`}

@@ -117,14 +117,17 @@
 
 .hero-stage {
   position: relative;
-  min-height: 520px;
+  min-height: 540px;
+  display: grid; place-items: center;
   --mx: 0; --my: 0;
 }
 .rig-col {
-  position: absolute; top: 0; right: 2%;
-  width: min(330px, 62%);
+  width: min(320px, 60%);
   display: flex; flex-direction: column; align-items: flex-end; gap: 16px;
+  translate: 0 0;
+  transition: translate 1200ms var(--ease);
 }
+.hero-stage.on .rig-col { translate: 27% -17%; }
 .rig {
   position: relative;
   width: 100%;
@@ -216,12 +219,14 @@
   background: rgba(10,10,12,0.5);
   box-shadow: inset 0 0 0 1.5px rgba(255,255,255,0.5), 0 12px 32px rgba(0,0,0,0.5);
   backdrop-filter: blur(9px);
-  opacity: 0; scale: 0.86;
+  opacity: 1; scale: 1;
   transition: opacity 320ms var(--ease), scale 320ms var(--ease);
 }
 .sleeve-btn svg { width: 30px; height: 30px; fill: #fff; }
-.sleeve:hover .sleeve-btn, .sleeve:focus-visible .sleeve-btn { opacity: 1; scale: 1; }
-.rig.spinning .sleeve-btn { opacity: 0; }
+.sleeve:hover .sleeve-btn { scale: 1.06; }
+/* Once it is running the record speaks for itself; the button steps back and
+   returns on hover so it can still be paused. */
+.rig.spinning .sleeve-btn { opacity: 0; scale: 0.86; }
 .rig.spinning .sleeve:hover .sleeve-btn { opacity: 1; scale: 1; }
 .sleeve:focus-visible { outline: 2.5px solid var(--accent); outline-offset: 4px; }
 
@@ -257,6 +262,7 @@
 .rig.swap-in-left   .sleeve, .rig.swap-in-left   .disc { animation: rec-in-left   430ms var(--ease); }
 
 @media (prefers-reduced-motion: reduce) {
+  .rig-col { transition: none }
   .card, .card-rows i b, .card-final .card-chip { transition: none }
   .card { opacity: 1; translate: 0 0 }
   .rig-pager button { transition: none }
@@ -265,9 +271,9 @@
 
 .card {
   position: absolute;
-  left: 0; bottom: 0;
+  left: 0; bottom: 4%;
   z-index: 3;
-  width: min(330px, 62%);
+  width: min(320px, 60%);
   opacity: 0;
   translate: 0 18px;
   pointer-events: none;
@@ -430,9 +436,9 @@
 
 /* ================================================================ mobile == */
 @media (max-width: 980px) {
-  /* No room to sit them diagonally, so they stack and both stay readable. */
+  /* No room to sit them diagonally, so they stack and nothing travels. */
   .hero-stage { min-height: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 22px; }
-  .rig-col { position: static; width: min(330px, 74%); }
+  .rig-col, .hero-stage.on .rig-col { width: min(330px, 74%); translate: 0 0; }
   .card { position: static; width: min(330px, 74%); }
 }
 @media (max-width: 780px) {
