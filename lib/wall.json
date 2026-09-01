@@ -414,5 +414,301 @@
     "cover": "/wall/since-i-left-you-20th-anniversary-deluxe-editi.jpg",
     "track": "Frontier Psychiatrist",
     "dz": 1280128812
+  },
+  {
+    "name": "The Chronic",
+    "artist": "Dr. Dre",
+    "genre": "Rap/Hip Hop",
+    "cover": "/wall/the-chronic.jpg",
+    "track": "Let Me Ride",
+    "dz": 2132918987
+  },
+  {
+    "name": "The Miseducation of Lauryn Hill",
+    "artist": "Lauryn Hill",
+    "genre": "Pop",
+    "cover": "/wall/the-miseducation-of-lauryn-hill.jpg",
+    "track": "Ex-Factor",
+    "dz": 15586234
+  },
+  {
+    "name": "My Beautiful Dark Twisted Fantasy",
+    "artist": "Kanye West",
+    "genre": "Rap/Hip Hop",
+    "cover": "/wall/my-beautiful-dark-twisted-fantasy.jpg",
+    "track": "POWER (Album Version Edited)",
+    "dz": 24281961
+  },
+  {
+    "name": "The Dark Side of the Moon",
+    "artist": "Pink Floyd",
+    "genre": "Rock",
+    "cover": "/wall/the-dark-side-of-the-moon.jpg",
+    "track": "On the Run",
+    "dz": 116914020
+  },
+  {
+    "name": "Abbey Road (Super Deluxe Edition)",
+    "artist": "The Beatles",
+    "genre": "Rock",
+    "cover": "/wall/abbey-road-super-deluxe-edition.jpg",
+    "track": "Maxwell's Silver Hammer (2019 Mix)",
+    "dz": 760429412
+  },
+  {
+    "name": "Nevermind (Deluxe Edition)",
+    "artist": "Nirvana",
+    "genre": "Rock",
+    "cover": "/wall/nevermind-deluxe-edition.jpg",
+    "track": "Come As You Are",
+    "dz": 13693499
+  },
+  {
+    "name": "The Velvet Underground & Nico 45th Anniversary",
+    "artist": "The Velvet Underground",
+    "genre": "Rock",
+    "cover": "/wall/the-velvet-underground-nico-45th-anniversary.jpg",
+    "track": "Femme Fatale",
+    "dz": 61292501
+  },
+  {
+    "name": "Head Hunters",
+    "artist": "Herbie Hancock",
+    "genre": "Jazz",
+    "cover": "/wall/head-hunters.jpg",
+    "track": "Sly",
+    "dz": 1012602
+  },
+  {
+    "name": "Mezzanine (Deluxe)",
+    "artist": "Massive Attack",
+    "genre": "Electro",
+    "cover": "/wall/mezzanine-deluxe.jpg",
+    "track": "Teardrop (Remastered 2019)",
+    "dz": 734487892
+  },
+  {
+    "name": "Dummy",
+    "artist": "Portishead",
+    "genre": "Rock",
+    "cover": "/wall/dummy.jpg",
+    "track": "Strangers",
+    "dz": 982653
+  },
+  {
+    "name": "The Fat Of The Land 25th Anniversary - Remixes",
+    "artist": "The Prodigy",
+    "genre": "Electro",
+    "cover": "/wall/the-fat-of-the-land-25th-anniversary-remixes.jpg",
+    "track": "Firestarter (Andy C Remix)",
+    "dz": 2358683445
+  },
+  {
+    "name": "In Colour",
+    "artist": "Jamie xx",
+    "genre": "Electro",
+    "cover": "/wall/in-colour.jpg",
+    "track": "SeeSaw",
+    "dz": 101009306
+  },
+  {
+    "name": "Illinois",
+    "artist": "Sufjan Stevens",
+    "genre": "Alternative",
+    "cover": "/wall/illinois.jpg",
+    "track": "Come On! Feel the Illinoise! Part I: The World's Columbian Exposition Part II: Carl Sandburg Visits Me In A Dream",
+    "dz": 62743213
+  },
+  {
+    "name": "For Emma, Forever Ago",
+    "artist": "Bon Iver",
+    "genre": "Alternative",
+    "cover": "/wall/for-emma-forever-ago.jpg",
+    "track": "Skinny Love",
+    "dz": 73916142
+  },
+  {
+    "name": "Baduizm - Special Edition",
+    "artist": "Erykah Badu",
+    "genre": "R&B",
+    "cover": "/wall/baduizm-special-edition.jpg",
+    "track": "Appletree",
+    "dz": 1123845
+  },
+  {
+    "name": "Voodoo",
+    "artist": "D'Angelo",
+    "genre": "Rap/Hip Hop",
+    "cover": "/wall/voodoo.jpg",
+    "track": "Left And Right",
+    "dz": 139102907
+  },
+  {
+    "name": "A Seat at the Table",
+    "artist": "Solange",
+    "genre": null,
+    "cover": "/wall/a-seat-at-the-table.jpg",
+    "track": "Interlude: The Glory is in You",
+    "dz": 133103634
+  },
+  {
+    "name": "Ctrl (Deluxe)",
+    "artist": "SZA",
+    "genre": "R&B",
+    "cover": "/wall/ctrl-deluxe.jpg",
+    "track": "Doves In The Wind (feat. Kendrick Lamar)",
+    "dz": 1782697987
+  },
+  {
+    "name": "Talking Timbuktu",
+    "artist": "Ali Farka Touré",
+    "genre": null,
+    "cover": "/wall/talking-timbuktu.jpg",
+    "track": "Gomni",
+    "dz": 3783361032
+  },
+  {
+    "name": "The Köln Concert",
+    "artist": "Keith Jarrett",
+    "genre": "Jazz",
+    "cover": "/wall/the-koln-concert.jpg",
+    "track": "Köln, January 24, 1975, Part II b (Live)",
+    "dz": 1177214
+  },
+  {
+    "name": "Legalize It",
+    "artist": "Peter Tosh",
+    "genre": "Reggae",
+    "cover": "/wall/legalize-it.jpg",
+    "track": "Whatcha Gonna Do",
+    "dz": 100936412
+  },
+  {
+    "name": "Lonerism (10 Year Anniversary Edition / Unreleased Demos)",
+    "artist": "Tame Impala",
+    "genre": "Alternative",
+    "cover": "/wall/lonerism-10-year-anniversary-edition-unrelease.jpg",
+    "track": "Sidetracked Soundtrack (Unreleased Demo)",
+    "dz": 2290897955
+  },
+  {
+    "name": "Mingus Ah Um (Remastered)",
+    "artist": "Charles Mingus",
+    "genre": "Jazz",
+    "cover": "/wall/mingus-ah-um-remastered-123759332.jpg",
+    "track": "Boogie Stop Shuffle (Remastered)",
+    "dz": 836323292
+  },
+  {
+    "name": "Journey in Satchidananda",
+    "artist": "Alice Coltrane",
+    "genre": "Jazz",
+    "cover": "/wall/journey-in-satchidananda-5941909.jpg",
+    "track": "Stopover Bombay",
+    "dz": 60722178
+  },
+  {
+    "name": "Transa",
+    "artist": "Caetano Veloso",
+    "genre": "Pop",
+    "cover": "/wall/transa-3304571.jpg",
+    "track": "Triste Bahia",
+    "dz": 34179391
+  },
+  {
+    "name": "Kid A",
+    "artist": "Radiohead",
+    "genre": "Alternative",
+    "cover": "/wall/kid-a-14880741.jpg",
+    "track": "The National Anthem",
+    "dz": 138547591
+  },
+  {
+    "name": "Pet Sounds (50th Anniversary Edition)",
+    "artist": "The Beach Boys",
+    "genre": "Pop",
+    "cover": "/wall/pet-sounds-50th-anniversary-edition-13308901.jpg",
+    "track": "That's Not Me (Mono)",
+    "dz": 126367539
+  },
+  {
+    "name": "Blonde On Blonde",
+    "artist": "Bob Dylan",
+    "genre": "Rock",
+    "cover": "/wall/blonde-on-blonde-1400030.jpg",
+    "track": "Visions of Johanna",
+    "dz": 15190492
+  },
+  {
+    "name": "A Love Supreme",
+    "artist": "John Coltrane",
+    "genre": "Jazz",
+    "cover": "/wall/a-love-supreme-1086218.jpg",
+    "track": "Favorite Things",
+    "dz": 11853581
+  },
+  {
+    "name": "Endtroducing (Deluxe Edition)",
+    "artist": "DJ Shadow",
+    "genre": "Rap/Hip Hop",
+    "cover": "/wall/endtroducing-deluxe-edition-387712187.jpg",
+    "track": "The Number Song",
+    "dz": 2074913027
+  },
+  {
+    "name": "Hounds Of Love",
+    "artist": "Kate Bush",
+    "genre": "Pop",
+    "cover": "/wall/hounds-of-love-413452427.jpg",
+    "track": "The Big Sky (Special Single Mix)",
+    "dz": 2173954707
+  },
+  {
+    "name": "Grace (Legacy Edition)",
+    "artist": "Jeff Buckley",
+    "genre": "Rock",
+    "cover": "/wall/grace-legacy-edition-107792722.jpg",
+    "track": "Last Goodbye",
+    "dz": 733720312
+  },
+  {
+    "name": "Aja",
+    "artist": "Steely Dan",
+    "genre": "Rock",
+    "cover": "/wall/aja-491146635.jpg",
+    "track": "Deacon Blues",
+    "dz": 2466017605
+  },
+  {
+    "name": "Innervisions",
+    "artist": "Stevie Wonder",
+    "genre": "Pop",
+    "cover": "/wall/innervisions-230976.jpg",
+    "track": "Living For The City",
+    "dz": 2319295
+  },
+  {
+    "name": "Marquee Moon (Edit)",
+    "artist": "Television",
+    "genre": "Rock",
+    "cover": "/wall/marquee-moon-edit-59642582.jpg",
+    "track": "Marquee Moon (Edit)",
+    "dz": 476842692
+  },
+  {
+    "name": "Doolittle",
+    "artist": "Pixies",
+    "genre": "Alternative",
+    "cover": "/wall/doolittle-106387.jpg",
+    "track": "Wave of Mutilation",
+    "dz": 945382
+  },
+  {
+    "name": "Blue Lines (2012 Mix/Master)",
+    "artist": "Massive Attack",
+    "genre": "Electro",
+    "cover": "/wall/blue-lines-2012-mix-master-6014554.jpg",
+    "track": "Blue Lines (2012 Mix/Master)",
+    "dz": 61381704
   }
 ]

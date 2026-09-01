@@ -227,12 +227,12 @@
 /* Changing the record. Under the sleeve, aligned to its edge, so the pair
    reads as the controls for the thing directly above them. */
 .rig-pager {
-  order: 2;
-  display: flex; gap: 8px;
+  display: flex; gap: 10px;
   margin-right: 12%;
+  margin-top: -12px;
 }
 .rig-pager button {
-  width: 38px; height: 34px; border-radius: 9px;
+  width: 40px; height: 40px; border-radius: 50%;
   display: grid; place-items: center;
   color: var(--fg-3);
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.16);
@@ -258,6 +258,8 @@
 .rig.swap-in-left   .sleeve, .rig.swap-in-left   .disc { animation: rec-in-left   430ms var(--ease); }
 
 @media (prefers-reduced-motion: reduce) {
+  .card, .card-rows i b, .card-final .card-chip { transition: none }
+  .card { opacity: 1; translate: 0 0 }
   .rig-pager button { transition: none }
   .rig[class*="swap-"] .sleeve, .rig[class*="swap-"] .disc { animation: none }
 }
@@ -267,6 +269,13 @@
   z-index: 3;
   width: min(340px, 70%);
   margin-right: 12%;
+  opacity: 0;
+  translate: 0 14px;
+  transition: opacity 460ms var(--ease) 120ms, translate 520ms var(--ease) 120ms;
+}
+.card.settled {
+  opacity: 1;
+  translate: 0 0;
   padding: 20px 21px 19px;
   border-radius: 20px;
   background: rgba(13,13,17,0.86);
@@ -286,8 +295,17 @@
 .card-rows li { display: grid; grid-template-columns: 1fr 62px 32px; align-items: center; gap: 10px; }
 .card-rows span { font-size: 0.8rem; color: var(--fg-3); letter-spacing: -0.005em; }
 .card-rows i { height: 5px; border-radius: 99px; background: rgba(255,255,255,0.1); overflow: hidden; }
-.card-rows i b { display: block; height: 100%; width: 100%; transform-origin: left; transform: scaleX(0);
-  border-radius: 99px; transition: transform 260ms linear; }
+.card-rows i b {
+  display: block; height: 100%; width: 100%;
+  transform-origin: left; transform: scaleX(0);
+  border-radius: 99px;
+  transition: transform 620ms var(--ease);
+  transition-delay: calc(260ms + var(--n) * 90ms);
+}
+/* While a preview is playing the bars track the audio, so they must follow it
+   immediately rather than easing behind it. */
+.rig.spinning ~ .card .card-rows i b,
+.card.playing .card-rows i b { transition: transform 200ms linear; transition-delay: 0ms; }
 .card-rows em { font-style: normal; font-size: 0.8rem; font-weight: 640; color: var(--fg-2);
   font-variant-numeric: tabular-nums; text-align: right; }
 .card-final { display: flex; align-items: center; justify-content: space-between; gap: 12px;
@@ -296,6 +314,8 @@
   font-size: 0.66rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--fg-3);
 }
+.card-final .card-chip { transition: opacity 420ms var(--ease) 700ms; }
+.card:not(.settled) .card-final .card-chip { opacity: 0; }
 .card-chip {
   display: inline-flex; align-items: center; justify-content: center;
   min-width: 82px; height: 52px; padding: 0 16px;

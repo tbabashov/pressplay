@@ -51,7 +51,15 @@ export default function Hero ({ albums = [], children }) {
   // Always lands somewhere else: drawing from the other albums rather than the
   // whole list means the button can never appear to do nothing.
   const [phase, setPhase] = useState(null)   // 'out' while it leaves, 'in' as it arrives
+  const [settled, setSettled] = useState(false)   // the panel, once it has filled in
   const timers = useRef([])
+
+  // Reset on every change of record so the bars grow again for the new one.
+  useEffect(() => {
+    setSettled(false)
+    const t = setTimeout(() => setSettled(true), 90)
+    return () => clearTimeout(t)
+  }, [i])
 
   useEffect(() => () => timers.current.forEach(clearTimeout), [])
 
@@ -110,7 +118,9 @@ export default function Hero ({ albums = [], children }) {
   // At rest the panel shows a finished review; pressing play re-scores it live, so
   // the resting state is never a wall of zeroes.
   // Eased so the panel reads as a rating settling, not a bar creeping from zero.
-  const filled = live ? Math.pow(progress, 0.4) : 1
+  // Nothing is drawn until the panel has settled, which is what makes the bars
+  // grow instead of appearing at full length.
+  const filled = settled ? (live ? Math.pow(progress, 0.4) : 1) : 0
 
   const demo = scoresFor(album.name)
 
@@ -183,7 +193,7 @@ export default function Hero ({ albums = [], children }) {
             </button>
           </div>
 
-          <div className="card">
+          <div className={`card${settled ? ' settled' : ''}`}>
             <div className="card-head">
               <strong>{album.name}</strong>
               <span>{album.artist}</span>
@@ -195,7 +205,7 @@ export default function Hero ({ albums = [], children }) {
                 const shown = v * 11
                 const col = ratingColor(Math.round(shown))
                 return (
-                  <li key={c}>
+                  <li key={c} style={{ '--n': n }}>
                     <span>{c}</span>
                     <i>
                       <b style={{ transform: `scaleX(${v.toFixed(3)})`, background: col.bg }} />
