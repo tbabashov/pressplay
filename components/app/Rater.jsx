@@ -180,16 +180,18 @@ export default function Rater ({ album, initial = null, canSave = true, preferen
             const has = v !== undefined
             return (
               <li key={t.id} className={`trk${on ? ' on' : ''}${has ? ' has' : ''}`}>
+                <em className="trk-n">{t.n}</em>
+
                 <button
                   className="trk-play"
                   onClick={() => play({ dz: t.id, cover: album.cover, artist: album.artist, track: t.title, name: album.name })}
                   disabled={!t.preview}
                   aria-label={t.preview ? `Play ${t.title}` : `No preview for ${t.title}`}
+                  title={t.preview ? `Play ${t.title}` : 'No preview for this track'}
                 >
                   {on && playing
                     ? <svg viewBox="0 0 24 24"><rect x="7" y="5.5" width="3.4" height="13" rx="1.2" /><rect x="13.6" y="5.5" width="3.4" height="13" rx="1.2" /></svg>
                     : <svg viewBox="0 0 24 24"><path d="M8.5 5.6v12.8a.8.8 0 0 0 1.22.68l10.1-6.4a.8.8 0 0 0 0-1.36L9.72 4.92a.8.8 0 0 0-1.22.68Z" /></svg>}
-                  <em className="trk-n">{t.n}</em>
                 </button>
 
                 <span className="trk-name">
