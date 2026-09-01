@@ -31,7 +31,7 @@ export default async function ExportPage ({ params }) {
       <div className="page-head exp-head">
         <div>
           <h1>{data.review.album.name}</h1>
-          <p>{data.review.album.artists[0]} · album #{data.albumNumber}</p>
+          <p>{data.review.album.artists?.[0] || 'Unknown artist'} · album #{data.albumNumber}</p>
         </div>
         <Link className="btn-ghost" href={`/app/rate/${id}`}>Back to the rating</Link>
       </div>
