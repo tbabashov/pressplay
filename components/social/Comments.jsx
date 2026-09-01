@@ -27,12 +27,17 @@ function Avatar ({ person, size = 34 }) {
   )
 }
 
-export default function Comments ({ handle, albumId, initial = [], viewer, canModerate }) {
+export default function Comments ({ handle, albumId, initial = [], viewer, canModerate, onCount }) {
   const [items, setItems] = useState(initial)
   const [text, setText] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [removing, setRemoving] = useState(null)
+
+  // The count lives outside this component on the social page, where it sits on
+  // the row that opened the thread. Without this, replying left the row still
+  // claiming no replies until the page was reloaded.
+  useEffect(() => { onCount?.(items.length) }, [items.length, onCount])
 
   const submit = async e => {
     e.preventDefault()

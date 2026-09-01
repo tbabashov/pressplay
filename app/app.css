@@ -1686,3 +1686,110 @@ body:has(.app) .vignette { opacity: 0.5; }
 .disc-hidden li { border-style: dashed; }
 .disc-tag.is-rated { color: var(--accent); border-color: rgba(var(--accent-rgb), 0.4); }
 .disc-locked { grid-column: 4; }
+
+/* ================================================================ social ==
+   Two panes: what people published on the left, the argument about one of
+   them on the right. The pane only exists once a thread is open, so a list
+   nobody has opened reads at the same measure as every other list here. */
+.sc-tabs { display: flex; gap: 8px; margin-bottom: 18px; }
+
+.sc-split { display: grid; gap: 20px; align-items: start; }
+.sc-split.is-open { grid-template-columns: minmax(0, 1fr) minmax(0, 400px); }
+
+.sc-list { list-style: none; }
+.sc-row {
+  display: grid; grid-template-columns: 34px 52px minmax(0, 1fr) auto auto;
+  align-items: center; gap: 12px; padding: 10px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.055);
+  transition: background 180ms var(--ease);
+}
+.sc-row:last-child { border-bottom: 0; }
+.sc-row:hover { background: rgba(255,255,255,0.04); }
+.sc-row.on { background: rgba(var(--accent-rgb), 0.09); }
+
+/* The vote column is its own grid cell rather than part of the link, so a
+   click on an arrow never navigates away from the list you are voting in. */
+.sc-votes { grid-column: 1; display: grid; justify-items: center; gap: 1px; }
+.sc-votes b { font-size: 12.4px; font-weight: 700; color: var(--fg-3); }
+.sc-vote {
+  width: 26px; height: 20px; display: grid; place-items: center;
+  border-radius: 6px; color: var(--fg-4); cursor: pointer;
+  transition: color 150ms var(--ease), background 150ms var(--ease);
+}
+.sc-vote svg { width: 15px; height: 15px; }
+.sc-vote:hover:not(:disabled) { color: var(--fg); background: rgba(255,255,255,0.1); }
+.sc-vote.on { color: var(--accent); }
+.sc-vote.on.down { color: #d8664f; }
+.sc-votes-own .sc-vote { opacity: 0.32; cursor: default; }
+
+.sc-main {
+  grid-column: 2 / 4; display: grid; grid-template-columns: 52px minmax(0, 1fr);
+  align-items: center; gap: 12px; min-width: 0; color: inherit;
+}
+.sc-art { width: 52px; height: 52px; border-radius: 9px; object-fit: cover;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08); }
+.sc-art-blank { background: rgba(255,255,255,0.06); }
+.sc-names { display: grid; gap: 2px; min-width: 0; }
+.sc-names strong {
+  font-size: 14.6px; font-weight: 650; letter-spacing: -0.015em;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.sc-sub { font-size: 12.4px; color: var(--fg-3);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sc-by { font-size: 11.6px; color: var(--fg-4); }
+
+.sc-score {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 52px; height: 32px; padding: 0 11px; border-radius: 9px;
+  font-size: 15px; font-weight: 800; letter-spacing: -0.02em;
+}
+.sc-talk {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 10px; border-radius: 999px; cursor: pointer;
+  color: var(--fg-4); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
+  transition: color 150ms var(--ease), box-shadow 150ms var(--ease);
+}
+.sc-talk svg { width: 15px; height: 15px; }
+.sc-talk em { font-style: normal; font-size: 12px; font-weight: 700; }
+.sc-talk:hover, .sc-talk.on { color: var(--fg); box-shadow: inset 0 0 0 1px rgba(var(--accent-rgb), 0.55); }
+
+.sc-pane {
+  position: sticky; top: 22px;
+  border-radius: 16px; padding: 16px;
+  background: rgba(255,255,255,0.035);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.09);
+  max-height: calc(100dvh - 60px); overflow: auto;
+}
+.sc-pane-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 10px; margin-bottom: 14px;
+}
+.sc-pane-head strong { display: block; font-size: 15px; font-weight: 660; letter-spacing: -0.015em; }
+.sc-pane-head span { display: block; font-size: 12.4px; color: var(--fg-4); margin-top: 2px; }
+.sc-pane-x {
+  flex: none; width: 28px; height: 28px; display: grid; place-items: center;
+  border-radius: 8px; color: var(--fg-4); cursor: pointer;
+}
+.sc-pane-x:hover { color: var(--fg); background: rgba(255,255,255,0.1); }
+.sc-pane-x svg { width: 13px; height: 13px; }
+.sc-pane-wait { font-size: 13px; color: var(--fg-4); padding: 12px 0; }
+/* The thread's own rules are written for the bottom of a review page, where it
+   sits under a rule with a lot of air above it. In the pane it is the whole
+   content, so that separation comes off. */
+.sc-pane .cm { margin: 0; padding: 0; border-top: 0; }
+.sc-pane .cm-head { font-size: 13px; color: var(--fg-3); margin-bottom: 14px; }
+.sc-pane .cm-list { gap: 16px; margin-bottom: 20px; }
+.sc-pane .cm-text { font-size: 13.6px; }
+.sc-pane .cm-field textarea { min-height: 74px; }
+
+/* Below this the pane cannot be a column without squeezing both halves, so it
+   goes under the list instead of beside it. */
+@media (max-width: 1000px) {
+  .sc-split.is-open { grid-template-columns: minmax(0, 1fr); }
+  .sc-pane { position: static; max-height: none; }
+}
+@media (max-width: 620px) {
+  .sc-row { grid-template-columns: 30px minmax(0, 1fr) auto; row-gap: 8px; }
+  .sc-main { grid-column: 2 / -1; }
+  .sc-talk { grid-column: 3; }
+}

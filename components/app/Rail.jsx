@@ -19,7 +19,7 @@ const LINKS = [
   ['/app/board', 'Leaderboard', 'board'],
   ['/app/discography', 'Discographies', 'disc'],
   ['/app/stats', 'Taste', 'stats'],
-  ['/app/feed', 'Following', 'feed'],
+  ['/app/feed', 'Social', 'feed'],
   ['/app/settings', 'Profile', 'profile']
 ]
 

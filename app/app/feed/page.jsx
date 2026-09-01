@@ -1,54 +1,46 @@
-import Link from 'next/link'
+import { Suspense } from 'react'
 import { auth } from '@/auth'
-import { feed } from '@/lib/social-queries'
-import { ratingColor } from '@/lib/rating-colors'
+import { getProfile } from '@/lib/db'
+import { discover, followedFeed } from '@/lib/social-queries'
+import { publicProfile } from '@/lib/profile'
+import Social from '@/components/app/Social'
 
-export const metadata = { title: 'Following' }
+export const metadata = { title: 'Social' }
 export const dynamic = 'force-dynamic'
 
-export default async function Feed () {
+const TABS = new Set(['recent', 'popular', 'following'])
+
+export default async function Feed ({ searchParams }) {
   const session = await auth()
   if (!session?.user) return null
 
-  const items = await feed(session.user.email)
+  const sp = await searchParams
+  const tab = TABS.has(sp?.tab) ? sp.tab : 'recent'
+  const email = session.user.email
+
+  const [rows, me] = await Promise.all([
+    tab === 'following'
+      ? followedFeed({ viewerEmail: email })
+      : discover({ sort: tab, viewerEmail: email }),
+    getProfile(email)
+  ])
 
   return (
     <>
       <div className="page-head">
-        <h1>Following</h1>
+        <h1>Social</h1>
+        <p className="page-sub">
+          What everyone has been rating. Vote a rating up or down, and open the replies to argue
+          with the number.
+        </p>
       </div>
-
-      {items.length === 0 ? (
-        <div className="soon-panel">
-          <p>Nothing here yet. Follow someone and their published ratings land here.</p>
-          <Link className="btn-ghost" href="/browse">Browse raters</Link>
-        </div>
-      ) : (
-        <ul className="fd-list glass-list">
-          {items.map(item => {
-            const c = item.final === null ? null : ratingColor(Math.round(item.final), item.scaleModel)
-            return (
-              <li key={`${item.by.handle}:${item.albumId}`} className="fd-item">
-                <Link href={`/u/${item.by.handle}/${encodeURIComponent(item.albumId)}`} className="fd-link">
-                  {item.cover
-                    ? <img className="fd-art" src={item.cover} alt="" loading="lazy" width="58" height="58" />
-                    : <span className="fd-art fd-art-blank" aria-hidden="true" />}
-                  <span className="fd-names">
-                    <strong>{item.albumName}</strong>
-                    <span className="fd-sub">{item.artist}</span>
-                    <span className="fd-by">Rated by {item.by.name}</span>
-                  </span>
-                  {c && (
-                    <span className="fd-score tnum" style={{ background: c.bg, color: c.fg }}>
-                      {item.final.toFixed(1)}
-                    </span>
-                  )}
-                </Link>
-              </li>
-            )
-          })}
-        </ul>
-      )}
+      <Suspense fallback={null}>
+        <Social
+          rows={rows}
+          tab={tab}
+          viewer={me ? publicProfile(me) : null}
+        />
+      </Suspense>
     </>
   )
 }
