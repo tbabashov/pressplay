@@ -9,6 +9,7 @@ import { hasAsset } from '@/lib/asset'
 import { SignIn, StartButton } from '@/components/AuthButtons'
 import Nav from '@/components/Nav'
 import wall from '@/lib/wall.json'
+import slidesByAlbum from '@/lib/slides.json'
 import './landing.css'
 
 // TODO: set this to the real account before launch. One line, used in two places.
@@ -34,15 +35,27 @@ const SocialIcon = ({ id, size = 18 }) => {
   )
 }
 
-const SLIDES = [
-  { src: '/slides/bp-01.png', label: 'Title card' },
-  { src: '/slides/bp-02.png', label: 'Every song, scored' },
-  { src: '/slides/bp-03.png', label: 'The rest of them' },
-  { src: '/slides/bp-04.png', label: 'The criteria' },
-  { src: '/slides/bp-05.png', label: 'Where it lands' },
-  { src: '/slides/bp-06.png', label: 'The discography' },
-  { src: '/slides/bp-07.png', label: 'The rest of the discography' }
+const LABELS = [
+  'Title card', 'Every song, scored', 'The rest of them', 'The criteria',
+  'Where it lands', 'The discography', 'The rest of the discography'
 ]
+const SLIDES = (slidesByAlbum['the-blueprint'] || []).map((src, i) => ({
+  src, label: LABELS[i] || `Slide ${i + 1}`
+}))
+
+// Behind See it in the wild, every album rather than one: the claim is that
+// these get posted a record at a time, so the wall should look like more than
+// one record. Interleaved rather than concatenated so no album lands as a
+// block, and fixed rather than shuffled per render, since the server and the
+// client have to agree on the markup.
+const WALL_SLIDES = (() => {
+  const sets = Object.values(slidesByAlbum)
+  const out = []
+  for (let i = 0; i < Math.max(...sets.map(s => s.length)); i++) {
+    for (const set of sets) if (set[i]) out.push(set[i])
+  }
+  return out
+})()
 
 const STEPS = [
   ['Find it', 'Search once and get the real tracklist, artwork and running times.'],
@@ -155,8 +168,8 @@ export default async function Landing () {
 
         <section className="band tiktok" id="tiktok">
           <div className="tiktok-wall" aria-hidden="true">
-            {[...SLIDES, ...SLIDES].map((sl, i) => (
-              <img key={`${sl.src}-${i}`} src={sl.src} alt="" loading="lazy" width="180" height="320" />
+            {WALL_SLIDES.map((src, i) => (
+              <img key={`${src}-${i}`} src={src} alt="" loading="lazy" width="180" height="320" />
             ))}
           </div>
           <div className="tiktok-veil" aria-hidden="true" />

@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import ImageInput from './ImageInput'
 
 const blank = { name: '', year: '', cover: '', artists: '' }
 
@@ -73,11 +74,15 @@ export default function Discography ({ initial, artists }) {
               {artists.map(a => <option key={a} value={a} />)}
             </datalist>
           </label>
-          <label className="wide">
-            <span>Cover image URL</span>
-            <input value={form.cover} onChange={e => setForm({ ...form, cover: e.target.value })}
-              placeholder="https://… (optional)" type="url" />
-          </label>
+          <div className="wide disc-cover">
+            <span>Cover</span>
+            <ImageInput
+              value={form.cover}
+              onChange={cover => setForm({ ...form, cover })}
+              hint={`${form.artists || 'artist'}-${form.name || 'album'}`}
+              label="Album cover"
+            />
+          </div>
         </div>
         <button className="btn-primary" disabled={busy}>{busy ? 'Adding…' : 'Add album'}</button>
         {error && <p className="cut-error">{error}</p>}

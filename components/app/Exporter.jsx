@@ -47,6 +47,11 @@ export default function Exporter ({ data, paid = false }) {
   const [panel, setPanel] = useState(false)
   const [stylePanel, setStylePanel] = useState(false)
   const [viewing, setViewing] = useState(null)   // index of the slide opened full size
+  // Making the whole slide a zoom target took the cut-out's drag with it: a
+  // press meant to move the picture opened the viewer instead. Arranging and
+  // looking are separate modes now, and the slides are only zoom targets in the
+  // second one.
+  const [preview, setPreview] = useState(false)
   const rail = useRef(null)
   const [cutouts, setCutouts] = useState(data.review.artistImages || [])
   const [saveState, setSaveState] = useState('idle')
@@ -129,7 +134,8 @@ export default function Exporter ({ data, paid = false }) {
     const out = []
     if (on('title')) out.push({
       key: 'title', label: 'Title card',
-      node: <TitleFrame data={data} palette={palette} theme={theme} images={cutouts} onImageChange={nudgeCutout} />
+      node: <TitleFrame data={data} palette={palette} theme={theme} images={cutouts}
+              onImageChange={nudgeCutout} lockCutouts={preview} />
     })
     if (on('songs')) pages.forEach((tracks, i) => out.push({
       key: `songs-${i}`,
@@ -164,7 +170,7 @@ export default function Exporter ({ data, paid = false }) {
       }
     })
     return out
-  }, [palette, theme, data, pages, settings.include, settings.scale, settings.discPerPage, settings.autoDiscography, cutouts])
+  }, [palette, theme, data, pages, settings.include, settings.scale, settings.discPerPage, settings.autoDiscography, cutouts, preview])
 
   // Cut-outs belong to the review, not to this page, so they persist.
   useEffect(() => {
@@ -259,6 +265,18 @@ export default function Exporter ({ data, paid = false }) {
           </svg>
           Style
         </button>
+        <button
+          className={`chip${preview ? ' on' : ''}`}
+          onClick={() => setPreview(v => !v)}
+          aria-pressed={preview}
+          title={preview ? 'Back to arranging the cut-outs' : 'Look at the slides full size'}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 9V5.5A1.5 1.5 0 0 1 5.5 4H9M15 4h3.5A1.5 1.5 0 0 1 20 5.5V9M20 15v3.5a1.5 1.5 0 0 1-1.5 1.5H15M9 20H5.5A1.5 1.5 0 0 1 4 18.5V15"
+              fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          {preview ? 'Arranging' : 'Preview'}
+        </button>
         <span className="exp-summary">
           {frames.length} slide{frames.length === 1 ? '' : 's'}
           {settings.accent !== 'auto' && ' · custom colour'}
@@ -300,10 +318,14 @@ export default function Exporter ({ data, paid = false }) {
         {frames.map((f, i) => (
           <li key={f.key}>
             <div
-              className="exp-shot" role="button" tabIndex={0}
-              onClick={() => setViewing(i)}
-              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setViewing(i) } }}
-              aria-label={`${f.label}. Open it full size.`}
+              className={`exp-shot${preview ? ' zoomable' : ''}`}
+              role={preview ? 'button' : undefined}
+              tabIndex={preview ? 0 : undefined}
+              onClick={preview ? () => setViewing(i) : undefined}
+              onKeyDown={preview
+                ? e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setViewing(i) } }
+                : undefined}
+              aria-label={preview ? `${f.label}. Open it full size.` : undefined}
             >
               <div className="exp-scale">
                 <div style={{ width: W, height: H, overflow: 'hidden', position: 'relative' }}>
