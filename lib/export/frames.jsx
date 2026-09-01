@@ -55,12 +55,35 @@ function ArtistCutout ({ img, index, count, onChange, locked }) {
   const live = useRef(img)
   live.current = img
   const editable = !!onChange && !locked
+  // Only the cut-out you are working on shows its handles and answers the
+  // wheel. Every cut-out grabbing the wheel meant the page could not be
+  // scrolled past one, and four sets of handles on one slide read as clutter.
+  const [active, setActive] = useState(false)
+  // The picture's own proportions, read off the file once it has loaded. The
+  // box needs an explicit width: left is a percentage and right is auto, so an
+  // auto width is shrink to fit against "containing block minus left", and a
+  // cut-out dragged or grown towards the right edge had its box clamped to a
+  // sliver while the picture overflowed it. The dashed border, the handles and
+  // the width the resize maths reads all collapsed with it.
+  const [aspect, setAspect] = useState(null)
+
+  useEffect(() => {
+    if (!editable) setActive(false)
+  }, [editable])
+
+  // Screen pixels to frame pixels. The preview is CSS scaled, and offsetHeight
+  // can be 0 for a frame while the image is still loading, which would divide
+  // to Infinity and leave the cut-out refusing to move until a reload.
+  const frameScale = el => {
+    const raw = el.getBoundingClientRect().height / (el.offsetHeight || 1)
+    return Number.isFinite(raw) && raw > 0.01 ? raw : 1
+  }
 
   useEffect(() => {
     const el = wrap.current
-    if (!el || !editable) return
-    // React's synthetic wheel handler can't preventDefault, so the page would
-    // scroll away underneath the gesture — bind it natively instead
+    if (!el || !editable || !active) return
+    // React's synthetic wheel handler cannot preventDefault, so the page would
+    // scroll away underneath the gesture; bind it natively instead.
     const onWheel = e => {
       e.preventDefault()
       const cur = live.current.scale ?? 1
@@ -68,37 +91,53 @@ function ArtistCutout ({ img, index, count, onChange, locked }) {
     }
     el.addEventListener('wheel', onWheel, { passive: false })
     return () => el.removeEventListener('wheel', onWheel)
-  }, [index, onChange, editable])
+  }, [index, onChange, editable, active])
+
+  // Clicking anywhere else puts the handles away.
+  useEffect(() => {
+    if (!active) return
+    const away = e => { if (!wrap.current?.contains(e.target)) setActive(false) }
+    document.addEventListener('pointerdown', away)
+    return () => document.removeEventListener('pointerdown', away)
+  }, [active])
 
   function startMove (e) {
     const el = wrap.current
-    // the preview is CSS-scaled, so convert screen pixels into frame pixels
-    // The preview is CSS scaled, so screen pixels have to be converted into
-    // frame pixels. offsetHeight can be 0 for one frame while the image is
-    // still loading, and dividing by it gives Infinity, which makes the cut-out
-    // refuse to move at all until the page is reloaded.
-    const raw = el.getBoundingClientRect().height / (el.offsetHeight || 1)
-    const s = Number.isFinite(raw) && raw > 0.01 ? raw : 1
-    drag.current = { kind: 'move', id: e.pointerId, sx: e.clientX, sy: e.clientY, x: img.x ?? 0, y: img.y ?? 0, s }
+    setActive(true)
+    el.focus?.()
+    drag.current = {
+      kind: 'move', id: e.pointerId, sx: e.clientX, sy: e.clientY,
+      x: img.x ?? 0, y: img.y ?? 0, s: frameScale(el)
+    }
     el.setPointerCapture(e.pointerId)
     e.preventDefault()
   }
 
   function startResize (e, fx, fy) {
-    const r = wrap.current.getBoundingClientRect()
-    // Scale about the opposite corner, the way every image editor does. Scaling
-    // about the centre meant a handle grabbed near the middle started from a
-    // tiny distance, so the ratio it divides by exploded and the cut-out either
-    // vanished or filled the frame on the smallest movement.
+    const el = wrap.current
+    const r = el.getBoundingClientRect()
+    const s = frameScale(el)
+    // The handles are named by the edge they sit on: fx 0 is the left side,
+    // fy 0 is the top. Resizing anchors the opposite corner, the way every
+    // image editor does.
     const cx = fx ? r.x : r.x + r.width
     const cy = fy ? r.y : r.y + r.height
+    const vx = e.clientX - cx
+    const vy = e.clientY - cy
+    const d0 = Math.max(24, Math.hypot(vx, vy))
     drag.current = {
-      kind: 'resize', id: e.pointerId, cx, cy,
-      // Never divide by something near zero, whatever was grabbed.
-      d0: Math.max(24, Math.hypot(e.clientX - cx, e.clientY - cy)),
-      scale: img.scale ?? 1
+      kind: 'resize', id: e.pointerId, fx, fy, cx, cy, d0,
+      // The pointer is projected onto the diagonal it was grabbed on, so a
+      // drag across the box scales it and a drag along the box's own edge
+      // barely does. Raw distance from the anchor grew on any movement at
+      // all, including the ones meant to be moving nothing.
+      ux: vx / d0, uy: vy / d0,
+      scale: img.scale ?? 1, x: img.x ?? 0, y: img.y ?? 0,
+      // Frame pixel geometry at the moment of the grab, so the anchored
+      // corner can be held still while the size changes.
+      w: r.width / s, h: r.height / s
     }
-    wrap.current.setPointerCapture(e.pointerId)
+    el.setPointerCapture(e.pointerId)
     e.stopPropagation()
     e.preventDefault()
   }
@@ -111,18 +150,55 @@ function ArtistCutout ({ img, index, count, onChange, locked }) {
         x: Math.round(d.x + (e.clientX - d.sx) / d.s),
         y: Math.round(d.y - (e.clientY - d.sy) / d.s) // bottom-anchored: down is less
       })
-    } else {
-      const dist = Math.hypot(e.clientX - d.cx, e.clientY - d.cy)
-      onChange(index, { scale: round2(clampScale(d.scale * (dist / d.d0))) })
+      return
     }
+
+    const proj = (e.clientX - d.cx) * d.ux + (e.clientY - d.cy) * d.uy
+    const scale = clampScale(d.scale * Math.max(0.05, proj / d.d0))
+    // The box is laid out from its bottom centre, so growing it moves both the
+    // corner under the cursor and the one opposite. Position is corrected by
+    // the difference, which is what keeps the anchored corner where it was and
+    // the grabbed corner under the pointer instead of sliding away from it.
+    const k = scale / d.scale
+    const w = d.w * k
+    const h = d.h * k
+    onChange(index, {
+      scale: round2(scale),
+      x: Math.round(d.fx ? d.x + (w - d.w) / 2 : d.x + (d.w - w) / 2),
+      y: Math.round(d.fy ? d.y + d.h - h : d.y)
+    })
   }
+
+  // Arrow keys for the last few pixels, which a mouse cannot place on a preview
+  // this small, and a reset that does not depend on knowing about double click.
+  function onKeyDown (e) {
+    if (!editable) return
+    const step = e.shiftKey ? 24 : 4
+    const move = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, step], ArrowDown: [0, -step] }[e.key]
+    if (move) {
+      e.preventDefault()
+      onChange(index, { x: (img.x ?? 0) + move[0], y: (img.y ?? 0) + move[1] })
+      return
+    }
+    if (e.key === '+' || e.key === '=' || e.key === '-') {
+      e.preventDefault()
+      const by = e.key === '-' ? 0.94 : 1.06
+      onChange(index, { scale: round2(clampScale((img.scale ?? 1) * by)) })
+    }
+    if (e.key === 'Escape') setActive(false)
+  }
+
+  const showChrome = editable && active
 
   return (
     <div
       ref={wrap}
+      tabIndex={editable ? 0 : undefined}
+      onFocus={editable ? () => setActive(true) : undefined}
       onPointerDown={editable ? startMove : undefined}
       onPointerMove={editable ? onPointerMove : undefined}
       onPointerUp={editable ? e => { if (drag.current?.id === e.pointerId) drag.current = null } : undefined}
+      onKeyDown={editable ? onKeyDown : undefined}
       onDoubleClick={editable ? () => onChange(index, { x: 0, y: 0, scale: 1 }) : undefined}
       style={{
         position: 'absolute',
@@ -132,18 +208,32 @@ function ArtistCutout ({ img, index, count, onChange, locked }) {
         // height drives the size and width follows the aspect ratio, so scaling
         // up always makes the picture bigger instead of padding the box
         height: Math.round(CUTOUT_BASE_H * (img.scale ?? 1)),
+        width: aspect ? Math.round(CUTOUT_BASE_H * (img.scale ?? 1) * aspect) : undefined,
         cursor: editable ? 'grab' : undefined,
+        outline: 'none',
         touchAction: editable ? 'none' : undefined
       }}
     >
       <img
         src={img.src} alt="" draggable={false}
+        onLoad={e => {
+          const { naturalWidth: w, naturalHeight: h } = e.currentTarget
+          if (w && h) setAspect(w / h)
+        }}
         style={{
-          display: 'block', height: '100%', width: 'auto',
+          display: 'block', height: '100%', width: aspect ? '100%' : 'auto',
           filter: 'drop-shadow(0 34px 56px rgba(0,0,0,0.55))'
         }}
       />
-      {editable && (
+      {editable && !active && (
+        // A quiet outline so an untouched cut-out still reads as something you
+        // are allowed to pick up, without four handles shouting on every slide.
+        <div data-no-export="1" style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          border: '4px dashed rgba(var(--ink-rgb), 0.34)'
+        }} />
+      )}
+      {showChrome && (
         <>
           <div data-no-export="1" style={{
             position: 'absolute', inset: 0, pointerEvents: 'none',

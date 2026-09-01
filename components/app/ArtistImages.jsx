@@ -98,11 +98,7 @@ export default function ArtistImages ({ images, onChange }) {
           <input ref={input} type="file" accept="image/png,image/webp" multiple hidden
             onChange={e => add(e.target.files)} />
           <p className="cut-hint">
-            Cut-outs stand in the dome on the title card. Up to three, background already removed.
-            Drag one on the title card to move it, drag a corner or scroll on it to resize, and
-            double click to put it back. Lock one once it is right and it stops responding, so
-            placing the next will not knock it out of position.
-          </p>
+            Cut-outs stand in the dome on the title card. Up to three, background already removed. Click one on the title card to pick it up, then drag to move it, drag a corner to resize it from the opposite corner, or scroll on it. Arrow keys nudge it a few pixels at a time, shift with them moves further, and + and − resize. Reset position puts it back. Lock one once it is right and it stops responding, so placing the next will not knock it out of position.</p>
         </>
       )}
       {error && <p className="cut-error">{error}</p>}
