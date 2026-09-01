@@ -69,7 +69,7 @@ export async function POST (req) {
     nowPlaying: take('nowPlaying'),
     album: take('album', v => v ?? existing?.album ?? null),
     artistImages: has('artistImages')
-      ? (Array.isArray(body.artistImages) ? body.artistImages.slice(0, 3) : [])
+      ? (Array.isArray(body.artistImages) ? body.artistImages : [])
       : (existing?.artistImages ?? []),
     finalOverride: has('finalOverride') ? (body.finalOverride || null) : (existing?.finalOverride ?? null),
     final: has('final')
@@ -81,7 +81,14 @@ export async function POST (req) {
       : (existing?.criteriaModel ?? null),
     scaleModel: has('scaleModel')
       ? normaliseScale(body.scaleModel)
-      : (existing?.scaleModel ?? null)
+      : (existing?.scaleModel ?? null),
+    // Blocks the slides were told to leave out, by the X on the preview. Kept
+    // on the review rather than in preferences because it is a decision about
+    // this album's slides, not about how every album gets rated.
+    hiddenParts: has('hiddenParts')
+      ? [...new Set((Array.isArray(body.hiddenParts) ? body.hiddenParts : [])
+          .map(v => String(v).slice(0, 40)))].slice(0, 40)
+      : (existing?.hiddenParts ?? [])
   })
   return Response.json({ review: saved })
 }

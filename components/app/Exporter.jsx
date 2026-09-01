@@ -8,6 +8,7 @@ import ExportSettings, { SWATCHES } from './ExportSettings'
 import StylePicker from './StylePicker'
 import { STYLES, STYLE_LIST } from '../../lib/export/styles.js'
 import ArtistImages from './ArtistImages'
+import { albumKey } from '../../lib/preferences'
 import {
   TitleFrame, TracksFrame, CriteriaFrame, ComparisonFrame, DiscographyFrame
 } from '../../lib/export/frames.jsx'
@@ -15,6 +16,14 @@ import {
 const W = 1080
 const H = 1920
 const STORE = 'ppr.export.settings'
+
+// What each removable block is called when it is listed as taken off. Falling
+// back to the id keeps a block added later from showing as nothing at all.
+const PART_NAMES = {
+  nowPlaying: 'Now playing',
+  bestSong: 'Best song',
+  worstSong: 'Worst song'
+}
 
 // Stored preferences cannot grant a style the account does not include.
 const freeFallback = id =>
@@ -47,6 +56,58 @@ export default function Exporter ({ data, paid = false }) {
   const [panel, setPanel] = useState(false)
   const [stylePanel, setStylePanel] = useState(false)
   const [viewing, setViewing] = useState(null)   // index of the slide opened full size
+
+  // Two kinds of "take that off the slide". A block belongs to this review, so
+  // it lives on the review. An album belongs to the artist's catalogue, so it
+  // lives with the hidden list the discography screen writes, and taking one
+  // off here takes it off there as well rather than the two disagreeing.
+  const [hiddenParts, setHiddenParts] = useState(() => data.review.hiddenParts || [])
+  const [hiddenAlbums, setHiddenAlbums] = useState(() => data.hiddenAlbums || [])
+  const [removeError, setRemoveError] = useState('')
+
+  const removePart = useCallback(id => {
+    setHiddenParts(prev => {
+      if (prev.includes(id)) return prev
+      const next = [...prev, id]
+      fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ albumId: data.review.albumId, hiddenParts: next })
+      }).catch(() => setRemoveError('That did not save.'))
+      return next
+    })
+  }, [data.review.albumId])
+
+  const restorePart = useCallback(id => {
+    setHiddenParts(prev => {
+      const next = prev.filter(k => k !== id)
+      fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ albumId: data.review.albumId, hiddenParts: next })
+      }).catch(() => setRemoveError('That did not save.'))
+      return next
+    })
+  }, [data.review.albumId])
+
+  // Key to the name the album is actually called, for the list of what has
+  // been taken off.
+  const hiddenNames = useMemo(() => {
+    const out = {}
+    for (const g of data.discographies || []) {
+      for (const a of g.albums || []) out[albumKey(g.artist, a.name)] = a.name
+    }
+    return out
+  }, [data.discographies])
+
+  const saveHiddenAlbums = next => {
+    setHiddenAlbums(next)
+    fetch('/api/preferences', {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ hiddenAlbums: next })
+    }).catch(() => setRemoveError('That did not save.'))
+  }
 
   // The frame's width comes from the viewport, so the fit is remeasured when
   // the window changes rather than only once on open.
@@ -154,15 +215,22 @@ export default function Exporter ({ data, paid = false }) {
               showScale={settings.scale === 'every' || (settings.scale === 'first' && i === 0)}
               dense={tracks.length > 12} />
     }))
-    if (on('criteria')) out.push({ key: 'criteria', label: 'The criteria', node: <CriteriaFrame data={data} palette={palette} theme={theme} /> })
+    if (on('criteria')) out.push({
+      key: 'criteria',
+      label: 'The criteria',
+      node: <CriteriaFrame data={data} palette={palette} theme={theme}
+              hiddenParts={hiddenParts} onRemovePart={preview ? undefined : removePart} />
+    })
     if (on('rank') && data.ladder?.length) out.push({ key: 'rank', label: 'Where it lands', node: <ComparisonFrame data={data} palette={palette} theme={theme} /> })
     // A discography of any size has to be split, or the grid runs off the frame.
     if (on('discography')) data.discographies?.forEach((g0, gi) => {
       // The catalogue fill is built server-side either way; dropping it here
       // keeps the toggle instant instead of costing a page reload.
-      const albums = settings.autoDiscography === false
+      const albums = (settings.autoDiscography === false
         ? g0.albums.filter(a => a.source !== 'auto')
         : g0.albums
+      ).map(a => ({ ...a, hidden: hiddenAlbums.includes(albumKey(g0.artist, a.name)) }))
+        .filter(a => !a.hidden)
       if (!albums.length) return
       const g = { ...g0, albums }
       const per = Number(settings.discPerPage) || 9
@@ -175,12 +243,19 @@ export default function Exporter ({ data, paid = false }) {
           key: `disc-${gi}-${i}`,
           label: pages > 1 ? `${g.artist} discography ${i + 1} of ${pages}` : `${g.artist} discography`,
           node: <DiscographyFrame group={slice} page={i + 1} pages={pages} counts={counts}
-                  currentAlbumName={data.review.album.name} palette={palette} theme={theme} />
+                  currentAlbumName={data.review.album.name} palette={palette} theme={theme}
+                  onRemoveAlbum={preview
+                    ? undefined
+                    : key => {
+                        const a = g0.albums.find(x => x.key === key)
+                        if (a) saveHiddenAlbums([...hiddenAlbums, albumKey(g0.artist, a.name)])
+                      }} />
         })
       }
     })
     return out
-  }, [palette, theme, data, pages, settings.include, settings.scale, settings.discPerPage, settings.autoDiscography, cutouts, preview])
+  }, [palette, theme, data, pages, settings.include, settings.scale, settings.discPerPage,
+      settings.autoDiscography, cutouts, preview, hiddenParts, hiddenAlbums, removePart])
 
   // Cut-outs belong to the review, not to this page, so they persist.
   useEffect(() => {
@@ -313,6 +388,37 @@ export default function Exporter ({ data, paid = false }) {
         open={stylePanel} onClose={() => setStylePanel(false)}
         settings={settings} set={set} paid={paid}
       />
+
+      {/* Everything taken off the slides, and the way back. Removing is not
+          deleting: a cover comes off this artist's grid and a block comes off
+          this review's slide, and either can be put back from here without
+          leaving the screen the slides are on. */}
+      {(hiddenParts.length > 0 || hiddenAlbums.length > 0) && (
+        <section className="exp-off">
+          <h2>Taken off the slides<em>{hiddenParts.length + hiddenAlbums.length}</em></h2>
+          <ul>
+            {hiddenParts.map(id => (
+              <li key={`p:${id}`}>
+                <span>{PART_NAMES[id] || id}</span>
+                <button onClick={() => restorePart(id)}>Put it back</button>
+              </li>
+            ))}
+            {hiddenAlbums.map(key => (
+              <li key={`a:${key}`}>
+                {/* The key is lowercased and stripped of any edition suffix, so
+                    it is not a name. The album itself is still in the data —
+                    hidden ones are marked rather than dropped — so the name it
+                    is actually called comes from there. */}
+                <span>{hiddenNames[key] || key.split('::')[1] || key}</span>
+                <button onClick={() => saveHiddenAlbums(hiddenAlbums.filter(k => k !== key))}>
+                  Put it back
+                </button>
+              </li>
+            ))}
+          </ul>
+          {removeError && <p className="cut-error">{removeError}</p>}
+        </section>
+      )}
 
       {settings.include.title !== false && (
         <section className="exp-cuts">

@@ -1916,3 +1916,48 @@ body:has(.app) .vignette { opacity: 0.5; }
   border: 1px dashed rgba(255,255,255,0.18);
 }
 .tr-note { font-size: 12.8px; color: var(--fg-4); line-height: 1.6; }
+
+/* ---- taking things off a slide -----------------------------------------
+   The X sits on the thing it removes and only appears when the pointer is on
+   it, so a slide being arranged still looks like the slide it will become.
+   It carries data-no-export, like the cut-out handles, so it is filtered out
+   of the PNG rather than rasterised into it. */
+.pp-rm { position: relative; }
+.pp-rm-x {
+  position: absolute; top: -9px; right: -9px; z-index: 3;
+  width: 42px; height: 42px; border-radius: 50%;
+  display: grid; place-items: center; cursor: pointer;
+  color: #fff; background: #c0392f;
+  border: 3px solid rgba(255,255,255,0.9);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.45);
+  opacity: 0; transform: scale(0.7);
+  transition: opacity 140ms var(--ease), transform 140ms var(--ease);
+}
+.pp-rm-x svg { width: 20px; height: 20px; }
+.pp-rm:hover > .pp-rm-x, .pp-rm-x:focus-visible { opacity: 1; transform: scale(1); }
+.pp-rm:hover { outline: 3px dashed rgba(192,57,47,0.75); outline-offset: 3px; border-radius: 6px; }
+
+.exp-off { margin: 26px 0 8px; }
+.exp-off h2 {
+  display: flex; align-items: center; gap: 9px;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--fg-4); margin-bottom: 10px;
+}
+.exp-off h2 em {
+  font-style: normal; font-size: 11px; font-weight: 700; color: var(--accent);
+  letter-spacing: 0.06em;
+}
+.exp-off ul { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
+.exp-off li {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 8px 7px 13px; border-radius: 999px;
+  background: rgba(255,255,255,0.04);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
+  font-size: 12.8px; color: var(--fg-2);
+}
+.exp-off li button {
+  padding: 4px 10px; border-radius: 999px; cursor: pointer;
+  font-size: 11.4px; font-weight: 640; color: var(--fg-3);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.16);
+}
+.exp-off li button:hover { color: var(--fg); background: rgba(255,255,255,0.1); }

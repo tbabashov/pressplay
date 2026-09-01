@@ -57,6 +57,30 @@ const HANDLES = [
   { id: 'se', ex: 1, ey: 1, cursor: 'nwse-resize' }
 ]
 
+// Anything on a slide that can be taken off it. The X is chrome, so it carries
+// data-no-export like the cut-out handles do and never reaches the PNG. When
+// there is no handler — the render route, the full size preview, a published
+// page — this is the children and nothing else, not even a wrapper.
+export function Removable ({ id, name, onRemove, children, inline, style }) {
+  if (!onRemove) return children
+  return (
+    <div className="pp-rm" style={{ position: 'relative', display: inline ? 'inline-block' : 'block', ...style }}>
+      {children}
+      <button
+        data-no-export="1"
+        className="pp-rm-x"
+        title={`Take ${name} off the slide`}
+        aria-label={`Take ${name} off the slide`}
+        onPointerDown={e => e.stopPropagation()}
+        onClick={e => { e.preventDefault(); e.stopPropagation(); onRemove(id) }}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11m0-11l-11 11"
+          fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" /></svg>
+      </button>
+    </div>
+  )
+}
+
 // ---- the one geometry ----------------------------------------------------
 //
 // What is stored on a cut-out is x, y and scale: an offset from the middle of
@@ -755,7 +779,8 @@ function Superlative ({ label, value, tone, theme }) {
   )
 }
 
-export function CriteriaFrame ({ data, palette, theme }) {
+export function CriteriaFrame ({ data, palette, theme, hiddenParts = [], onRemovePart }) {
+  const off = id => hiddenParts.includes(id)
   const { review, parts, final, tierLabels } = data
   const { album } = review
   const sel = review.selections || {}
@@ -776,14 +801,28 @@ export function CriteriaFrame ({ data, palette, theme }) {
         ))}
       </Surface>
 
-      {(sel.bestSong || sel.worstSong) && (
+      {((sel.bestSong && !off('bestSong')) || (sel.worstSong && !off('worstSong'))) && (
         <div style={{ display: 'flex', gap: 18, marginTop: 20 }}>
-          {sel.bestSong && <Superlative label="Best Song" value={sel.bestSong} tone="#6ee7a0" theme={theme} />}
-          {sel.worstSong && <Superlative label="Worst Song" value={sel.worstSong} tone="#f97316" theme={theme} />}
+          {sel.bestSong && !off('bestSong') && (
+            <Removable id="bestSong" name="Best Song" onRemove={onRemovePart}
+              style={{ flex: 1, minWidth: 0, display: 'flex' }}>
+              <Superlative label="Best Song" value={sel.bestSong} tone="#6ee7a0" theme={theme} />
+            </Removable>
+          )}
+          {sel.worstSong && !off('worstSong') && (
+            <Removable id="worstSong" name="Worst Song" onRemove={onRemovePart}
+              style={{ flex: 1, minWidth: 0, display: 'flex' }}>
+              <Superlative label="Worst Song" value={sel.worstSong} tone="#f97316" theme={theme} />
+            </Removable>
+          )}
         </div>
       )}
 
-      {nowTrack && <div style={{ marginTop: 20 }}><NowPlaying track={nowTrack} album={album} palette={palette} theme={theme} /></div>}
+      {nowTrack && !off('nowPlaying') && (
+        <Removable id="nowPlaying" name="Now Playing" onRemove={onRemovePart} style={{ marginTop: 20 }}>
+          <NowPlaying track={nowTrack} album={album} palette={palette} theme={theme} />
+        </Removable>
+      )}
 
       <Surface theme={theme} radius={36} style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -906,9 +945,10 @@ export function ComparisonFrame ({ data, palette, theme }) {
 // ---------- Frame 5+: one artist's discography ----------
 const CELL = Math.floor((CONTENT_W - 2 * 26) / 3) // 3 across the safe width
 
-function DiscoCell ({ album, isCurrent, palette, theme }) {
+function DiscoCell ({ album, isCurrent, palette, theme, onRemove }) {
   const rated = album.rated && typeof album.rating === 'number'
   return (
+    <Removable id={album.key} name={album.name} onRemove={onRemove} inline>
     <div style={{ width: CELL }}>
       <div style={{
         position: 'relative', width: CELL, height: CELL, borderRadius: 22, overflow: 'hidden',
@@ -959,10 +999,11 @@ function DiscoCell ({ album, isCurrent, palette, theme }) {
         {rated ? [album.year, `#${album.rank}`].filter(Boolean).join(' · ') : (album.year || 'Not rated yet')}
       </div>
     </div>
+    </Removable>
   )
 }
 
-export function DiscographyFrame ({ group, page, pages, currentAlbumName, palette, theme, counts }) {
+export function DiscographyFrame ({ group, page, pages, currentAlbumName, palette, theme, counts, onRemoveAlbum }) {
   // When the list is split across pages, the header still counts the whole
   // discography rather than whatever landed on this one.
   const ratedCount = counts?.rated ?? group.albums.filter(a => a.rated).length
@@ -987,10 +1028,11 @@ export function DiscographyFrame ({ group, page, pages, currentAlbumName, palett
       <Fill theme={theme}>
         {/* centred so a final row of one or two albums doesn't sit lopsided */}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 26, justifyContent: 'center' }}>
-          {group.albums.map(a => (
+          {group.albums.filter(a => !a.hidden).map(a => (
             <DiscoCell
               key={a.key} album={a} palette={palette} theme={theme}
               isCurrent={a.name === currentAlbumName}
+              onRemove={onRemoveAlbum}
             />
           ))}
         </div>
