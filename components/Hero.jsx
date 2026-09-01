@@ -43,18 +43,23 @@ export default function Hero ({ albums = [], children }) {
   const stage = useRef(null)
   const art = useRef(null)
 
-  // Randomise after mount so server and client markup cannot disagree.
+  // Fixed on the server, randomised after mount, so the markup cannot disagree.
+  const [shelf, setShelf] = useState([7, 19, 28, 34, 41])
+
   useEffect(() => {
-    if (albums.length > 1) setI(Math.floor(Math.random() * albums.length))
+    if (albums.length < 7) return
+    const onShelf = new Set([7, 19, 28, 34, 41].map(n => n % albums.length))
+    const free = albums.map((_, n) => n).filter(n => !onShelf.has(n))
+    setI(free[Math.floor(Math.random() * free.length)] ?? 0)
   }, [albums])
 
-  // Always lands on a different sleeve: picking from the other albums rather
-  // than the whole list means it never appears to do nothing.
-  const shuffle = () => setI(n => {
-    if (albums.length < 2) return n
-    const pick = Math.floor(Math.random() * (albums.length - 1))
-    return pick >= n ? pick + 1 : pick
-  })
+  // A swap, not a jump: whatever was on the stand takes the slot of whatever
+  // came off the shelf, so the shelf never shows the record already playing.
+  const take = slot => {
+    const wanted = shelf[slot]
+    setShelf(prev => prev.map((v, n) => (n === slot ? i : v)))
+    setI(wanted)
+  }
 
   // Before anything plays, the room is still lit by the record on the stand.
   useEffect(() => {
@@ -102,22 +107,31 @@ export default function Hero ({ albums = [], children }) {
 
   const demo = scoresFor(album.name)
 
-  // Fixed indices, so the server and client agree on the background shelf.
-  const shelf = [7, 19, 28, 34, 41].map(i => albums[i % albums.length]).filter(Boolean)
-
   return (
     <header className="hero" ref={stage}>
-      <div className="room" aria-hidden="true">
-        <div className="room-wall" />
-        <div className="room-beam" />
+      <div className="room">
+        <div className="room-wall" aria-hidden="true" />
+        <div className="room-beam" aria-hidden="true" />
         <div className="room-shelf">
-          {shelf.map((a, i) => (
-            <img key={a.cover} src={a.cover} alt="" style={{ '--i': i }} />
-          ))}
+          {shelf.map((idx, slot) => {
+            const a = albums[idx % albums.length]
+            if (!a) return null
+            return (
+              <button
+                key={`${slot}-${a.cover}`}
+                className="shelf-sleeve"
+                style={{ '--i': slot }}
+                onClick={() => take(slot)}
+                aria-label={`Put ${a.name} by ${a.artist} on the stand`}
+              >
+                <img src={a.cover} alt="" />
+              </button>
+            )
+          })}
         </div>
-        <div className="room-floor" />
-        <div className="room-horizon" />
-        <div className="room-dust">
+        <div className="room-floor" aria-hidden="true" />
+        <div className="room-horizon" aria-hidden="true" />
+        <div className="room-dust" aria-hidden="true">
           {[[8,22,17],[21,64,23],[37,12,29],[52,48,19],[63,78,25],[74,31,21],[88,58,27],[94,18,18]]
             .map(([x, y, d], i) => (
               <i key={i} style={{ left: `${x}%`, top: `${y}%`, '--d': `${d}s`, '--n': i }} />
@@ -136,6 +150,7 @@ export default function Hero ({ albums = [], children }) {
             slides built for TikTok.
           </p>
           <div className="hero-cta">{children}</div>
+          <p className="hero-pick">Take a record off the shelf to hear it.</p>
         </div>
 
         <div className="hero-stage">
@@ -208,18 +223,6 @@ export default function Hero ({ albums = [], children }) {
               })()}
             </div>
 
-            <div className="card-foot">
-              <span className="card-note">Example scores</span>
-              <button className="card-shuffle" onClick={shuffle}>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M4 7h3.6l3 4.2M4 17h3.6l7-9.9H20M4 7h3.6M20 17h-5.4l-2-2.8"
-                  fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="m17.4 4.4 2.6 2.6-2.6 2.6M17.4 14.4 20 17l-2.6 2.6"
-                  fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-                Another record
-              </button>
-            </div>
           </div>
         </div>
       </div>

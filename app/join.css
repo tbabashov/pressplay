@@ -32,14 +32,12 @@
   margin-top: 30px; width: 100%;
   display: inline-flex; align-items: center; justify-content: center; gap: 10px;
   padding: 13px 20px; border-radius: 12px;
-  font-size: 15px; font-weight: 600;
+  font-size: 15px; font-weight: 620;
   background: #fff; color: #12121a;
-  transition: transform 180ms var(--ease), box-shadow 200ms var(--ease);
-  box-shadow: 0 2px 0 rgba(0,0,0,0.34), 0 14px 30px -14px rgba(0,0,0,0.8);
+  transition: background 200ms var(--ease);
 }
-.jn-google:hover { transform: translateY(-1.5px); box-shadow: 0 3.5px 0 rgba(0,0,0,0.34), 0 20px 38px -16px rgba(0,0,0,0.85); }
-.jn-google:active { transform: translateY(1.5px); }
-.jn-google:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.jn-google:hover { background: #e9e9ee; }
+.jn-google:disabled { opacity: 0.55; cursor: not-allowed; }
 
 .jn-or {
   display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 14px;

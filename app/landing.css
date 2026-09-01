@@ -242,31 +242,6 @@
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .card-head span { font-size: 0.735rem; color: var(--fg-4); }
 
-/* Changing the record. A caption and a text control, not a slab: the slides
-   have no filled buttons on them and neither should the panel that quotes them. */
-.card-foot {
-  display: flex; align-items: center; justify-content: space-between; gap: 10px;
-  margin-top: 13px; padding-top: 11px;
-  border-top: 1px solid rgba(255,255,255,0.08);
-}
-.card-note {
-  font-size: 0.6rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--fg-4);
-}
-.card-shuffle {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 0.66rem; font-weight: 650; letter-spacing: 0.01em;
-  color: var(--fg-3);
-  transition: color 200ms var(--ease);
-}
-.card-shuffle:hover { color: var(--accent); }
-.card-shuffle svg { width: 12px; height: 12px; transition: transform 320ms var(--ease); }
-.card-shuffle:hover svg { transform: rotate(180deg); }
-@media (prefers-reduced-motion: reduce) {
-  .card-shuffle, .card-shuffle svg { transition: none }
-  .card-shuffle:hover svg { transform: none }
-}
-
 .card-rows { list-style: none; display: grid; gap: 8px; }
 .card-rows li { display: grid; grid-template-columns: 1fr 52px 26px; align-items: center; gap: 8px; }
 .card-rows span { font-size: 0.715rem; color: var(--fg-3); letter-spacing: -0.005em; }
@@ -555,6 +530,11 @@
    ══════════════════════════════════════════════════════════════════════════ */
 
 .hero-copy { position: relative; z-index: 2; }
+.hero-pick {
+  margin-top: 22px;
+  font-size: 12.6px; letter-spacing: 0.01em; color: var(--fg-4);
+}
+@media (max-width: 980px) { .hero-pick { display: none } }
 
 .band-alt {
   background:
@@ -933,13 +913,41 @@
 .room-shelf {
   position: absolute; right: -8%; bottom: 11%;
   display: flex; align-items: flex-end; gap: 14px;
-  filter: blur(6px) saturate(0.62) brightness(0.5);
-  opacity: 0.7;
+  pointer-events: auto;   /* the room is inert; the shelf is not */
 }
-.room-shelf img {
+.shelf-sleeve {
+  display: block; padding: 0;
+  transform:
+    rotate(calc((var(--i) - 2) * 3.4deg))
+    translateY(calc(var(--i) * -9px));
+  filter: blur(5px) saturate(0.62) brightness(0.5);
+  opacity: 0.72;
+  transition:
+    filter 460ms var(--ease),
+    opacity 460ms var(--ease),
+    transform 460ms var(--ease);
+}
+.shelf-sleeve img {
   width: 168px; height: 168px; border-radius: 3px; object-fit: cover;
-  transform: rotate(calc((var(--i) - 2) * 3.4deg)) translateY(calc(var(--i) * -9px));
   box-shadow: 0 26px 44px rgba(0,0,0,0.86), inset 0 0 0 1px rgba(255,255,255,0.06);
+}
+.shelf-sleeve:hover, .shelf-sleeve:focus-visible {
+  outline: none;
+  filter: blur(0) saturate(1) brightness(1);
+  opacity: 1;
+  z-index: 2;
+  transform:
+    rotate(calc((var(--i) - 2) * 1.6deg))
+    translateY(calc(var(--i) * -9px - 20px))
+    scale(1.05);
+}
+.shelf-sleeve:focus-visible img { box-shadow: 0 0 0 2.5px var(--accent), 0 26px 44px rgba(0,0,0,0.86); }
+.shelf-sleeve:active { transform:
+  rotate(calc((var(--i) - 2) * 1.6deg))
+  translateY(calc(var(--i) * -9px - 12px))
+  scale(1.01); }
+@media (prefers-reduced-motion: reduce) {
+  .shelf-sleeve { transition: none }
 }
 
 /* Where the wall stops and the surface begins. */
