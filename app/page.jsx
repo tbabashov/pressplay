@@ -2,6 +2,8 @@ import Hero from '@/components/Hero'
 import Wall from '@/components/Wall'
 import ReviewDemo from '@/components/ReviewDemo'
 import Placeholder from '@/components/Placeholder'
+import CoverBand from '@/components/CoverBand'
+import { hasAsset } from '@/lib/asset'
 import { SignIn, StartButton } from '@/components/AuthButtons'
 import Nav from '@/components/Nav'
 import wall from '@/lib/wall.json'
@@ -88,11 +90,10 @@ export default async function Landing () {
         </section>
 
         <section className="band-photo">
-          <Placeholder
-            ratio="21 / 8"
-            title="Wide photograph: the listening scene"
-            brief="Someone mid-rating at a desk at night. Laptop open with the app on screen, headphones on or just off, a record sleeve propped beside it. Warm lamp light against a dark room, shot slightly from the side so the screen glow lands on their face. Landscape, at least 2400px wide."
-            credit="Replace with /public/photos/listening.jpg"
+          <CoverBand
+            albums={wall}
+            heading="Ninety records, one instrument."
+            sub="Rap, jazz, classical, country, dub, techno. If it has a tracklist it can be scored, and the same six numbers come out the other side."
           />
         </section>
 
@@ -169,7 +170,9 @@ export default async function Landing () {
                 time, on TikTok.
               </p>
               <a className="btn-tiktok" href={TIKTOK.url} target="_blank" rel="noopener noreferrer">
-                <SocialIcon id="tiktok" size={20} />
+                {hasAsset('/photos/mark.png')
+                  ? <img className="btn-tiktok-mark" src="/photos/mark.png" alt="" width="26" height="26" />
+                  : <SocialIcon id="tiktok" size={20} />}
                 <span>{TIKTOK.handle}</span>
                 <svg width="14" height="14" viewBox="0 0 15 15" fill="none" aria-hidden="true">
                   <path d="M4 11 11 4m0 0H5m6 0v6" stroke="currentColor" strokeWidth="1.6"
@@ -177,12 +180,24 @@ export default async function Landing () {
                 </svg>
               </a>
             </div>
-            <Placeholder
-              ratio="4 / 5"
-              title="Photograph: a phone mid-scroll"
-              brief="A hand holding a phone with one of the exported slides on screen, shot close and slightly overhead. Dark surroundings, screen as the only real light source. Portrait orientation, at least 1400px wide."
-              credit="Replace with /public/photos/phone.jpg"
-            />
+            {hasAsset('/photos/phone.png') || hasAsset('/photos/phone.jpg')
+              ? (
+                <figure className="phone-shot">
+                  <img
+                    src={hasAsset('/photos/phone.png') ? '/photos/phone.png' : '/photos/phone.jpg'}
+                    alt="One of the exported slides on a phone, mid scroll on TikTok"
+                    loading="lazy"
+                  />
+                </figure>
+                )
+              : (
+                <Placeholder
+                  ratio="4 / 5"
+                  title="Photograph: a phone mid-scroll"
+                  brief="A hand holding a phone with one of the exported slides on screen, shot close and slightly overhead. Dark surroundings, screen as the only real light source. Portrait orientation, at least 1400px wide."
+                  credit="Drop the file at public/photos/phone.png and it appears here"
+                />
+                )}
           </div>
         </section>
 

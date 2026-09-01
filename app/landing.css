@@ -1179,3 +1179,54 @@
   .rev-art { width: 60px; height: 60px; }
   .rev-crit { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* ============================================================ cover band ==
+   Real covers, rotated off true, veiled enough to take type. The same
+   composition the sign in page uses, laid on its side. */
+.cb {
+  position: relative;
+  min-height: clamp(340px, 40vw, 460px);
+  overflow: hidden;
+  display: grid; align-items: center;
+}
+.cb-grid {
+  position: absolute; inset: -14% -6%;
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 14px;
+  transform: rotate(-6deg) scale(1.12);
+}
+.cb-grid img {
+  width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 10px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.6);
+}
+/* Every other column rides low, so it reads as a wall rather than a table. */
+.cb-grid img:nth-child(3n+2) { translate: 0 28px; }
+.cb-grid img:nth-child(3n+3) { translate: 0 -20px; }
+
+.cb-veil {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg, var(--ink) 4%, rgba(8,8,10,0.82) 38%, rgba(8,8,10,0.58) 72%, rgba(8,8,10,0.86) 100%),
+    linear-gradient(180deg, var(--ink) 0%, transparent 22%, transparent 74%, var(--ink) 100%);
+}
+.cb-copy { position: relative; z-index: 2; }
+.cb-copy .h2 { max-width: 16ch; }
+.cb-copy .lede { margin-top: 16px; }
+
+@media (max-width: 780px) {
+  .cb-grid { grid-template-columns: repeat(5, 1fr); }
+  .cb-veil { background:
+    linear-gradient(180deg, var(--ink) 0%, rgba(8,8,10,0.8) 30%, rgba(8,8,10,0.86) 100%); }
+}
+
+/* The phone shot, once there is one. */
+.phone-shot { margin: 0; }
+.phone-shot img {
+  width: 100%; height: auto; display: block;
+  border-radius: var(--r-md);
+  filter: drop-shadow(0 40px 80px rgba(0,0,0,0.7));
+}
+
+/* The account's own mark, once the file is there. */
+.btn-tiktok-mark { width: 26px; height: 26px; border-radius: 7px; object-fit: cover; }
