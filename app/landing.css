@@ -1320,3 +1320,31 @@
   .sv-arrow { position: absolute; bottom: 24px; }
   .sv-prev { left: 26%; } .sv-next { right: 26%; }
 }
+
+/* --- See it in the wild ---
+   The posts behind the claim about the posts. A platform's logo blown up as
+   wallpaper would be decoration and someone else's trademark; these are the
+   actual exports, which is the only thing that proves the sentence. */
+.tiktok { position: relative; overflow: hidden; }
+.tiktok-wall {
+  position: absolute; inset: -12% -4%;
+  display: flex; flex-wrap: wrap; gap: 16px;
+  justify-content: center; align-content: center;
+  transform: rotate(-7deg) scale(1.1);
+  pointer-events: none;
+}
+.tiktok-wall img {
+  width: 148px; height: auto; border-radius: 9px;
+  box-shadow: 0 20px 44px rgba(0,0,0,0.6);
+}
+.tiktok-veil {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(90deg, var(--ink) 6%, rgba(8,8,10,0.9) 44%, rgba(8,8,10,0.66) 78%, rgba(8,8,10,0.9) 100%),
+    linear-gradient(180deg, var(--ink) 0%, transparent 18%, transparent 78%, var(--ink) 100%);
+}
+.tiktok-grid { position: relative; z-index: 2; }
+@media (max-width: 780px) {
+  .tiktok-wall img { width: 104px; }
+  .tiktok-veil { background: linear-gradient(180deg, var(--ink) 0%, rgba(8,8,10,0.9) 26%, rgba(8,8,10,0.94) 100%); }
+}

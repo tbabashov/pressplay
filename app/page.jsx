@@ -158,6 +158,13 @@ export default async function Landing () {
         </section>
 
         <section className="band tiktok" id="tiktok">
+          <div className="tiktok-wall" aria-hidden="true">
+            {[...SLIDES, ...SLIDES].map((sl, i) => (
+              <img key={`${sl.src}-${i}`} src={sl.src} alt="" loading="lazy" width="180" height="320" />
+            ))}
+          </div>
+          <div className="tiktok-veil" aria-hidden="true" />
+
           <div className="shell tiktok-grid">
             <div>
               <h2 className="display h2 rv">See it in the wild.</h2>

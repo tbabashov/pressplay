@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- The wordmark's own mark: the same ring and triangle drawn in the nav, so
+       a tab and the site agree. The account's headphones logo names the TikTok
+       account, not the product, which is why it does not belong here. -->
+  <rect width="32" height="32" rx="7" fill="#08080a"/>
+  <circle cx="16" cy="16" r="10.5" fill="none" stroke="#e2aa4a" stroke-width="2.4"/>
+  <path d="M13.1 10.8v10.4l8.1-5.2z" fill="#e2aa4a"/>
+</svg>

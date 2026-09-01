@@ -52,8 +52,9 @@ export const metadata = {
     'Rate an album properly. Score every song on a scale you build, weigh six criteria, ' +
     'and land on one number you can defend. Then export it as the post.',
   robots: { index: true, follow: true },
-  // The account's own mark, so a tab and a shared link carry it.
-  icons: { icon: '/photos/mark.png', apple: '/photos/mark.png' },
+  // The tab carries the product's own mark, which lives at app/icon.svg and is
+  // the same ring and triangle as the wordmark. The headphones logo names the
+  // TikTok account and stays on the link to it.
   openGraph: {
     title: 'Press Play Rankings',
     description: 'Every song scored. Six criteria weighed. One number you can defend.',
