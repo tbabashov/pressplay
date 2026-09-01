@@ -3,9 +3,10 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  CRITERIA_PRESETS, SUPERLATIVES, CRITERIA_MAX, SUPERLATIVE_MAX,
+  CRITERIA_PRESETS, CRITERIA_MAX, SUPERLATIVE_MAX,
   LABEL_MAX, keyFromLabel, clampLabel
 } from '@/lib/preferences'
+import SuperlativePicker from './SuperlativePicker'
 
 export default function RatingModel ({ initial }) {
   const [criteria, setCriteria] = useState(initial.criteria)
@@ -115,21 +116,7 @@ export default function RatingModel ({ initial }) {
           shows those and nothing else. Up to {SUPERLATIVE_MAX}.
         </p>
 
-        <ul className="rm-supers">
-          {SUPERLATIVES.map(s => {
-            const on = supers.includes(s.key)
-            const full = !on && supers.length >= SUPERLATIVE_MAX
-            return (
-              <li key={s.key}>
-                <label className={`rm-super${on ? ' on' : ''}${full ? ' full' : ''}`}>
-                  <input type="checkbox" checked={on} disabled={full} onChange={() => toggle(s.key)} />
-                  <span>{s.label}</span>
-                  {s.note && <em>{s.note}</em>}
-                </label>
-              </li>
-            )
-          })}
-        </ul>
+        <SuperlativePicker chosen={supers} onToggle={toggle} />
       </section>
 
       <div className="rm-actions">

@@ -63,10 +63,24 @@ export default function ArtistImages ({ images, onChange }) {
                   : 'Original size'}
                 {(im.x || im.y) ? ' · moved' : ''}
               </span>
-              <button type="button" className="cut-reset"
-                onClick={() => patch(i, { x: 0, y: 0, scale: 1 })}>
-                Reset position
-              </button>
+              <div className="cut-do">
+                <button type="button" className="cut-reset"
+                  onClick={() => patch(i, { x: 0, y: 0, scale: 1 })}>
+                  Reset position
+                </button>
+                <button
+                  type="button"
+                  className={`cut-lock${im.locked ? ' on' : ''}`}
+                  onClick={() => patch(i, { locked: !im.locked })}
+                  aria-pressed={!!im.locked}
+                  title={im.locked ? 'Unlock to move it again' : 'Lock it where it is'}
+                >
+                  {im.locked
+                    ? <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2" fill="currentColor" /><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" strokeWidth="1.9" /></svg>
+                    : <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2" fill="none" stroke="currentColor" strokeWidth="1.9" /><path d="M8 11V8a4 4 0 0 1 7.5-1.9" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" /></svg>}
+                  {im.locked ? 'Locked' : 'Lock'}
+                </button>
+              </div>
             </div>
             <button className="cut-x" onClick={() => drop(i)} aria-label={`Remove cut-out ${i + 1}`}>
               <svg viewBox="0 0 24 24"><path d="M6.5 6.5l11 11m0-11l-11 11" fill="none"
@@ -86,7 +100,8 @@ export default function ArtistImages ({ images, onChange }) {
           <p className="cut-hint">
             Cut-outs stand in the dome on the title card. Up to three, background already removed.
             Drag one on the title card to move it, drag a corner or scroll on it to resize, and
-            double click to put it back.
+            double click to put it back. Lock one once it is right and it stops responding, so
+            placing the next will not knock it out of position.
           </p>
         </>
       )}

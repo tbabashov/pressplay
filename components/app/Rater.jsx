@@ -6,8 +6,9 @@ import Meter from '../audio/Meter'
 import { dominant } from '../../lib/palette'
 import { ratingColor } from '../../lib/rating-colors'
 import { NA, MAX_SCORE } from '../../lib/rating-scale'
-import { superlativeByKey, DEFAULT_PREFERENCES } from '../../lib/preferences'
+import { superlativeByKey, DEFAULT_PREFERENCES, SUPERLATIVE_MAX } from '../../lib/preferences'
 import AlbumDetails from './AlbumDetails'
+import SuperlativePicker from './SuperlativePicker'
 import { fmtTime } from '../../lib/music'
 import { toSnapshot } from '../../lib/album-shape'
 
@@ -54,7 +55,26 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
   const editAlbum = next => { setAlbum(next); setSave({ state: 'idle', message: '' }) }
 
   const CRITERIA = preferences.criteria.map(c => [c.key, c.label])
-  const picks = preferences.superlatives.map(k => superlativeByKey[k]).filter(Boolean)
+
+  // Which superlatives to hand out is a decision made while rating, not one to
+  // go to a settings page for, so it is changed here and saved as it changes.
+  const [supers, setSupers] = useState(preferences.superlatives)
+  const [picksPanel, setPicksPanel] = useState(false)
+  const picks = supers.map(k => superlativeByKey[k]).filter(Boolean)
+
+  const toggleSuper = key => setSupers(prev => {
+    const next = prev.includes(key)
+      ? prev.filter(k => k !== key)
+      : (prev.length >= SUPERLATIVE_MAX ? prev : [...prev, key])
+    // Fire and forget: it is a preference, and blocking the checkbox on a
+    // round trip would make ticking one feel broken.
+    fetch('/api/preferences', {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ criteria: preferences.criteria, superlatives: next })
+    }).catch(() => {})
+    return next
+  })
   const { track, playing, play } = usePlayer()
   const art = proxied(album.cover)
 
@@ -195,6 +215,28 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
         open={details} onClose={() => setDetails(false)}
       />
 
+      <button
+        className={`set-scrim${picksPanel ? ' on' : ''}`}
+        onClick={() => setPicksPanel(false)} aria-label="Close superlatives"
+        tabIndex={picksPanel ? 0 : -1}
+      />
+      <aside className={`set${picksPanel ? ' open' : ''}`} aria-label="Superlatives" aria-hidden={!picksPanel}>
+        <header className="set-head">
+          <h2>Superlatives</h2>
+          <button onClick={() => setPicksPanel(false)} aria-label="Close superlatives">
+            <svg viewBox="0 0 24 24"><path d="M6.5 6.5l11 11m0-11l-11 11" fill="none"
+              stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
+          </button>
+        </header>
+        <div className="set-body">
+          <p className="ad-note">
+            The picks you hand out on this and every album. Turning one off takes it off the
+            rating screen and off the exported slides.
+          </p>
+          <SuperlativePicker chosen={supers} onToggle={toggleSuper} />
+        </div>
+      </aside>
+
       <div className="rater-main">
         <ol className="tracks">
           {album.tracks.map(t => {
@@ -281,6 +323,17 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
               aria-label="Override the final score"
             />
           </label>
+
+          <div className="picks-head">
+            <span>Superlatives</span>
+            <button onClick={() => setPicksPanel(true)}>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 6h16M7 12h10M10 18h4" fill="none" stroke="currentColor"
+                  strokeWidth="1.9" strokeLinecap="round" />
+              </svg>
+              Choose
+            </button>
+          </div>
 
           {picks.length > 0 && (
             <div className="picks">

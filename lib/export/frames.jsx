@@ -183,7 +183,7 @@ export function TitleFrame ({ data, palette, theme, images, onImageChange, lockC
       {cutouts.map((img, i) => (
         <ArtistCutout
           key={i} img={img} index={i} count={cutouts.length}
-          onChange={onImageChange} locked={lockCutouts}
+          onChange={onImageChange} locked={lockCutouts || img.locked}
         />
       ))}
 
