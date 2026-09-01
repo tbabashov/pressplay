@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import Mark from './Mark'
 
 // Sits flush at the top of the page, then contracts into a floating pill once
 // you start scrolling, so it stops competing with the content behind it.
@@ -37,10 +38,7 @@ export default function Nav ({ children }) {
       <div className={`nav-wrap${stuck ? ' stuck' : ''}`}>
         <nav className="nav">
           <a className="wordmark" href="/" aria-label="Press Play Rankings, home">
-            <svg width="17" height="17" viewBox="0 0 17 17" fill="none" aria-hidden="true">
-              <circle cx="8.5" cy="8.5" r="7.6" stroke="currentColor" strokeWidth="1.5" />
-              <path d="M6.9 5.6v5.8l4.5-2.9z" fill="currentColor" />
-            </svg>
+            <Mark size={18} />
             <span>Press&nbsp;Play</span>
           </a>
           <div className="nav-links">

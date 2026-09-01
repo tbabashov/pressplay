@@ -3,6 +3,7 @@ import Wall from '@/components/Wall'
 import ReviewDemo from '@/components/ReviewDemo'
 import Placeholder from '@/components/Placeholder'
 import CoverBand from '@/components/CoverBand'
+import Mark from '@/components/Mark'
 import Slides from '@/components/Slides'
 import { hasAsset } from '@/lib/asset'
 import { SignIn, StartButton } from '@/components/AuthButtons'
@@ -59,12 +60,7 @@ const GoogleMark = ({ size = 16 }) => (
   </svg>
 )
 
-const Mark = ({ size = 17 }) => (
-  <svg width={size} height={size} viewBox="0 0 17 17" fill="none" aria-hidden="true">
-    <circle cx="8.5" cy="8.5" r="7.6" stroke="currentColor" strokeWidth="1.5" />
-    <path d="M6.9 5.6v5.8l4.5-2.9z" fill="currentColor" />
-  </svg>
-)
+
 
 export default async function Landing () {
   return (

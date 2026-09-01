@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { auth } from '@/auth'
 import AuthPanel from '@/components/auth/AuthPanel'
+import Mark from '@/components/Mark'
 import wall from '@/lib/wall.json'
 import '../join.css'
 
@@ -24,10 +25,7 @@ export default async function Join () {
     <div className="jn">
       <div className="jn-left">
         <Link href="/" className="jn-mark">
-          <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
-            <circle cx="9" cy="9" r="8" fill="none" stroke="currentColor" strokeWidth="1.5" />
-            <path d="M6.9 5.6v5.8l4.5-2.9z" fill="currentColor" />
-          </svg>
+          <Mark size={19} />
           <strong>Press Play</strong>
         </Link>
 
