@@ -242,47 +242,51 @@
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .card-head span { font-size: 0.735rem; color: var(--fg-4); }
 
-/* The panel demonstrates the mechanism. It is not anybody's verdict on the
-   record in the sleeve, and it says so. */
-.card-tag {
-  justify-self: start;
-  margin-top: 5px;
-  font-style: normal;
-  font-size: 0.62rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase;
+/* Changing the record. A caption and a text control, not a slab: the slides
+   have no filled buttons on them and neither should the panel that quotes them. */
+.card-foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  margin-top: 13px; padding-top: 11px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.card-note {
+  font-size: 0.6rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--fg-4);
-  padding: 3px 7px; border-radius: 5px;
-  background: rgba(255,255,255,0.07);
+}
+.card-shuffle {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.66rem; font-weight: 650; letter-spacing: 0.01em;
+  color: var(--fg-3);
+  transition: color 200ms var(--ease);
+}
+.card-shuffle:hover { color: var(--accent); }
+.card-shuffle svg { width: 12px; height: 12px; transition: transform 320ms var(--ease); }
+.card-shuffle:hover svg { transform: rotate(180deg); }
+@media (prefers-reduced-motion: reduce) {
+  .card-shuffle, .card-shuffle svg { transition: none }
+  .card-shuffle:hover svg { transform: none }
 }
 
-/* Changing the record. One control, in the footer of the panel it changes,
-   rather than a pager for walking through fifty two sleeves one at a time. */
-.card-shuffle {
-  margin-top: 14px;
-  width: 100%;
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 9px 14px; border-radius: 10px;
-  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.01em;
-  color: var(--fg-3);
-  background: rgba(255,255,255,0.05);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.09);
-  transition: color 200ms var(--ease), background 200ms var(--ease);
-}
-.card-shuffle:hover { color: var(--fg); background: rgba(255,255,255,0.1); }
-.card-shuffle:active { background: rgba(255,255,255,0.06); }
-.card-shuffle svg { width: 14px; height: 14px; }
-@media (prefers-reduced-motion: reduce) { .card-shuffle { transition: none } }
 .card-rows { list-style: none; display: grid; gap: 8px; }
 .card-rows li { display: grid; grid-template-columns: 1fr 52px 26px; align-items: center; gap: 8px; }
 .card-rows span { font-size: 0.715rem; color: var(--fg-3); letter-spacing: -0.005em; }
-.card-rows i { height: 3.5px; border-radius: 99px; background: rgba(255,255,255,0.12); overflow: hidden; }
+.card-rows i { height: 4px; border-radius: 99px; background: rgba(255,255,255,0.1); overflow: hidden; }
 .card-rows i b { display: block; height: 100%; width: 100%; transform-origin: left; transform: scaleX(0);
-  border-radius: 99px; background: var(--accent); transition: transform 260ms linear; }
-.card-rows em { font-style: normal; font-size: 0.7rem; color: var(--fg-4);
+  border-radius: 99px; transition: transform 260ms linear; }
+.card-rows em { font-style: normal; font-size: 0.72rem; font-weight: 620; color: var(--fg-2);
   font-variant-numeric: tabular-nums; text-align: right; }
-.card-final { display: flex; align-items: baseline; justify-content: space-between;
-  margin-top: 13px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.09); }
-.card-final span { font-size: 0.735rem; color: var(--fg-3); }
-.card-final strong { font-size: 1.9rem; font-weight: 700; letter-spacing: -0.04em; color: var(--accent); }
+.card-final { display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-top: 14px; padding-top: 13px; border-top: 1px solid rgba(255,255,255,0.09); }
+.card-final-label {
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--fg-3);
+}
+.card-chip {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 68px; height: 42px; padding: 0 14px;
+  border-radius: 12px;
+  font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em;
+}
 
 @media (max-width: 980px) {
   .hero { min-height: 0; padding: 56px 0 76px; }
@@ -594,18 +598,17 @@
 }
 .criterion dd { font-size: 0.9rem; line-height: 1.55; color: var(--fg-3); }
 
+/* Labels, not capsules. On the exported frames a small uppercase label is
+   coloured text sitting directly on the panel, and it names the thing beneath
+   it. Wrapping the same words in a grey pill adds a shape that means nothing. */
 .auto-tag, .edit-tag {
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 0.055em;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  padding: 3.5px 8px;
-  border-radius: 999px;
 }
-.auto-tag { color: var(--accent); background: rgba(var(--accent-rgb), 0.14);
-  box-shadow: inset 0 0 0 1px rgba(var(--accent-rgb), 0.32); }
-.edit-tag { color: var(--fg-4); background: rgba(255,255,255,0.055);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.11); }
+.auto-tag { color: var(--accent); }
+.edit-tag { color: var(--fg-4); }
 
 /* ── TikTok ───────────────────────────────────────────────────────────────*/
 

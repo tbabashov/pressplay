@@ -29,8 +29,12 @@ const tierStyle = v => {
 }
 const finalStyle = v => {
   if (v === null) return undefined
-  const c = ratingColor(v)
-  return c.bg.startsWith('#') ? { color: c.bg } : undefined
+  const c = ratingColor(Math.round(v))
+  return {
+    background: c.bg,
+    color: c.fg,
+    boxShadow: c.glow ? `0 0 46px ${c.glow}` : 'none'
+  }
 }
 
 // Same-origin so the canvas can read it.
@@ -228,7 +232,10 @@ export default function Rater ({ album, initial = null, canSave = true }) {
 
           <div className="verdict-final">
             <span>Final</span>
-            <strong className="tnum" style={finalStyle(final)}>
+            <strong
+              className={`tnum${final === null ? ' is-empty' : ''}`}
+              style={finalStyle(final)}
+            >
               {final === null ? '—' : final.toFixed(1)}
             </strong>
           </div>

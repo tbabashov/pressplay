@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { usePlayer } from './audio/Player'
 import { dominant } from '../lib/palette'
+import { ratingColor } from '../lib/rating-colors'
 
 // The hero is a listening station, not a product card. A sleeve with the record
 // half out of it: press it and the disc spins, the room takes the cover's colour,
@@ -169,35 +170,56 @@ export default function Hero ({ albums = [], children }) {
             <div className="card-head">
               <strong>{album.name}</strong>
               <span>{album.artist}</span>
-              <em className="card-tag">Example scores</em>
             </div>
             <ul className="card-rows">
               {CRITERIA.map((c, n) => {
                 const target = demo.values[n] / 11
                 const v = Math.min(1, Math.max(0, (filled - n * 0.06) / 0.5)) * target
+                const shown = v * 11
+                const col = ratingColor(Math.round(shown))
                 return (
                   <li key={c}>
                     <span>{c}</span>
-                    <i><b style={{ transform: `scaleX(${v.toFixed(3)})` }} /></i>
-                    <em>{(v * 11).toFixed(1)}</em>
+                    <i>
+                      <b style={{ transform: `scaleX(${v.toFixed(3)})`, background: col.bg }} />
+                    </i>
+                    <em>{shown.toFixed(1)}</em>
                   </li>
                 )
               })}
             </ul>
             <div className="card-final">
-              <span>Final</span>
-              <strong className="tnum">{(filled * demo.final).toFixed(1)}</strong>
+              <span className="card-final-label">Final rating</span>
+              {(() => {
+                const shown = filled * demo.final
+                const col = ratingColor(Math.round(shown))
+                return (
+                  <strong
+                    className="card-chip tnum"
+                    style={{
+                      background: col.bg,
+                      color: col.fg,
+                      boxShadow: col.glow ? `0 0 38px ${col.glow}` : 'none'
+                    }}
+                  >
+                    {shown.toFixed(1)}
+                  </strong>
+                )
+              })()}
             </div>
 
-            <button className="card-shuffle" onClick={shuffle}>
+            <div className="card-foot">
+              <span className="card-note">Example scores</span>
+              <button className="card-shuffle" onClick={shuffle}>
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M4 7h3.6l3 4.2M4 17h3.6l7-9.9H20M4 7h3.6M20 17h-5.4l-2-2.8"
                   fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="m17.4 4.4 2.6 2.6-2.6 2.6M17.4 14.4 20 17l-2.6 2.6"
                   fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              Another record
-            </button>
+                Another record
+              </button>
+            </div>
           </div>
         </div>
       </div>
