@@ -543,8 +543,15 @@ body:has(.app) .vignette { opacity: 0.5; }
    look through. */
 .exp-rail-wrap { position: relative; }
 .exp-grid {
-  --pw: 216px;
-  --ps: 0.2;
+  /* One number, because a width and a scale that have to agree are two chances
+     to disagree. They did: a later rule set the width alone and left the scale
+     behind it, so the slide stopped filling its own box, and between the two
+     phone breakpoints it overflowed and was cropped instead. The frame is
+     1080px across, so the scale is the width over 1080 and cannot drift from
+     it. Override --pw-n and nothing else. */
+  --pw-n: 216;
+  --pw: calc(var(--pw-n) * 1px);
+  --ps: calc(var(--pw-n) / 1080);
   list-style: none;
   display: flex;
   gap: 20px;
@@ -599,9 +606,6 @@ body:has(.app) .vignette { opacity: 0.5; }
   width: 1080px; height: 1920px;
   transform-origin: top left;
   transform: scale(var(--ps));
-}
-@media (max-width: 620px) {
-  .exp-grid { --pw: 150px; --ps: 0.13888; }
 }
 /* The label and its button read as one line, not as two things pinned to
    opposite edges. Under space-between the gap between them was whatever the
@@ -2217,7 +2221,7 @@ body:has(.app) .vignette { opacity: 0.5; }
   .set-body { max-height: none; padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)); }
   /* The slide rail scrolls with a thumb, so the arrows are noise. */
   .sl-arrow { display: none; }
-  .exp-grid { --pw: 172px; }
+  .exp-grid { --pw-n: 172; }
   .lk-row { gap: 7px; }
   .lk-add, .lk-use { min-height: 40px; display: inline-flex; align-items: center; }
 
