@@ -2,16 +2,21 @@ import { GROUPS, earnedCount } from '@/lib/achievements'
 
 // A locked badge still shows how far along it is. "18 of 25" is something to
 // finish; a blank locked badge is only a reminder that you have not.
-export default function Achievements ({ list }) {
+// bare drops the section's own heading, for a page that already gave it one.
+export default function Achievements ({ list, bare }) {
   if (!list?.length) return null
   const done = earnedCount(list)
 
   return (
     <section className="ts-block ac">
-      <h2 className="ts-h2">
-        Achievements
-        <em className="ac-count tnum">{done} of {list.length}</em>
-      </h2>
+      {bare
+        ? <p className="ac-tally">{done} of {list.length} earned</p>
+        : (
+          <h2 className="ts-h2">
+            Achievements
+            <em className="ac-count tnum">{done} of {list.length}</em>
+          </h2>
+        )}
 
       {GROUPS.map(([group, label]) => {
         const rows = list.filter(a => a.group === group)

@@ -902,9 +902,13 @@ function RankRow ({ entry, highlight, palette, theme, artistRef, artistSize }) {
   )
 }
 
-export function ComparisonFrame ({ data, palette, theme }) {
-  const { review, rank, totalRanked, ladder } = data
+export function ComparisonFrame ({ data, palette, theme, hiddenParts = [], onRemovePart }) {
+  const { review, rank, totalRanked, ladder: all } = data
   const artistRefs = useRef([])
+  // A row taken off the ladder is a decision about this review's slides, so it
+  // is keyed the same way as any other removed block. The album itself is
+  // untouched: it keeps its place in the library and its rank.
+  const ladder = all.filter(e => e.gap || !hiddenParts.includes(`rank:${e.albumId}`))
   const rows = ladder.filter(e => !e.gap)
   // stable slot per row: a ref callback fires again on every re-render, so the
   // index has to come from the data rather than a running counter
@@ -930,12 +934,19 @@ export function ComparisonFrame ({ data, palette, theme }) {
             ···
           </div>
         ) : (
-          <RankRow
-            key={entry.albumId} entry={entry} palette={palette} theme={theme}
-            highlight={entry.albumId === review.albumId}
-            artistRef={el => { artistRefs.current[slot.get(entry.albumId)] = el }}
-            artistSize={artistSize}
-          />
+          <Removable
+            key={entry.albumId}
+            id={`rank:${entry.albumId}`}
+            name={entry.album.name}
+            onRemove={entry.albumId === review.albumId ? undefined : onRemovePart}
+          >
+            <RankRow
+              entry={entry} palette={palette} theme={theme}
+              highlight={entry.albumId === review.albumId}
+              artistRef={el => { artistRefs.current[slot.get(entry.albumId)] = el }}
+              artistSize={artistSize}
+            />
+          </Removable>
         ))}
       </Fill>
     </FrameShell>

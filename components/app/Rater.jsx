@@ -13,6 +13,7 @@ import SuperlativePicker from './SuperlativePicker'
 import FeatureInput from './FeatureInput'
 import { fmtTime } from '../../lib/music'
 import { toSnapshot } from '../../lib/album-shape'
+import { artUrl } from '../../app/api/art/shared.js'
 
 // Accepts 0-11, a decimal, or a dash for N/A. Anything else is simply ignored
 // rather than bounced with an error, so typing never fights the user.
@@ -56,7 +57,8 @@ const finalStyle = (v, scale) => {
 }
 
 // Same-origin so the canvas can read it.
-const proxied = url => (url ? `/api/art?u=${encodeURIComponent(url)}` : null)
+// The target rides in the path; see app/api/art/[key]/route.js for why.
+const proxied = url => (url ? artUrl(url) : null)
 
 export default function Rater ({ album: source, initial = null, canSave = true, preferences = DEFAULT_PREFERENCES }) {
   // The album is editable, so it is state rather than a prop read straight

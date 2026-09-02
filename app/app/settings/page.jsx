@@ -1,12 +1,14 @@
 import Link from 'next/link'
 import { auth } from '@/auth'
-import { getProfile, listReviews, getPreferences } from '@/lib/db'
+import { getProfile, listReviews, getPreferences, countCommentsBy, voteTotals, listFollowers, reviewId } from '@/lib/db'
 import { ensureProfile } from '@/lib/ensure-profile'
 import { published } from '@/lib/social-queries'
 import { normalisePreferences, DEFAULT_PREFERENCES } from '@/lib/preferences'
 import ProfileForm from '@/components/social/ProfileForm'
 import RatingModel from '@/components/app/RatingModel'
 import { accountTier, TIER_DETAIL } from '@/lib/tiers'
+import Achievements from '@/components/app/Achievements'
+import { achievementsFor } from '@/lib/achievements'
 
 export const metadata = { title: 'Profile' }
 export const dynamic = 'force-dynamic'
@@ -36,6 +38,21 @@ export default async function Settings () {
   ])
   const live = published(all)
   const tier = accountTier(session, profile)
+
+  // Counted off what is already stored. The only extra reads are the three
+  // things a rating cannot tell you on its own: replies written, upvotes drawn,
+  // and who is following.
+  const email = session.user.email
+  const ids = all.map(r => reviewId(email, r.albumId))
+  const [commentsWritten, votes, followers] = await Promise.all([
+    countCommentsBy(email), voteTotals(ids), listFollowers(email)
+  ])
+  const achievements = achievementsFor({
+    reviews: all,
+    commentsWritten,
+    upvotes: Object.values(votes).reduce((n, v) => n + v.up, 0),
+    followers: followers.length
+  })
   const preferences = storedPrefs ? normalisePreferences(storedPrefs) : DEFAULT_PREFERENCES
 
   return (
@@ -60,6 +77,13 @@ export default async function Settings () {
         <h1>Your rating model</h1>
       </div>
       <RatingModel initial={preferences} />
+
+      <hr className="set-rule" />
+
+      <div className="page-head set-head">
+        <h1>Achievements</h1>
+      </div>
+      <Achievements list={achievements} bare />
 
       <hr className="set-rule" />
 

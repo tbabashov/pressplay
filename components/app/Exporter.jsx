@@ -100,6 +100,15 @@ export default function Exporter ({ data, paid = false }) {
     return out
   }, [data.discographies])
 
+  // A removed ladder row is stored as rank:<albumId>, which is not a name.
+  const partNames = useMemo(() => {
+    const out = { ...PART_NAMES }
+    for (const e of data.ladder || []) {
+      if (!e.gap) out[`rank:${e.albumId}`] = `${e.album.name} on the ladder`
+    }
+    return out
+  }, [data.ladder])
+
   const saveHiddenAlbums = next => {
     setHiddenAlbums(next)
     fetch('/api/preferences', {
@@ -221,7 +230,12 @@ export default function Exporter ({ data, paid = false }) {
       node: <CriteriaFrame data={data} palette={palette} theme={theme}
               hiddenParts={hiddenParts} onRemovePart={preview ? undefined : removePart} />
     })
-    if (on('rank') && data.ladder?.length) out.push({ key: 'rank', label: 'Where it lands', node: <ComparisonFrame data={data} palette={palette} theme={theme} /> })
+    if (on('rank') && data.ladder?.length) out.push({
+      key: 'rank',
+      label: 'Where it lands',
+      node: <ComparisonFrame data={data} palette={palette} theme={theme}
+              hiddenParts={hiddenParts} onRemovePart={preview ? undefined : removePart} />
+    })
     // A discography of any size has to be split, or the grid runs off the frame.
     if (on('discography')) data.discographies?.forEach((g0, gi) => {
       // The catalogue fill is built server-side either way; dropping it here
@@ -399,7 +413,7 @@ export default function Exporter ({ data, paid = false }) {
           <ul>
             {hiddenParts.map(id => (
               <li key={`p:${id}`}>
-                <span>{PART_NAMES[id] || id}</span>
+                <span>{partNames[id] || id}</span>
                 <button onClick={() => restorePart(id)}>Put it back</button>
               </li>
             ))}
