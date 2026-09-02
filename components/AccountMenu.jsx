@@ -8,7 +8,20 @@ import { signOut } from 'next-auth/react'
 // Profile; open it is the two things anyone actually wants from it.
 export default function AccountMenu ({ name, image, handle, role }) {
   const [open, setOpen] = useState(false)
+  const [quota, setQuota] = useState(null)
   const box = useRef(null)
+
+  // Fetched when the menu opens rather than on every page, so a number nobody
+  // is looking at costs nothing.
+  useEffect(() => {
+    if (!open || quota) return
+    let alive = true
+    fetch('/api/generations')
+      .then(r => (r.ok ? r.json() : null))
+      .then(d => { if (alive && d) setQuota(d) })
+      .catch(() => {})
+    return () => { alive = false }
+  }, [open, quota])
 
   useEffect(() => {
     if (!open) return
@@ -49,6 +62,26 @@ export default function AccountMenu ({ name, image, handle, role }) {
             {handle && <span>/u/{handle}</span>}
             {role === 'owner' && <em className="acct-owner">Owner</em>}
           </div>
+
+          {/* What you are on, and what is left of today. Both here because this
+              is where anyone looks when they wonder why something stopped. */}
+          <Link className="acct-plan" href="/app/tiers" onClick={() => setOpen(false)} role="menuitem">
+            <span className={`acct-tier acct-tier-${quota?.tier || 'free'}`}>
+              {quota ? quota.tierName : '—'}
+            </span>
+            <span className="acct-quota">
+              {!quota
+                ? 'Checking today…'
+                : quota.unlimited
+                  ? 'No daily limit'
+                  : `${quota.left} of ${quota.limit} record${quota.limit === 1 ? '' : 's'} left today`}
+            </span>
+            {quota && !quota.unlimited && (
+              <span className="acct-bar" aria-hidden="true">
+                <i style={{ width: `${Math.round((quota.used / quota.limit) * 100)}%` }} />
+              </span>
+            )}
+          </Link>
 
           <Link role="menuitem" href="/app/settings" onClick={() => setOpen(false)}>
             Account

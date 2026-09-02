@@ -9,6 +9,7 @@ import StylePicker from './StylePicker'
 import { STYLES, STYLE_LIST } from '../../lib/export/styles.js'
 import ArtistImages from './ArtistImages'
 import { albumKey } from '../../lib/preferences'
+import Paywall from './Paywall'
 import {
   TitleFrame, TracksFrame, CriteriaFrame, ComparisonFrame, DiscographyFrame
 } from '../../lib/export/frames.jsx'
@@ -64,6 +65,8 @@ export default function Exporter ({ data, paid = false }) {
   const [hiddenParts, setHiddenParts] = useState(() => data.review.hiddenParts || [])
   const [hiddenAlbums, setHiddenAlbums] = useState(() => data.hiddenAlbums || [])
   const [removeError, setRemoveError] = useState('')
+  const [quota, setQuota] = useState(null)
+  const [wall, setWall] = useState(null)   // the day's records are used up
 
   const removePart = useCallback(id => {
     setHiddenParts(prev => {
@@ -330,15 +333,41 @@ export default function Exporter ({ data, paid = false }) {
   const slug = `${data.review.album.artist || data.review.album.artists?.[0] || 'album'}-${data.review.album.name}`
     .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 
+  // The day's allowance is claimed at the moment slides are actually produced,
+  // not when the screen is opened: looking at what a record would make costs
+  // nothing, and an album already produced today can be produced again after a
+  // typo without spending a second one. A refusal returns what is left, which
+  // is what the wall is built from.
+  const claim = async () => {
+    try {
+      const res = await fetch('/api/generations', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ albumId: data.review.albumId })
+      })
+      const q = await res.json().catch(() => null)
+      if (res.status === 429) { setWall(q || { used: 0, limit: 0 }); return false }
+      if (q) setQuota(q)
+      return res.ok
+    } catch {
+      // A network fault is not a reason to withhold something already paid for.
+      return true
+    }
+  }
+
   const one = async i => {
-    setError(''); setBusy(frames[i].key)
+    setError('')
+    if (!(await claim())) return
+    setBusy(frames[i].key)
     try { save(await shoot(i), `${slug}-${String(i + 1).padStart(2, '0')}.png`) }
     catch (e) { setError(e.message || 'Could not render that slide.') }
     finally { setBusy(null) }
   }
 
   const all = async () => {
-    setError(''); setBusy('all')
+    setError('')
+    if (!(await claim())) return
+    setBusy('all')
     try {
       for (let i = 0; i < frames.length; i++) {
         save(await shoot(i), `${slug}-${String(i + 1).padStart(2, '0')}.png`)
@@ -353,6 +382,12 @@ export default function Exporter ({ data, paid = false }) {
 
   return (
     <div className="exp">
+      {wall && (
+        <Paywall
+          tier={wall.tier} used={wall.used} limit={wall.limit}
+          onClose={() => setWall(null)}
+        />
+      )}
       <div className="exp-bar">
         <button className="chip chip-set" onClick={() => setPanel(true)}>
           <svg viewBox="0 0 24 24" aria-hidden="true">

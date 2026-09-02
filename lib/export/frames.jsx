@@ -61,6 +61,18 @@ const HANDLES = [
 // data-no-export like the cut-out handles do and never reaches the PNG. When
 // there is no handler — the render route, the full size preview, a published
 // page — this is the children and nothing else, not even a wrapper.
+// A cover, or the space where one would be. An <img> with an empty src makes
+// the browser request the current page again — six of them on a slide deck
+// meant six extra full page loads every time the frames rendered, which is
+// both wrong and slow. A missing cover draws a plain block instead.
+export function Cover ({ src, size, style }) {
+  const base = { width: size, height: size, flexShrink: 0, ...style }
+  if (!src) {
+    return <div aria-hidden="true" style={{ ...base, background: 'rgba(var(--ink-rgb), 0.08)' }} />
+  }
+  return <img src={src} alt="" style={{ ...base, objectFit: 'cover' }} />
+}
+
 export function Removable ({ id, name, onRemove, children, inline, style }) {
   if (!onRemove) return children
   return (
@@ -443,10 +455,8 @@ export function TitleFrame ({ data, palette, theme, images, onImageChange, lockC
         }}>
           Album #{data.albumNumber}
         </div>
-        <img
-          src={album.coverProxied} alt=""
-          style={{ width: 640, height: 640, borderRadius: 36, objectFit: 'cover', boxShadow: '0 50px 120px rgba(0,0,0,0.65)' }}
-        />
+        <Cover src={album.coverProxied} size={640}
+          style={{ borderRadius: 36, boxShadow: '0 50px 120px rgba(0,0,0,0.65)' }} />
         <FitText
           size={66} min={44} lines={2} weight={800} fitKey={album.name}
           style={{ letterSpacing: -1.5, marginTop: 22, width: 880, textAlign: 'center' }}
@@ -473,7 +483,7 @@ export function TitleFrame ({ data, palette, theme, images, onImageChange, lockC
 function Header ({ album, palette, theme, subtitle }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 32, marginBottom: 34 }}>
-      <img src={album.coverProxied} alt="" style={{ width: 168, height: 168, borderRadius: 'var(--cover-radius)', objectFit: 'cover', boxShadow: '0 20px 60px rgba(0,0,0,0.55)', flexShrink: 0 }} />
+      <Cover src={album.coverProxied} size={168} style={{ borderRadius: 'var(--cover-radius)', boxShadow: '0 20px 60px rgba(0,0,0,0.55)' }} />
       <div style={{ flex: 1, minWidth: 0 }}>
         <FitText size={48} min={30} weight={800} fitKey={album.name}
           style={{ letterSpacing: 'var(--display-track)', fontWeight: 'var(--display-weight)' }}>
@@ -722,7 +732,7 @@ function NowPlaying ({ track, album, palette, theme }) {
   return (
     <div style={{ ...surfaceStyle(theme, { radius: 34 }), padding: '24px 30px 26px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 22 }}>
-        <img src={album.coverProxied} alt="" style={{ width: 108, height: 108, borderRadius: 20, objectFit: 'cover', boxShadow: '0 14px 34px rgba(0,0,0,0.5)', flexShrink: 0 }} />
+        <Cover src={album.coverProxied} size={108} style={{ borderRadius: 20, boxShadow: '0 14px 34px rgba(0,0,0,0.5)' }} />
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: 17, fontWeight: 'var(--label-weight)', letterSpacing: 'var(--label-track)', textTransform: 'var(--label-case)', color: palette.accent, marginBottom: 7 }}>
             Now Playing
@@ -881,7 +891,7 @@ function RankRow ({ entry, highlight, palette, theme, artistRef, artistSize }) {
       }}>
         #{entry.rank}
       </span>
-      <img src={entry.coverProxied} alt="" style={{ width: 112, height: 112, borderRadius: 20, objectFit: 'cover', flexShrink: 0 }} />
+      <Cover src={entry.coverProxied} size={112} style={{ borderRadius: 20 }} />
       <div style={{ flex: 1, minWidth: 0 }}>
         <FitText size={34} min={21} lines={2} weight={700} fitKey={entry.album.name}>
           {entry.album.name}

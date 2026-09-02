@@ -3,6 +3,7 @@
 import React from 'react'
 import { fmtScore } from '../rating-scale.js'
 import { FrameShell, Surface, ScoreChip, FitText, Fill, rowRule } from './shell.jsx'
+import { Cover } from './frames.jsx'
 
 const UP = '#34d399'
 const DOWN = '#fb7185'
@@ -110,13 +111,9 @@ export function LeaderboardTitleFrame ({ total, top, palette, theme }) {
           <div style={{ display: 'flex', gap: 22, marginTop: 66, alignItems: 'flex-end' }}>
             {top.map((r, i) => (
               <div key={r.albumId} style={{ textAlign: 'center' }}>
-                <img
-                  src={r.coverProxied} alt=""
-                  style={{
-                    width: i === 0 ? 250 : 200, height: i === 0 ? 250 : 200,
-                    borderRadius: 24, objectFit: 'cover',
-                    boxShadow: '0 26px 60px rgba(0,0,0,0.6)'
-                  }}
+                <Cover
+                  src={r.coverProxied} size={i === 0 ? 250 : 200}
+                  style={{ borderRadius: 24, boxShadow: '0 26px 60px rgba(0,0,0,0.6)' }}
                 />
                 <div style={{ fontSize: 30, fontWeight: 800, color: palette.accent, marginTop: 12 }}>#{r.rank}</div>
               </div>
@@ -158,7 +155,7 @@ export function LeaderboardFrame ({ rows, from, to, total, palette, theme }) {
               <span style={{ width: 86, flexShrink: 0, display: 'flex', justifyContent: 'center' }}>
                 <Delta places={r.rankDelta} isNew={r.isNew} accent={palette.accent} />
               </span>
-              <img src={r.coverProxied} alt="" style={{ width: 66, height: 66, borderRadius: 13, objectFit: 'cover', flexShrink: 0 }} />
+              <Cover src={r.coverProxied} size={66} style={{ borderRadius: 13 }} />
               <div style={{ flex: 1, minWidth: 0 }}>
                 {/* the name column is narrow here, so long titles wrap onto a
                     second line rather than shrinking away to nothing */}
@@ -206,7 +203,7 @@ export function SongJumpsFrame ({ jumps, page, pages, palette, theme }) {
               display: 'flex', alignItems: 'center', gap: 20, height: 104,
               borderBottom: i < jumps.length - 1 ? rowRule(theme) : 'none'
             }}>
-              <img src={j.coverProxied} alt="" style={{ width: 70, height: 70, borderRadius: 14, objectFit: 'cover', flexShrink: 0 }} />
+              <Cover src={j.coverProxied} size={70} style={{ borderRadius: 14 }} />
               <div style={{ flex: 1, minWidth: 0 }}>
                 <FitText size={30} min={18} lines={2} boxHeight={70} weight={700} fitKey={j.name}>{j.name}</FitText>
                 <FitText
@@ -242,7 +239,7 @@ export function MoversFrame ({ climbers, fallers, palette, theme }) {
             display: 'flex', alignItems: 'center', gap: 14, height: 82,
             borderBottom: i < rows.length - 1 ? rowRule(theme) : 'none'
           }}>
-            <img src={r.coverProxied} alt="" style={{ width: 56, height: 56, borderRadius: 11, objectFit: 'cover', flexShrink: 0 }} />
+            <Cover src={r.coverProxied} size={56} style={{ borderRadius: 11 }} />
             <div style={{ flex: 1, minWidth: 0 }}>
               <FitText size={23} min={15} weight={700} fitKey={r.album.name}>{r.album.name}</FitText>
               <div style={{ fontSize: 18, fontWeight: 600, color: 'rgba(var(--ink-rgb), 0.5)', marginTop: 2, fontVariantNumeric: 'tabular-nums' }}>

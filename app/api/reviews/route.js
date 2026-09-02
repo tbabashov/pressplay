@@ -23,19 +23,10 @@ export async function POST (req) {
   try { body = await req.json() } catch { return Response.json({ error: 'Bad request.' }, { status: 400 }) }
   if (!body?.albumId) return Response.json({ error: 'Which album?' }, { status: 400 })
 
-  // Editing something you already rated never counts against the daily limit.
+  // Rating is not what a tier limits any more: making slides is. Someone can
+  // score as much as they like and choose which of it to publish, which is the
+  // behaviour the free tier should encourage rather than ration.
   const existing = await getReview(email, String(body.albumId))
-  if (!existing) {
-    const tier = accountTier(session, await getProfile(email))
-    const cap = limitsFor(tier).albumsPerDay
-    const used = await countToday(email)
-    if (used >= cap) {
-      return Response.json({
-        error: `That is ${cap} albums today. The limit resets at midnight.`,
-        limit: cap, used, tier
-      }, { status: 429 })
-    }
-  }
 
   // Only what was actually sent is written. Defaulting an absent field to null
   // meant any save that omitted one wiped it, and a save that omitted all of
