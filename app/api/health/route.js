@@ -1,4 +1,5 @@
 import { driver } from '@/lib/db'
+import { billingReport } from '@/lib/billing'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -18,6 +19,10 @@ export async function GET () {
        'ADMIN_EMAIL', 'SUPABASE_SERVICE_ROLE_KEY']
         .map(k => [k, process.env[k] ? 'set' : 'MISSING'])
     ),
+    // Which half of billing is configured. Selling needs the key, the store and
+    // the variant being sold; taking webhooks needs only the secret, so a build
+    // can be able to do one and not the other, and this says which.
+    billing: billingReport(),
     checks: {}
   }
 
