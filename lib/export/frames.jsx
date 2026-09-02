@@ -469,7 +469,7 @@ export function TitleFrame ({ data, palette, theme, images, onImageChange, lockC
   const cutouts = images || data.review.artistImages || []
 
   return (
-    <FrameShell palette={palette} theme={theme} fullBleed>
+    <FrameShell palette={palette} theme={theme} cover={album.coverProxied} fullBleed>
       {theme?.dome !== false && styleOf(theme).dome !== false && !off('dome') && (
         <Removable id="dome" name="the dome" onRemove={onRemovePart} style={{
           position: 'absolute', left: '50%', bottom: -12, transform: 'translateX(-50%)',
@@ -718,6 +718,7 @@ const SURFACE_PAD = 44
 // `dense` is decided once for the whole album, not per page, so every song
 // image in a set is typeset identically.
 export function TracksFrame ({ data, palette, theme, tracks, showScale, dense }) {
+  const coverForBg = data.review.album.coverProxied
   const { review, tierLabels } = data
   const { album } = review
 
@@ -732,7 +733,7 @@ export function TracksFrame ({ data, palette, theme, tracks, showScale, dense })
   const chipSize = Math.max(28, Math.min(dense ? 42 : 46, rowH - 14))
 
   return (
-    <FrameShell palette={palette} theme={theme}>
+    <FrameShell palette={palette} theme={theme} cover={coverForBg}>
       <Header album={album} palette={palette} theme={theme} />
 
       <Fill theme={theme} gap={24}>
@@ -854,6 +855,7 @@ function Superlative ({ label, value, tone, theme, field, onEdit }) {
 }
 
 export function CriteriaFrame ({ data, palette, theme, hiddenParts = [], onRemovePart, onEdit }) {
+  const coverForBg = data.review.album.coverProxied
   const off = id => hiddenParts.includes(id)
   const { review, parts, final, tierLabels } = data
   const { album } = review
@@ -863,7 +865,7 @@ export function CriteriaFrame ({ data, palette, theme, hiddenParts = [], onRemov
   const tier = typeof final === 'number' ? (tierLabels[Math.round(final)] || '') : ''
 
   return (
-    <FrameShell palette={palette} theme={theme}>
+    <FrameShell palette={palette} theme={theme} cover={coverForBg}>
       <Header
         album={album} palette={palette} theme={theme}
         subtitle={[album.year, album.genre].filter(Boolean).join(' · ')}
@@ -979,6 +981,7 @@ function RankRow ({ entry, highlight, palette, theme, artistRef, artistSize }) {
 }
 
 export function ComparisonFrame ({ data, palette, theme, hiddenParts = [], onRemovePart }) {
+  const coverForBg = data.review.album.coverProxied
   const { review, rank, totalRanked, ladder: all } = data
   const artistRefs = useRef([])
   // A row taken off the ladder is a decision about this review's slides, so it
@@ -994,7 +997,7 @@ export function ComparisonFrame ({ data, palette, theme, hiddenParts = [], onRem
     [rows.map(e => e.album.artists.join(',')).join('|')]
   )
   return (
-    <FrameShell palette={palette} theme={theme}>
+    <FrameShell palette={palette} theme={theme} cover={coverForBg}>
       <div style={{ textAlign: 'center', marginBottom: 44 }}>
         <div style={{ fontSize: 34, fontWeight: 700, letterSpacing: 5, textTransform: 'uppercase', color: palette.accent }}>
           Where It Ranks
@@ -1091,12 +1094,13 @@ function DiscoCell ({ album, isCurrent, palette, theme, onRemove }) {
 }
 
 export function DiscographyFrame ({ group, page, pages, currentAlbumName, palette, theme, counts, onRemoveAlbum }) {
+  const coverForBg = group.albums.find(a => a.rated)?.cover || group.albums[0]?.cover
   // When the list is split across pages, the header still counts the whole
   // discography rather than whatever landed on this one.
   const ratedCount = counts?.rated ?? group.albums.filter(a => a.rated).length
   const totalCount = counts?.total ?? group.albums.length
   return (
-    <FrameShell palette={palette} theme={theme}>
+    <FrameShell palette={palette} theme={theme} cover={coverForBg}>
       <div style={{ textAlign: 'center', marginBottom: 38 }}>
         <div style={{ fontSize: 28, fontWeight: 700, letterSpacing: 5, textTransform: 'uppercase', color: palette.accent }}>
           Discography{pages > 1 ? ` · ${page} / ${pages}` : ''}

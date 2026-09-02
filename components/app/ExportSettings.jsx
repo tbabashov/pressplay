@@ -2,6 +2,7 @@
 
 import { ALIGNMENTS, TEXT_SIZES, FEATURE_DROPS } from '../../lib/export/shell.jsx'
 import { STYLE_LIST } from '../../lib/export/styles.js'
+import ImageInput from './ImageInput'
 
 export const SWATCHES = [
   ['auto', 'From cover', null],
@@ -110,6 +111,42 @@ export default function ExportSettings ({ open, onClose, settings, set, onReset,
                 />
                 {settings.bg && (
                   <button className="bgclear" onClick={() => set('bg', null)}>Use the cover</button>
+                )}
+              </div>
+            </Row>
+            <Row label="Behind the slide">
+              {/* Nothing, the record's own cover blown up and blurred, or a
+                  picture of your own. The dimmer is part of the control rather
+                  than a separate setting, because a picture you cannot read
+                  the slide over is not a choice anyone wants to have made. */}
+              <div className="bgpick bgpick-col">
+                <div className="bgchoice">
+                  {[['none', 'Nothing'], ['cover', 'The cover'], ['image', 'A picture']].map(([id, label]) => (
+                    <button
+                      key={id}
+                      className={`chip${(settings.background || 'none') === id ? ' on' : ''}`}
+                      onClick={() => set('background', id)}
+                      aria-pressed={(settings.background || 'none') === id}
+                    >{label}</button>
+                  ))}
+                </div>
+                {settings.background === 'image' && (
+                  <ImageInput
+                    value={settings.backgroundImage || ''}
+                    onChange={v => set('backgroundImage', v)}
+                    label="Slide background"
+                    hint="slide-background"
+                  />
+                )}
+                {settings.background && settings.background !== 'none' && (
+                  <label className="bgdim">
+                    <span>How dark</span>
+                    <input
+                      type="range" min="0.2" max="0.92" step="0.02"
+                      value={settings.backgroundDim ?? 0.62}
+                      onChange={e => set('backgroundDim', Number(e.target.value))}
+                    />
+                  </label>
                 )}
               </div>
             </Row>

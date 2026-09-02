@@ -161,8 +161,16 @@ export function PressPlayMark () {
 }
 
 // ---------- Frame ----------
-export function FrameShell ({ palette, theme, children, fullBleed, pad }) {
+export function FrameShell ({ palette, theme, children, fullBleed, pad, cover }) {
   const inset = pad || SAFE
+  // A picture behind the slide: the record's own cover, or one you chose. It
+  // is blown up and blurred rather than fitted, because a square behind a
+  // portrait frame either letterboxes or crops, and a crop of a cover is
+  // rarely the part of it worth showing.
+  const bgImage = theme?.background === 'cover' ? cover
+    : theme?.background === 'image' ? theme?.backgroundImage
+      : null
+  const dim = typeof theme?.backgroundDim === 'number' ? theme.backgroundDim : 0.62
   return (
     <div style={{
       width: FRAME_W,
@@ -188,6 +196,36 @@ export function FrameShell ({ palette, theme, children, fullBleed, pad }) {
       flexDirection: 'column',
       WebkitFontSmoothing: 'antialiased'
     }}>
+      {bgImage && (
+        <>
+          <img
+            src={bgImage} alt=""
+            style={{
+              position: 'absolute', inset: 0, width: '100%', height: '100%',
+              objectFit: 'cover',
+              filter: `blur(${theme?.backgroundBlur ?? 34}px) saturate(1.15)`,
+              transform: 'scale(1.16)'
+            }}
+          />
+          {/* The scrim is what keeps a slide readable over any picture at
+              all, and it has to be the style's own paper rather than always
+              black: on a cream stock with dark ink a black wash makes every
+              word disappear. Light ink gets a dark scrim, dark ink gets a
+              pale one, so the picture sits behind the paper instead of on
+              top of the type. */}
+          {(() => {
+            const scrim = luminance(inkFor(theme).ink) > 0.5 ? '8, 8, 11' : '246, 243, 235'
+            const a = v => `rgba(${scrim}, ${Math.min(0.97, v)})`
+            return (
+              <div style={{
+                position: 'absolute', inset: 0,
+                background: `linear-gradient(180deg, ${a(dim + 0.18)} 0%, ${a(dim)} 34%, ${a(dim)} 66%, ${a(dim + 0.22)} 100%)`
+              }} />
+            )
+          })()}
+        </>
+      )}
+
       {/* soft accent glow behind the content; the gradient theme is already
           layered, so it only needs a whisper of extra light */}
       <div style={{

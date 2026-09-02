@@ -42,6 +42,7 @@ const DEFAULTS = {
   gradient: true, glass: true, align: 'top', textSize: 'auto', featureDrop: 2,
   accent: 'auto', perPage: 'auto', scale: 'first', safeZones: false,
   style: 'paper', watermark: true, showHandle: false, handle: '@the.press.play',
+  background: 'none', backgroundImage: '', backgroundDim: 0.62,
   autoDiscography: true,
   bg: null, dome: true, discPerPage: 9,
   include: { title: true, songs: true, criteria: true, rank: true, discography: true }
