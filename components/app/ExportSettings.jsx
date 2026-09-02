@@ -60,7 +60,7 @@ function Toggle ({ on, onChange, label }) {
   )
 }
 
-export default function ExportSettings ({ open, onClose, settings, set, onReset, paid = false }) {
+export default function ExportSettings ({ open, onClose, settings, set, onReset, paid = false, onLocked }) {
   const active = STYLE_LIST.find(s => s.id === settings.style) || STYLE_LIST[0]
   const has = look => (active.looks || []).includes(look)
   return (
@@ -223,9 +223,15 @@ export default function ExportSettings ({ open, onClose, settings, set, onReset,
                 ? 'Yours to turn off.'
                 : 'A small mark in the corner. Removing it comes with a subscription.'}
             >
+              {/* Turning it off on a free account opens the subscription
+                  screen rather than being quietly ignored. Silently swallowing
+                  the press is the worst of both: it reads as broken, and it
+                  never says why. */}
               <Toggle
                 on={settings.watermark !== false}
-                onChange={v => { if (paid || v) set('watermark', v) }}
+                onChange={v => (paid || v
+                  ? set('watermark', v)
+                  : onLocked?.('Taking the Press Play mark off comes with Plus.'))}
                 label="Press Play credit"
               />
             </Row>

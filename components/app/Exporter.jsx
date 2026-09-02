@@ -226,7 +226,11 @@ export default function Exporter ({ data, tier = 'free' }) {
   }, [tier])
 
   const set = (key, value) => setSettings(s => {
-    const next = { ...s, [key]: value }
+    // A style can bring settings with it — Marquee without the cover behind it
+    // is a poster for nothing. They are applied on the way in and can still be
+    // changed afterwards, so this is a starting point and not a lock.
+    const brought = key === 'style' ? (STYLES[value]?.defaults || {}) : {}
+    const next = { ...s, ...brought, [key]: value }
     try { window.localStorage.setItem(STORE, JSON.stringify(next)) } catch {}
     return next
   })
@@ -517,6 +521,7 @@ export default function Exporter ({ data, tier = 'free' }) {
       <ExportSettings
         open={panel} onClose={() => setPanel(false)}
         settings={settings} set={set} onReset={reset} paid={paid}
+        onLocked={reason => setWall({ tier, reason })}
       />
 
       <StylePicker

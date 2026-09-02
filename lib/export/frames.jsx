@@ -474,52 +474,82 @@ function ArtistCutout ({ img, index, count, onChange, locked }) {
 // left, the cover is a plate held down the right, and the credits sit under a
 // masthead rule rather than centred under the artwork.
 function BroadsheetTitle ({ album, data, palette, onEdit, off, onRemovePart }) {
+  const rule = (w = 2, o = 0.34) => ({ height: w, background: `rgba(var(--ink-rgb), ${o})` })
   return (
     <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column',
-      padding: '120px 96px 0' }}>
-      {!off('albumNumber') && (
-        <Removable id="albumNumber" name="the album number" onRemove={onRemovePart}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 22, marginBottom: 34 }}>
-            <span style={{ fontSize: 30, fontWeight: 'var(--label-weight)',
+      padding: '96px 84px 0' }}>
+      {/* Masthead. Two rules with the paper's name between them, the way the
+          top of a page is set, rather than a label floating over artwork. */}
+      <div style={{ ...rule(3, 0.5) }} />
+      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
+        padding: '14px 0 12px' }}>
+        <span style={{ fontSize: 26, fontWeight: 'var(--label-weight)',
+          letterSpacing: 'var(--label-track)', textTransform: 'var(--label-case)' }}>
+          Album Review
+        </span>
+        {!off('albumNumber') && (
+          <Removable id="albumNumber" name="the album number" onRemove={onRemovePart}>
+            <span style={{ fontSize: 26, fontWeight: 'var(--label-weight)',
               letterSpacing: 'var(--label-track)', textTransform: 'var(--label-case)' }}>
               No. {data.albumNumber}
             </span>
-            <span style={{ flex: 1, height: 2, background: 'rgba(var(--ink-rgb), 0.35)' }} />
-          </div>
-        </Removable>
-      )}
+          </Removable>
+        )}
+      </div>
+      <div style={{ ...rule(1, 0.3) }} />
 
-      <FitText size={112} min={58} lines={3} weight={800} fitKey={album.name}
-        style={{ letterSpacing: '-0.035em', lineHeight: 1.02, textAlign: 'left', width: '100%' }}>
+      {/* The headline runs the full measure, ragged right, the way a front page
+          sets a lead rather than the way a card centres a title. */}
+      <FitText size={150} min={68} lines={3} weight={800} fitKey={album.name}
+        style={{ marginTop: 40, letterSpacing: '-0.03em', lineHeight: 0.94,
+          textAlign: 'left', width: '100%' }}>
         <Editable field="albumName" value={album.name} onEdit={onEdit} />
       </FitText>
 
-      {!off('artist') && (
-        <Removable id="artist" name="the credit" onRemove={onRemovePart}>
-          <div style={{ marginTop: 26, paddingTop: 22, borderTop: '3px solid rgba(var(--ink-rgb), 0.4)' }}>
-            <FitText size={46} min={30} weight={600} fitKey={album.artists.join(', ')}
-              style={{ textAlign: 'left' }}>
-              <Editable field="artist" value={album.artists.join(', ')} onEdit={onEdit} />
-            </FitText>
-          </div>
-        </Removable>
-      )}
+      <div style={{ ...rule(1, 0.3), marginTop: 44 }} />
 
-      {!off('meta') && (album.year || album.genre) && (
-        <Removable id="meta" name="the year and genre" onRemove={onRemovePart}>
-          <div style={{ marginTop: 12, fontSize: 30, color: 'rgba(var(--ink-rgb), 0.62)' }}>
-            {album.year ? <Editable field="year" value={String(album.year)} onEdit={onEdit} /> : null}
-            {album.year && album.genre ? ' · ' : ''}
-            {album.genre || ''}
-          </div>
-        </Removable>
-      )}
-
-      {/* The plate: held to the right and hung below the type, the way a
-          picture sits in a column of text rather than above it. */}
-      <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'flex-end', paddingBottom: 150 }}>
-        <Cover src={album.coverProxied} size={620}
-          style={{ borderRadius: 0, boxShadow: '26px 26px 0 rgba(var(--ink-rgb), 0.16)' }} />
+      {/* Below the fold: the plate on the left, the standfirst beside it in a
+          narrow column with hairlines between its lines. */}
+      <div style={{ display: 'flex', gap: 44, marginTop: 40, alignItems: 'flex-start' }}>
+        <Cover src={album.coverProxied} size={480} style={{ borderRadius: 0, flexShrink: 0 }} />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          {!off('artist') && (
+            <Removable id="artist" name="the credit" onRemove={onRemovePart}>
+              <div style={{ paddingBottom: 16, borderBottom: '1px solid rgba(var(--ink-rgb), 0.26)' }}>
+                <div style={{ fontSize: 20, letterSpacing: '0.16em', textTransform: 'uppercase',
+                  color: 'rgba(var(--ink-rgb), 0.55)', marginBottom: 8 }}>By</div>
+                <FitText size={52} min={28} lines={2} weight={700} fitKey={album.artists.join(', ')}
+                  style={{ textAlign: 'left', lineHeight: 1.06 }}>
+                  <Editable field="artist" value={album.artists.join(', ')} onEdit={onEdit} />
+                </FitText>
+              </div>
+            </Removable>
+          )}
+          {!off('meta') && (album.year || album.genre) && (
+            <Removable id="meta" name="the year and genre" onRemove={onRemovePart}>
+              <div style={{ paddingTop: 16 }}>
+                {album.year && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
+                    paddingBottom: 10, borderBottom: '1px solid rgba(var(--ink-rgb), 0.18)' }}>
+                    <span style={{ fontSize: 20, letterSpacing: '0.16em', textTransform: 'uppercase',
+                      color: 'rgba(var(--ink-rgb), 0.55)' }}>Released</span>
+                    <span style={{ fontSize: 30, fontWeight: 600 }}>
+                      <Editable field="year" value={String(album.year)} onEdit={onEdit} />
+                    </span>
+                  </div>
+                )}
+                {album.genre && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
+                    paddingTop: 10 }}>
+                    <span style={{ fontSize: 20, letterSpacing: '0.16em', textTransform: 'uppercase',
+                      color: 'rgba(var(--ink-rgb), 0.55)' }}>Genre</span>
+                    <span style={{ fontSize: 30, fontWeight: 600 }}>{album.genre}</span>
+                  </div>
+                )}
+              </div>
+            </Removable>
+          )}
+        </div>
       </div>
     </div>
   )
@@ -634,35 +664,63 @@ function SplitTitle ({ album, data, palette, theme, onEdit, off, onRemovePart })
   )
 }
 
-// Stack: the cover is a small plate at the top with the words stacked under it
-// in a tight column, everything left aligned against one margin.
-function StackTitle ({ album, data, palette, onEdit, off, onRemovePart }) {
+// Orbit: the record as a disc rather than a sleeve. A circular cover with a
+// ring of light around it, the title set wide and light above, the credit
+// below on the same axis. Nothing here is a rounded rectangle, which is what
+// kept telling the eye this was the house card with the lights turned up.
+function OrbitTitle ({ album, data, palette, onEdit, off, onRemovePart }) {
+  const DISC = 720
   return (
     <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column',
-      justifyContent: 'center', padding: '0 96px 150px' }}>
-      <Cover src={album.coverProxied} size={420}
-        style={{ borderRadius: 'var(--cover-radius)', boxShadow: '0 40px 90px rgba(0,0,0,0.5)' }} />
+      alignItems: 'center', justifyContent: 'center', padding: '0 84px 130px', textAlign: 'center' }}>
 
       {!off('albumNumber') && (
         <Removable id="albumNumber" name="the album number" onRemove={onRemovePart}>
-          <div style={{ marginTop: 46, fontSize: 28, fontWeight: 'var(--label-weight)',
+          <div style={{ fontSize: 26, fontWeight: 'var(--label-weight)',
             letterSpacing: 'var(--label-track)', textTransform: 'var(--label-case)',
-            color: palette.accent }}>
-            Album #{data.albumNumber}
+            color: 'rgba(var(--ink-rgb), 0.6)', marginBottom: 34 }}>
+            Album {data.albumNumber}
           </div>
         </Removable>
       )}
 
-      <FitText size={96} min={52} lines={2} weight={800} fitKey={album.name}
-        style={{ marginTop: 24, letterSpacing: '-0.035em', lineHeight: 1.06,
-          textAlign: 'left', width: '100%' }}>
+      <FitText size={86} min={44} lines={2} weight={600} fitKey={album.name}
+        style={{ letterSpacing: '-0.03em', lineHeight: 1.04, width: '100%', marginBottom: 46 }}>
         <Editable field="albumName" value={album.name} onEdit={onEdit} />
       </FitText>
 
+      {/* The disc. The ring is drawn outside the artwork rather than as a
+          border on it, so the light reads as coming off the record. */}
+      <div style={{ position: 'relative', width: DISC, height: DISC, flexShrink: 0 }}>
+        <div style={{
+          position: 'absolute', inset: -70, borderRadius: '50%',
+          background: `radial-gradient(closest-side, ${palette.accentGlow || 'rgba(255,255,255,0.3)'} 0%, transparent 72%)`,
+          filter: 'blur(30px)'
+        }} />
+        <div style={{
+          position: 'absolute', inset: -14, borderRadius: '50%',
+          border: '2px solid rgba(var(--ink-rgb), 0.34)'
+        }} />
+        {album.coverProxied
+          ? <img src={album.coverProxied} alt="" style={{
+              position: 'relative', width: '100%', height: '100%',
+              borderRadius: '50%', objectFit: 'cover',
+              boxShadow: '0 40px 110px rgba(0,0,0,0.55)'
+            }} />
+          : <div style={{ position: 'relative', width: '100%', height: '100%', borderRadius: '50%',
+              background: 'rgba(var(--ink-rgb), 0.1)' }} />}
+        {/* The spindle, so it reads as a record and not as a cropped photo. */}
+        <div style={{
+          position: 'absolute', left: '50%', top: '50%', width: 86, height: 86,
+          marginLeft: -43, marginTop: -43, borderRadius: '50%',
+          background: 'rgba(0,0,0,0.55)', border: '2px solid rgba(var(--ink-rgb), 0.4)'
+        }} />
+      </div>
+
       {!off('artist') && (
         <Removable id="artist" name="the credit" onRemove={onRemovePart}>
-          <FitText size={44} min={28} weight={600} fitKey={album.artists.join(', ')}
-            style={{ marginTop: 18, textAlign: 'left', color: 'rgba(var(--ink-rgb), 0.74)' }}>
+          <FitText size={46} min={28} weight={500} fitKey={album.artists.join(', ')}
+            style={{ marginTop: 48, color: 'rgba(var(--ink-rgb), 0.82)' }}>
             <Editable field="artist" value={album.artists.join(', ')} onEdit={onEdit} />
           </FitText>
         </Removable>
@@ -670,9 +728,10 @@ function StackTitle ({ album, data, palette, onEdit, off, onRemovePart }) {
 
       {!off('meta') && (album.year || album.genre) && (
         <Removable id="meta" name="the year and genre" onRemove={onRemovePart}>
-          <div style={{ marginTop: 12, fontSize: 28, color: 'rgba(var(--ink-rgb), 0.52)' }}>
+          <div style={{ marginTop: 16, fontSize: 26, letterSpacing: '0.22em',
+            textTransform: 'uppercase', color: 'rgba(var(--ink-rgb), 0.5)' }}>
             {album.year ? <Editable field="year" value={String(album.year)} onEdit={onEdit} /> : null}
-            {album.year && album.genre ? ' · ' : ''}
+            {album.year && album.genre ? '   ·   ' : ''}
             {album.genre || ''}
           </div>
         </Removable>
@@ -685,7 +744,7 @@ const TITLE_LAYOUTS = {
   broadsheet: BroadsheetTitle,
   poster: PosterTitle,
   split: SplitTitle,
-  stack: StackTitle
+  orbit: OrbitTitle
 }
 
 export function TitleFrame ({ data, palette, theme, images, onImageChange, lockCutouts,

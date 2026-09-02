@@ -1,4 +1,4 @@
-import { Archivo, Bricolage_Grotesque, Instrument_Serif, IBM_Plex_Mono, Archivo_Black } from 'next/font/google'
+import { Archivo, Bricolage_Grotesque, Fraunces, Space_Grotesk, Archivo_Black, Outfit } from 'next/font/google'
 import './globals.css'
 import './immersive.css'
 import PlayerProvider from '../components/audio/Player'
@@ -29,17 +29,30 @@ const display = Bricolage_Grotesque({
 // Export styles are separate design languages, so each one gets its own voice
 // rather than a weight of the same face. Self-hosted by next/font, which is
 // what lets the rasteriser inline them.
-const serif = Instrument_Serif({
-  subsets: ['latin'], weight: ['400'], style: ['normal', 'italic'],
+// Instrument Serif ships one weight, 400, so every heavier weight the paper
+// style asked for did nothing and the headline came out as thin as the body.
+// Fraunces is variable across 100-900 and carries an optical size axis, which
+// is what lets one family set both a broadsheet headline and a legible row.
+const serif = Fraunces({
+  subsets: ['latin'], axes: ['SOFT', 'WONK', 'opsz'],
   display: 'swap', variable: '--font-serif'
 })
-const mono = IBM_Plex_Mono({
+// The mono style is monochrome, not monospace — the name is about colour. A
+// typewriter face was fighting that rather than saying it, so this is a
+// grotesque with enough character to carry a near-empty page.
+const mono = Space_Grotesk({
   subsets: ['latin'], weight: ['400', '500', '600', '700'],
   display: 'swap', variable: '--font-mono'
 })
 const poster = Archivo_Black({
   subsets: ['latin'], weight: ['400'],
   display: 'swap', variable: '--font-poster'
+})
+// Aurora was set in the same face as the app itself, which is why it read as
+// the house style with the lights turned up. Outfit is geometric and open,
+// which is what that style is actually about.
+const glow = Outfit({
+  subsets: ['latin'], display: 'swap', variable: '--font-glow'
 })
 
 export const metadata = {
@@ -70,7 +83,7 @@ export const viewport = {
 
 export default function RootLayout ({ children }) {
   return (
-    <html lang="en" className={`${archivo.variable} ${display.variable} ${serif.variable} ${mono.variable} ${poster.variable}`}>
+    <html lang="en" className={`${archivo.variable} ${display.variable} ${serif.variable} ${mono.variable} ${poster.variable} ${glow.variable}`}>
       <body style={{ fontFamily: 'var(--font-archivo), system-ui, sans-serif' }}>
         <PlayerProvider>
           <Atmosphere />
