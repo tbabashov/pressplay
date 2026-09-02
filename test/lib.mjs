@@ -102,3 +102,30 @@ await test('nothing public carries an email address', async () => {
   const out = publicProfile({ email: 'someone@example.com', handle: 'h', name: 'N' })
   assert.equal(JSON.stringify(out).includes('@'), false)
 })
+
+await test('taken off the slides is scoped to the record you are looking at', async () => {
+  // A Drake export was listing "bandana beats" and "pinata beats" under
+  // things taken off its slides, because hidden albums are one list for the
+  // whole account and the panel never narrowed it to this artist.
+  const { albumKey, hiddenForArtist } = await import(R + 'preferences.js')
+
+  const hidden = [
+    albumKey('Freddie Gibbs & Madlib', 'Bandana Beats'),
+    albumKey('Freddie Gibbs & Madlib', 'Pinata Beats'),
+    albumKey('Drake', 'For All The Dogs Scary Hours Edition')
+  ]
+
+  const onDrake = hiddenForArtist(hidden, ['Drake'])
+  assert.equal(onDrake.length, 1, 'only Drake keys belong on a Drake export')
+  assert.ok(onDrake[0].startsWith('drake::'))
+
+  const onGibbs = hiddenForArtist(hidden, ['Freddie Gibbs & Madlib'])
+  assert.equal(onGibbs.length, 2)
+
+  // Case and stray spacing must not split one artist into two.
+  assert.deepEqual(hiddenForArtist(hidden, ['  dRaKe ']), onDrake)
+
+  // No artist means nothing to scope to, which must not mean everything.
+  assert.deepEqual(hiddenForArtist(hidden, []), [])
+  assert.deepEqual(hiddenForArtist(hidden, [undefined]), [])
+})

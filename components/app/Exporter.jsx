@@ -8,7 +8,7 @@ import ExportSettings, { SWATCHES } from './ExportSettings'
 import StylePicker from './StylePicker'
 import { STYLES, STYLE_LIST } from '../../lib/export/styles.js'
 import ArtistImages from './ArtistImages'
-import { albumKey } from '../../lib/preferences'
+import { albumKey, hiddenForArtist } from '../../lib/preferences'
 import Paywall from './Paywall'
 import Looks from './Looks'
 import { canUseStyle, limitsFor, TIER_DETAIL, TIERS } from '../../lib/tiers'
@@ -104,6 +104,21 @@ export default function Exporter ({ data, tier = 'free' }) {
       return next
     })
   }, [data.review.albumId])
+
+  // Hidden albums are one list for the whole account, but this screen is one
+  // record by one artist. Unscoped, a Drake export offered to put back a
+  // Freddie Gibbs record, which is both noise and a way to change another
+  // artist's slides from a screen that is not showing them. The key carries
+  // the artist it belongs to, so it is the thing to scope on.
+  // The second artist is the record's own: with the discography slides switched
+  // off there is no group to read one from, but the record still has an artist
+  // and its removals are still this screen's to undo.
+  const hiddenHere = useMemo(
+    () => hiddenForArtist(hiddenAlbums, [
+      ...(data.discographies || []).map(g => g.artist),
+      data.review?.album?.artists?.[0]
+    ]),
+    [hiddenAlbums, data.discographies, data.review])
 
   // Key to the name the album is actually called, for the list of what has
   // been taken off.
@@ -527,9 +542,9 @@ export default function Exporter ({ data, tier = 'free' }) {
           deleting: a cover comes off this artist's grid and a block comes off
           this review's slide, and either can be put back from here without
           leaving the screen the slides are on. */}
-      {(hiddenParts.length > 0 || hiddenAlbums.length > 0) && (
+      {(hiddenParts.length > 0 || hiddenHere.length > 0) && (
         <section className="exp-off">
-          <h2>Taken off the slides<em>{hiddenParts.length + hiddenAlbums.length}</em></h2>
+          <h2>Taken off the slides<em>{hiddenParts.length + hiddenHere.length}</em></h2>
           <ul>
             {hiddenParts.map(id => (
               <li key={`p:${id}`}>
@@ -537,7 +552,7 @@ export default function Exporter ({ data, tier = 'free' }) {
                 <button onClick={() => restorePart(id)}>Put it back</button>
               </li>
             ))}
-            {hiddenAlbums.map(key => (
+            {hiddenHere.map(key => (
               <li key={`a:${key}`}>
                 {/* The key is lowercased and stripped of any edition suffix, so
                     it is not a name. The album itself is still in the data, 
