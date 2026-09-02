@@ -207,3 +207,66 @@ await test('a hand built scale survives the trip through normaliseScale', async 
   assert.equal(normaliseScale({ ...mine, max: 0 }), DEFAULT_SCALE)
   assert.equal(normaliseScale({ ...mine, max: SCALE_MAX_CEILING + 1 }), DEFAULT_SCALE)
 })
+
+await test('a webhook signature is the whole of the billing security', async () => {
+  // This route is the only thing that can raise an account's tier and it is
+  // reachable by anyone who knows the URL, so a signature check that can be
+  // fooled is a free Max subscription for the internet.
+  const { createHmac } = await import('node:crypto')
+  const { validSignature } = await import(R + 'billing.js')
+
+  const secret = 'a-test-signing-secret'
+  const body = JSON.stringify({ meta: { event_name: 'subscription_created' } })
+  const good = createHmac('sha256', secret).update(body, 'utf8').digest('hex')
+
+  assert.ok(validSignature(body, good, secret))
+  assert.ok(validSignature(body, ` ${good.toUpperCase()} `, secret), 'case and spacing')
+
+  assert.ok(!validSignature(body, good, 'the-wrong-secret'))
+  assert.ok(!validSignature(body + ' ', good, secret), 'a changed body breaks it')
+  assert.ok(!validSignature(body, good.slice(0, -2) + '00', secret))
+
+  // Must return false, never throw: a throw here is a 500, and a 500 makes
+  // Lemon Squeezy retry an event that is never going to be accepted.
+  for (const bad of [null, undefined, '', 'not-hex', 'zz', good.slice(0, 10)]) {
+    assert.equal(validSignature(body, bad, secret), false, String(bad))
+  }
+  assert.equal(validSignature(body, good, null), false, 'no secret configured')
+})
+
+await test('a subscription status becomes the right tier', async () => {
+  process.env.LS_VARIANT_PLUS_MONTHLY = '111'
+  process.env.LS_VARIANT_MAX_YEARLY = '222'
+  const { subscriptionUpdate, emailFor, entitled } = await import(R + 'billing.js')
+
+  const make = (variant, status) => ({
+    meta: { custom_data: { email: 'Buyer@Example.com ' } },
+    data: { id: 'sub_1', attributes: { variant_id: variant, status, user_email: 'till@example.com' } }
+  })
+
+  assert.equal(subscriptionUpdate(make('111', 'active')).tier, 'plus')
+  assert.equal(subscriptionUpdate(make('222', 'active')).tier, 'max')
+  assert.equal(subscriptionUpdate(make('222', 'on_trial')).tier, 'max')
+
+  // Cancelled is "will not renew", not "has stopped": Lemon Squeezy sends
+  // expired when the paid period actually runs out. Dropping the tier here
+  // would take back time that was paid for.
+  assert.equal(subscriptionUpdate(make('222', 'cancelled')).tier, 'max')
+  assert.equal(subscriptionUpdate(make('222', 'past_due')).tier, 'max', 'retries still count')
+
+  assert.equal(subscriptionUpdate(make('222', 'expired')).tier, 'free')
+  assert.equal(subscriptionUpdate(make('222', 'unpaid')).tier, 'free')
+  assert.equal(subscriptionUpdate(make('222', 'paused')).tier, 'free')
+
+  // A product nobody configured is not this app's subscription. Guessing a
+  // tier from an unknown variant is how someone gets Max for buying a sticker.
+  assert.equal(subscriptionUpdate(make('999', 'active')), null)
+  assert.equal(subscriptionUpdate(make(undefined, 'active')), null)
+  assert.ok(!entitled('something_new'), 'an unknown status grants nothing')
+
+  // The account email travels through checkout; the till email is only a
+  // fallback, because the two are often not the same person's typing.
+  assert.equal(emailFor(make('111', 'active')), 'buyer@example.com')
+  assert.equal(
+    emailFor({ data: { attributes: { user_email: 'Till@Example.com' } } }), 'till@example.com')
+})
