@@ -605,7 +605,7 @@ body:has(.app) .vignette { opacity: 0.5; }
 }
 /* The label and its button read as one line, not as two things pinned to
    opposite edges. Under space-between the gap between them was whatever the
-   label did not use — 57px on one card and 105px on the next — so no two
+   label did not use, 57px on one card and 105px on the next, so no two
    captions in the row looked alike. */
 .exp-meta {
   display: flex; align-items: center; justify-content: flex-start;

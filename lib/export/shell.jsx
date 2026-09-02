@@ -27,7 +27,7 @@ const JUSTIFY = { top: 'flex-start', center: 'center', bottom: 'flex-end' }
 
 // Song-title size for the tracklist. Auto follows how tightly packed the page
 // is; the fixed picks pin it regardless. Either way the whole list shares the
-// one size — the fitter only ever moves it for every row at once.
+// one size, the fitter only ever moves it for every row at once.
 export const TEXT_SIZES = [['auto', 'Auto'], ['s', 'S'], ['m', 'M'], ['l', 'L']]
 const TEXT_SIZE_PX = { s: 26, m: 30, l: 34 }
 
@@ -114,7 +114,7 @@ export function useUniformFit (refs, size, min, deps) {
   return fs
 }
 
-// Divider between rows inside a surface — brighter on glass so it survives the sheen
+// Divider between rows inside a surface, brighter on glass so it survives the sheen
 export const rowRule = theme => styleOf(theme).rule(theme)
 
 // ---------- Watermark ----------
@@ -247,7 +247,7 @@ export function FrameShell ({ palette, theme, children, fullBleed, pad, cover })
   )
 }
 
-// The variable-length body of a frame — a tracklist, a ladder, a grid — filling
+// The variable-length body of a frame, a tracklist, a ladder, a grid, filling
 // whatever room is left below the header. Which end it settles against is the
 // Align setting, so a short list can hang from the top, sit in the middle, or
 // rest on the bottom.
@@ -278,7 +278,7 @@ export function SafeZoneOverlay () {
 
 // ---------- Text that always fits ----------
 // Steps the font size down until the text fits its box, then wraps onto up to
-// `lines` lines — so a long album title is never cut off with an ellipsis and
+// `lines` lines, so a long album title is never cut off with an ellipsis and
 // never needs an abbreviation. Measured against the live DOM, which is the
 // same DOM html-to-image serialises, so the preview and the PNG always agree.
 export function FitText ({

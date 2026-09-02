@@ -123,8 +123,19 @@ export default async function Landing () {
           </div>
         </section>
 
-        <section className="band" id="rating">
-          <div className="shell">
+        <section className="band rateband" id="rating">
+          {/* The screen is the ground the section stands on, not a picture
+              dropped into the middle of it: full height, bleeding off the
+              right edge the way it would if you were looking over someone's
+              shoulder, with the copy held on the readable side. */}
+          <div className="rateband-bg" aria-hidden="true">
+            <img
+              src="/photos/rating-late-registration.jpg"
+              alt="" width="1800" height="1473" loading="lazy"
+            />
+          </div>
+
+          <div className="shell rateband-copy">
             <h2 className="display h2 rv">Score it song by song.</h2>
             <p className="lede measure rv">
               The whole record, one row at a time, with a preview of every track so you are
@@ -134,21 +145,10 @@ export default async function Landing () {
             <p className="lede measure rv">
               The song average is one input, not the verdict. Everything beside it is a judgement
               you define: keep the defaults, rename them, drop the ones you do not believe in, add
-              the ones you do. Leave any of them blank and it simply does not vote — so a record
+              the ones you do. Leave any of them blank and it simply does not vote, so a record
               with flawless production and nothing to say cannot hide behind its beats.
             </p>
           </div>
-
-          {/* The real screen, not a drawing of it: Late Registration, all
-              twenty one tracks scored, the criteria panel open beside them. */}
-          <figure className="ratefig rv">
-            <img
-              src="/photos/rating-late-registration.jpg"
-              alt="Late Registration being rated: every track scored from 0 to 11, with the criteria panel and a final score of 9.4"
-              width="1800" height="1473" loading="lazy"
-            />
-            <figcaption>Late Registration, all twenty one tracks scored. Final: 9.4.</figcaption>
-          </figure>
         </section>
 
         <section className="band band-alt" id="export">

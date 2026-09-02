@@ -37,7 +37,7 @@ const serif = Fraunces({
   subsets: ['latin'], axes: ['SOFT', 'WONK', 'opsz'],
   display: 'swap', variable: '--font-serif'
 })
-// The mono style is monochrome, not monospace — the name is about colour. A
+// The mono style is monochrome, not monospace, the name is about colour. A
 // typewriter face was fighting that rather than saying it, so this is a
 // grotesque with enough character to carry a near-empty page.
 const mono = Space_Grotesk({

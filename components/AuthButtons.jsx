@@ -30,8 +30,10 @@ async function Account ({ session }) {
   const profile = await getProfile(email).catch(() => null)
   return (
     <AccountMenu
-      name={(name || '').split(' ')[0] || name}
-      image={image}
+      // Same reason as the app shell: the profile is what was edited, the
+      // session is what the account signed up with and never changes.
+      name={profile?.name || (name || '').split(' ')[0] || name}
+      image={profile?.image || image}
       handle={profile?.handle}
       role={role}
     />

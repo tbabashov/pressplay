@@ -13,7 +13,7 @@ const TABS = [
   ['following', 'Following']
 ]
 
-const fmt = (n, d = 1) => (typeof n === 'number' ? n.toFixed(d) : '—')
+const fmt = (n, d = 1) => (typeof n === 'number' ? n.toFixed(d) : '-')
 
 // Relative times are the reader's clock, so they are filled in after mount.
 // Rendering them on the server would mismatch, and be wrong for anyone outside
@@ -105,7 +105,7 @@ function TrackList ({ tracks, scale }) {
             </span>
             {col
               ? <span className="sc-ts tnum" style={{ background: col.bg, color: col.fg }}>{fmt(t.score)}</span>
-              : <span className="sc-ts sc-ts-none">—</span>}
+              : <span className="sc-ts sc-ts-none">-</span>}
           </li>
         )
       })}

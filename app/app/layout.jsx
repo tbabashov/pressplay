@@ -32,7 +32,18 @@ export default async function AppLayout ({ children }) {
         </Link>
 
         <div className="topbar-end">
-          <AccountMenu name={first || name} image={image} handle={profile?.handle} role={role} />
+          {/* The profile is what someone edited; the session is what they
+              signed in with and it never changes again. Reading the session
+              here meant the name and picture in the bar stayed on whatever
+              the account was called at sign up, however many times the profile
+              was saved, which is exactly what "it says saved but nothing
+              changes" looks like. */}
+          <AccountMenu
+            name={profile?.name || first || name}
+            image={profile?.image || image}
+            handle={profile?.handle}
+            role={role}
+          />
         </div>
       </header>
 

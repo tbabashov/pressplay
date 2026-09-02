@@ -46,8 +46,10 @@
        control stranded a third of the way in from the right on a phone, with
        nothing between it and the menu button. Tighter here, so it sits where
        a thumb reaches for it. */
-    gap: 10px;
-    height: 56px; padding: 0 10px 0 18px; border-radius: 999px;
+    gap: 8px;
+    /* Further right still: the control wants to sit under the thumb, which on
+       a phone is the outer edge and not the middle of the bar. */
+    height: 56px; padding: 0 6px 0 16px; border-radius: 999px;
     background: rgba(14,14,18,0.86); border-color: rgba(255,255,255,0.13);
     box-shadow: 0 14px 36px rgba(0,0,0,0.45);
   }
@@ -1316,8 +1318,8 @@
 
 /* ---- phone: the tiers are a deck, not a row ----------------------------
    Three cards side by side on a 390px screen is three unreadable columns.
-   One card at a time, snapped, swiped through — which is what a phone is
-   for — with the row of dots saying how many there are so nobody has to
+   One card at a time, snapped, swiped through, which is what a phone is
+   for, with the row of dots saying how many there are so nobody has to
    discover the other two by accident. */
 @media (max-width: 900px) {
   .tiers {
@@ -1350,30 +1352,80 @@
   .tiers { margin-top: 12px; }
 }
 
-/* ---- the rating screen, shown as itself --------------------------------
-   A real capture rather than an illustration, so it is held like a screen:
-   inset, edge-lit, and cut off at the bottom the way the page it came from
-   carries on below the fold. */
-.ratefig { margin: 46px auto 0; max-width: 1180px; padding: 0 24px; }
-.ratefig img {
-  display: block; width: 100%; height: auto;
-  border-radius: 18px 18px 0 0;
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.1),
-    0 -1px 0 rgba(255,255,255,0.12),
-    0 50px 120px rgba(0,0,0,0.6);
-  /* Fades out at the bottom instead of stopping dead, because the screen it
-     came from does not stop there either. */
-  -webkit-mask-image: linear-gradient(180deg, #000 68%, transparent 100%);
-  mask-image: linear-gradient(180deg, #000 68%, transparent 100%);
-}
-.ratefig figcaption {
-  margin-top: -34px; text-align: center; position: relative;
-  font-size: 12.6px; letter-spacing: 0.06em; text-transform: uppercase;
-  color: var(--fg-4);
-}
+/* ---- phone: the record has to fit on the screen ------------------------
+   The rig is composed for a wide stage: the column sits right of centre and
+   the disc slides a quarter of its own width further right again, so the
+   sleeve landed 24px off centre and the disc's edge ran 12px past the side of
+   a 390px phone. On a narrow screen the pair is centred as one thing and the
+   disc peeks by less, which is the same idea at a size that fits. */
 @media (max-width: 900px) {
-  .ratefig { margin-top: 32px; padding: 0 14px; }
-  .ratefig img { border-radius: 12px 12px 0 0; }
-  .ratefig figcaption { margin-top: -18px; font-size: 11.4px; }
+  .rig-col {
+    width: min(300px, 78%);
+    align-items: center;
+    margin-inline: auto;
+  }
+  .hero-stage.on .rig-col { translate: 0 -8%; }
+  /* Half the peek. The sleeve and the disc together then sit centred on the
+     stage without any nudge, which is the point: the pair is the object, not
+     the sleeve with something behind it. */
+  .disc { translate: 15% 0; }
+  .rig.out .disc { translate: 26% 0; }
+  .hero-stage { min-height: 420px; }
+}
+
+/* ---- the rating screen as the ground ----------------------------------
+   A real capture rather than an illustration, and part of the section rather
+   than an object sitting in the middle of it. It bleeds off the right edge at
+   full height, the way it would if you were looking over someone's shoulder,
+   and a wash from the left keeps the copy on readable ground. */
+.rateband { position: relative; overflow: hidden; }
+.rateband-bg {
+  position: absolute; inset: 0; z-index: 0;
+  display: flex; justify-content: flex-end; align-items: center;
+  pointer-events: none;
+}
+.rateband-bg img {
+  height: 108%; width: auto; max-width: none;
+  object-fit: cover; object-position: left center;
+  transform: translateX(16%);
+  border-radius: 22px;
+  box-shadow: 0 60px 140px rgba(0,0,0,0.6);
+  opacity: 0.85;
+  /* Fades into the page on every side that meets it. */
+  -webkit-mask-image:
+    linear-gradient(90deg, transparent 0%, #000 26%),
+    linear-gradient(180deg, transparent 0%, #000 12%, #000 84%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(90deg, transparent 0%, #000 26%),
+    linear-gradient(180deg, transparent 0%, #000 12%, #000 84%, transparent 100%);
+  mask-composite: intersect;
+}
+/* The wash that keeps the words legible over it. */
+.rateband::after {
+  content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(90deg,
+    var(--bg, #08080b) 0%, rgba(8,8,11,0.94) 34%, rgba(8,8,11,0.6) 58%, rgba(8,8,11,0.22) 100%);
+}
+.rateband-copy { position: relative; z-index: 2; }
+.rateband-copy .measure { max-width: 46ch; }
+
+@media (max-width: 900px) {
+  /* On a phone there is no column to put it beside, so it sits under the copy
+     as texture. Behind text it has to be much further back than it is beside
+     text: at the desktop weight the tracklist rows read as a second paragraph
+     interleaved with the first, which is unreadable rather than layered. */
+  .rateband { padding-bottom: 0; }
+  .rateband-bg { justify-content: center; align-items: flex-end; }
+  .rateband-bg img {
+    height: auto; width: 150%;
+    transform: translate(4%, 30%);
+    opacity: 0.28; border-radius: 14px;
+    filter: saturate(0.7);
+  }
+  .rateband::after {
+    background: linear-gradient(180deg,
+      var(--bg, #08080b) 0%, rgba(8,8,11,0.97) 30%, rgba(8,8,11,0.9) 62%, rgba(8,8,11,0.74) 100%);
+  }
+  .rateband-copy .measure { max-width: none; }
 }

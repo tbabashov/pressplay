@@ -100,7 +100,7 @@ export default function TiersScreen ({ mine, heading, reason, onClose, closeHref
                       ? (() => {
                           const y = yearlySaving(t.key)
                           return y
-                            ? `${y.percent}% off — $${y.saves.toFixed(2)} against paying monthly`
+                            ? `${y.percent}% off, $${y.saves.toFixed(2)} against paying monthly`
                             : `$${(t.yearly / 12).toFixed(2)} a month, billed yearly`
                         })()
                       : `or $${t.yearly.toFixed(2)} a year, ${yearlySaving(t.key)?.percent ?? 0}% off`}

@@ -226,7 +226,7 @@ export default function Exporter ({ data, tier = 'free' }) {
   }, [tier])
 
   const set = (key, value) => setSettings(s => {
-    // A style can bring settings with it — Marquee without the cover behind it
+    // A style can bring settings with it, Marquee without the cover behind it
     // is a poster for nothing. They are applied on the way in and can still be
     // changed afterwards, so this is a starting point and not a lock.
     const brought = key === 'style' ? (STYLES[value]?.defaults || {}) : {}
@@ -563,8 +563,8 @@ export default function Exporter ({ data, tier = 'free' }) {
             {hiddenAlbums.map(key => (
               <li key={`a:${key}`}>
                 {/* The key is lowercased and stripped of any edition suffix, so
-                    it is not a name. The album itself is still in the data —
-                    hidden ones are marked rather than dropped — so the name it
+                    it is not a name. The album itself is still in the data, 
+                    hidden ones are marked rather than dropped, so the name it
                     is actually called comes from there. */}
                 <span>{hiddenNames[key] || key.split('::')[1] || key}</span>
                 <button onClick={() => saveHiddenAlbums(hiddenAlbums.filter(k => k !== key))}>

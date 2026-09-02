@@ -58,7 +58,7 @@ export default function AccountMenu ({ name, image, handle, role }) {
       {open && (
         <div className="acct-menu" role="menu">
           <div className="acct-who">
-            <strong>{name || 'You'}</strong>
+            <strong>{name || handle || 'You'}</strong>
             {handle && <span>/u/{handle}</span>}
             {role === 'owner' && <em className="acct-owner">Owner</em>}
           </div>

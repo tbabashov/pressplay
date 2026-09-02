@@ -12,9 +12,9 @@ import {
 
 // ---------- Frame 1: Title card ----------
 
-// The crystal dome the artist cut-outs stand in. Always glass — unlike the
+// The crystal dome the artist cut-outs stand in. Always glass, unlike the
 // content surfaces, this one isn't part of the beta theme.
-// The rim and sheen do all the work — no backdrop-filter, for the same reason
+// The rim and sheen do all the work, no backdrop-filter, for the same reason
 // as surfaceStyle: it rasterises as a huge misplaced blur in the export.
 const DOME = {
   background: [
@@ -44,11 +44,11 @@ export const CUTOUT_BASE_H = 520
 const MIN_H = 90
 const MAX_H = 1750
 
-const HANDLE = 56 // frame pixels — the preview is ~0.2 scale, so ~11px on screen
+const HANDLE = 56 // frame pixels, the preview is ~0.2 scale, so ~11px on screen
 const HIT = 96    // the pointer target is larger than the thing you can see
 
-// Handles are named by the two edges they sit on. Everything else — where they
-// are drawn, which corner is anchored, which cursor is shown — is derived from
+// Handles are named by the two edges they sit on. Everything else, where they
+// are drawn, which corner is anchored, which cursor is shown, is derived from
 // this one description, so a handle cannot end up drawn in one place and
 // anchored to another.
 const HANDLES = [
@@ -60,10 +60,10 @@ const HANDLES = [
 
 // Anything on a slide that can be taken off it. The X is chrome, so it carries
 // data-no-export like the cut-out handles do and never reaches the PNG. When
-// there is no handler — the render route, the full size preview, a published
-// page — this is the children and nothing else, not even a wrapper.
+// there is no handler, the render route, the full size preview, a published
+// page, this is the children and nothing else, not even a wrapper.
 // A cover, or the space where one would be. An <img> with an empty src makes
-// the browser request the current page again — six of them on a slide deck
+// the browser request the current page again, six of them on a slide deck
 // meant six extra full page loads every time the frames rendered, which is
 // both wrong and slow. A missing cover draws a plain block instead.
 export function Cover ({ src, size, style }) {
@@ -164,7 +164,7 @@ const imgOf = (rect, spread, host) => ({
 
 // A cut-out that can be dragged and scaled straight on the preview. Unlocked it
 // gets a transform box with corner handles; those carry data-no-export so the
-// PNG capture filters them out — the cut-out itself lives inside the node
+// PNG capture filters them out, the cut-out itself lives inside the node
 // html-to-image serialises, so nothing decorative may survive into the export.
 function ArtistCutout ({ img, index, count, onChange, locked }) {
   const wrap = useRef(null)
@@ -795,7 +795,7 @@ export function TitleFrame ({ data, palette, theme, images, onImageChange, lockC
       ))}
 
       {/* The album number and cover sit a touch lower, while the credits below
-          close up towards the cover — the title's two-line box already carries
+          close up towards the cover, the title's two-line box already carries
           plenty of air, so the gap under the artwork can afford to tighten. */}
       <div style={{
         position: 'relative', display: 'flex', flexDirection: 'column',
@@ -863,7 +863,7 @@ function Header ({ album, palette, theme, subtitle }) {
         <div style={{ fontSize: 25, fontWeight: 600, color: palette.accent, marginTop: 7 }}>
           {subtitle || [
             album.year, album.genre, `${album.tracks.length} songs`,
-            // Discogs tracklists carry no durations — "0 min" is worse than nothing
+            // Discogs tracklists carry no durations, "0 min" is worse than nothing
             album.runtimeMs > 0 && fmtRuntime(album.runtimeMs)
           ].filter(Boolean).join(' · ')}
         </div>
@@ -878,7 +878,7 @@ function Header ({ album, palette, theme, subtitle }) {
 // and the labels share one size that fits the longest of them.
 // Two rows of seven, as a grid rather than wrapped flex. Wrapping was one
 // pixel away from fitting seven per row, so the glass theme's 3px border tipped
-// it into a third row — 65px taller than budgeted, which is what pushed the
+// it into a third row, 65px taller than budgeted, which is what pushed the
 // legend over the bottom safe line.
 export const LEGEND_COLS = 7
 export const LEGEND_H = 168
@@ -928,7 +928,7 @@ const featLabel = (features, n) => n >= features.length
   ? ` ft. ${features.join(', ')}`
   : ` ft. ${features.slice(0, n).join(', ')} & more`
 
-// The whole tracklist shares one title size and one feature size — a single
+// The whole tracklist shares one title size and one feature size, a single
 // monster credit must never leave one row typeset differently from its
 // neighbours. So an overlong row has its guest list trimmed first, and only if
 // a row still won't fit does the size step down for every row at once.
@@ -1029,7 +1029,7 @@ export function TracksFrame ({ data, palette, theme, tracks, showScale, dense })
   const { album } = review
 
   // Rows shrink to fit whatever is left of the frame, so a hand-typed count of
-  // 25 songs — or a page that also carries the scale legend — still lands
+  // 25 songs, or a page that also carries the scale legend, still lands
   // inside the safe area instead of running off the bottom. SAFETY keeps a
   // deliberate margin so rounding can never nudge the last row over the line.
   const SAFETY = 12
@@ -1039,7 +1039,7 @@ export function TracksFrame ({ data, palette, theme, tracks, showScale, dense })
   const chipSize = Math.max(28, Math.min(dense ? 42 : 46, rowH - 14))
 
   // Split puts the songs down the left and everything that reads them down the
-  // right — the scale, and what the record's best and worst turned out to be.
+  // right, the scale, and what the record's best and worst turned out to be.
   // The other layouts stack, which is a different slide rather than the same
   // one with the panel moved.
   if (styleOf(theme).layout === 'split') {
@@ -1172,7 +1172,7 @@ function CriterionRow ({ part, theme, last }) {
         fontVariantNumeric: 'tabular-nums', color: has ? 'var(--ink)' : 'rgba(var(--ink-rgb), 0.35)',
         flexShrink: 0
       }}>
-        {has ? part.value.toFixed(1) : '—'}
+        {has ? part.value.toFixed(1) : ', '}
       </span>
     </div>
   )
@@ -1355,7 +1355,7 @@ function RankRow ({ entry, highlight, palette, theme, artistRef, artistSize }) {
         <FitText size={34} min={21} lines={2} weight={700} fitKey={entry.album.name}>
           {entry.album.name}
         </FitText>
-        {/* every credit on the ladder shares one size — see useUniformFit */}
+        {/* every credit on the ladder shares one size, see useUniformFit */}
         <div
           ref={artistRef}
           style={{

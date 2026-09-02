@@ -1,8 +1,8 @@
 import { auth } from '@/auth'
 import { TIERS, TIER_DETAIL } from '@/lib/tiers'
 
-// The one place a payment provider will be wired in. Everything upstream — the
-// buttons on the landing page, the buttons in the subscription screen — already
+// The one place a payment provider will be wired in. Everything upstream, the
+// buttons on the landing page, the buttons in the subscription screen, already
 // posts here and already handles being told there is nowhere to go yet, so
 // switching billing on is a change to this file and nothing else.
 export async function POST (req) {

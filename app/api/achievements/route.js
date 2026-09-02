@@ -40,7 +40,7 @@ export async function GET () {
   // before any of this existed should not be met with sixteen notifications at
   // once. It is marked by a sentinel written on that first look rather than by
   // the list being empty, because a new account earns nothing on its first look
-  // either — and without the sentinel it stayed "first" until it earned
+  // either, and without the sentinel it stayed "first" until it earned
   // something, which is exactly the moment it should have been told.
   const INIT = '@seen'
   const firstLook = !seen.has(INIT)
