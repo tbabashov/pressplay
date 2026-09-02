@@ -40,15 +40,21 @@
 
 @media (max-width: 900px) {
   .nav-wrap { padding: 10px 14px; }
+  .nav-wrap { padding: 0; }
   .nav-wrap.stuck { padding: 8px 14px; }
+  /* At the top of the page this is a plain bar across the width, exactly as it
+     is on a desktop; the pill is what the page scrolling does to it. It used
+     to be a pill from the first pixel on a phone, which made the two feel like
+     different sites rather than one at two sizes.
+
+     The 30px gap the desktop bar uses between its groups also left the account
+     control stranded a third of the way in, so it is tighter here and sits
+     where a thumb reaches. */
   .nav {
-    /* The 30px gap the desktop bar uses between its groups left the account
-       control stranded a third of the way in from the right on a phone, with
-       nothing between it and the menu button. Tighter here, so it sits where
-       a thumb reaches for it. */
     gap: 8px;
-    /* Further right still: the control wants to sit under the thumb, which on
-       a phone is the outer edge and not the middle of the bar. */
+    height: 58px; padding: 0 14px 0 16px;
+  }
+  .nav-wrap.stuck .nav {
     height: 56px; padding: 0 6px 0 16px; border-radius: 999px;
     background: rgba(14,14,18,0.86); border-color: rgba(255,255,255,0.13);
     box-shadow: 0 14px 36px rgba(0,0,0,0.45);
@@ -443,8 +449,11 @@
 
 /* ================================================================ mobile == */
 @media (max-width: 980px) {
-  /* No room to sit them diagonally, so they stack and nothing travels. */
-  .hero-stage { min-height: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 22px; }
+  /* No room to sit them diagonally, so they stack and nothing travels. They
+     centre rather than hang off the right edge: flex-end is what put the
+     record, the arrows and the card all 44px to one side of a screen that has
+     no second column to balance them against. */
+  .hero-stage { min-height: 0; display: flex; flex-direction: column; align-items: center; gap: 22px; }
   .rig-col, .hero-stage.on .rig-col { width: min(330px, 74%); translate: 0 0; }
   .card { position: static; width: min(330px, 74%); }
 }
@@ -1362,7 +1371,6 @@
   .rig-col {
     width: min(300px, 78%);
     align-items: center;
-    margin-inline: auto;
   }
   .hero-stage.on .rig-col { translate: 0 -8%; }
   /* Half the peek. The sleeve and the disc together then sit centred on the

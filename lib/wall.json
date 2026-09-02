@@ -140,8 +140,8 @@
     "artist": "Fleetwood Mac",
     "genre": "Rock",
     "cover": "/wall/rumours-deluxe-edition.jpg",
-    "dz": 137494154,
-    "track": "Songbird"
+    "dz": 972433232,
+    "track": "Songbird (Live)"
   },
   {
     "name": "OK Computer",
@@ -225,11 +225,11 @@
   },
   {
     "name": "Vivaldi: The Four Seasons",
-    "artist": "Itzhak Perlman, London Philharmonic Orchestra & Israel Philharmonic Orchestra",
+    "artist": "I Musici",
     "genre": "Classical",
     "cover": "/wall/vivaldi-the-four-seasons.jpg",
-    "dz": 3255069751,
-    "track": "Trois Gymnopédies: Gymnopédie No. 1 in D Major: Lent et douloureux"
+    "dz": 4182674,
+    "track": "Spring: Allegro"
   },
   {
     "name": "Bach: Goldberg Variations, BWV 988 (1981 Recording)",
@@ -260,8 +260,8 @@
     "artist": "Taylor Swift",
     "genre": "Pop",
     "cover": "/wall/1989-taylor-s-version-deluxe.jpg",
-    "track": "Shake It Off",
-    "dz": 89077555
+    "track": "Shake It Off (Taylor's Version)",
+    "dz": 2512293231
   },
   {
     "name": "Thriller",
@@ -340,8 +340,8 @@
     "artist": "Talking Heads",
     "genre": "Alternative",
     "cover": "/wall/remain-in-light.jpg",
-    "dz": 3051930911,
-    "track": "Once In A Lifetime"
+    "dz": 108717048,
+    "track": "Once In A Lifetime (Live)"
   },
   {
     "name": "Fear Of A Blank Planet (2024 Remaster)",
@@ -717,7 +717,7 @@
     "genre": "Psychedelic Pop",
     "cover": "/wall/currents.jpg",
     "track": "Let It Happen",
-    "dz": 10709540
+    "dz": 103052650
   },
   {
     "name": "Graduation",
@@ -725,7 +725,7 @@
     "genre": "Hip-Hop/Rap",
     "cover": "/wall/graduation.jpg",
     "track": "Stronger",
-    "dz": 86994002
+    "dz": 630827242
   },
   {
     "name": "IGOR",
@@ -733,7 +733,7 @@
     "genre": "Hip-Hop/Rap",
     "cover": "/wall/igor.jpg",
     "track": "EARFQUAKE",
-    "dz": 97140952
+    "dz": 681009652
   },
   {
     "name": "Take Care",
@@ -741,6 +741,6 @@
     "genre": "Hip-Hop/Rap",
     "cover": "/wall/take-care.jpg",
     "track": "Marvins Room",
-    "dz": 1622724
+    "dz": 17347969
   }
 ]
