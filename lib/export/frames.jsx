@@ -73,6 +73,46 @@ export function Cover ({ src, size, style }) {
   return <img src={src} alt="" style={{ ...base, objectFit: 'cover' }} />
 }
 
+// Text you can change on the slide instead of going back a screen for it.
+// contentEditable rather than an input, because the text has to keep the
+// frame's own type: an input here would need every font, size and letter
+// spacing copied onto it, and would still break the moment a style changed.
+//
+// The value is only written back on blur or Enter. Writing on every keystroke
+// would put a request behind every letter, and would re-render the frame under
+// the cursor while someone was still typing into it.
+export function Editable ({ field, value, onEdit, multiline, children, style }) {
+  const ref = useRef(null)
+  if (!onEdit) return children ?? value
+
+  const commit = () => {
+    const next = (ref.current?.innerText ?? '').replace(/\s+/g, ' ').trim()
+    if (next && next !== value) onEdit(field, next)
+    else if (ref.current) ref.current.innerText = value   // put back what was there
+  }
+
+  return (
+    <span
+      ref={ref}
+      className="pp-ed"
+      contentEditable
+      suppressContentEditableWarning
+      spellCheck={false}
+      data-pp-edit="1"
+      onPointerDown={e => e.stopPropagation()}
+      onBlur={commit}
+      onKeyDown={e => {
+        e.stopPropagation()
+        if (e.key === 'Enter' && !multiline) { e.preventDefault(); ref.current?.blur() }
+        if (e.key === 'Escape') { if (ref.current) ref.current.innerText = value; ref.current?.blur() }
+      }}
+      style={{ outline: 'none', ...style }}
+    >
+      {value}
+    </span>
+  )
+}
+
 export function Removable ({ id, name, onRemove, children, inline, style }) {
   if (!onRemove) return children
   return (
@@ -422,17 +462,23 @@ function ArtistCutout ({ img, index, count, onChange, locked }) {
   )
 }
 
-export function TitleFrame ({ data, palette, theme, images, onImageChange, lockCutouts }) {
+export function TitleFrame ({ data, palette, theme, images, onImageChange, lockCutouts,
+  hiddenParts = [], onRemovePart, onEdit }) {
+  const off = id => hiddenParts.includes(id)
   const { album } = data.review
   const cutouts = images || data.review.artistImages || []
 
   return (
     <FrameShell palette={palette} theme={theme} fullBleed>
-      {theme?.dome !== false && styleOf(theme).dome !== false && (
-        <div style={{
+      {theme?.dome !== false && styleOf(theme).dome !== false && !off('dome') && (
+        <Removable id="dome" name="the dome" onRemove={onRemovePart} style={{
           position: 'absolute', left: '50%', bottom: -12, transform: 'translateX(-50%)',
-          width: 950, height: 470, borderRadius: '475px 475px 0 0', ...DOME
-        }} />
+          width: 950, height: 470
+        }}>
+          <div style={{
+            width: '100%', height: '100%', borderRadius: '475px 475px 0 0', ...DOME
+          }} />
+        </Removable>
       )}
 
       {cutouts.map((img, i) => (
@@ -449,29 +495,45 @@ export function TitleFrame ({ data, palette, theme, images, onImageChange, lockC
         position: 'relative', display: 'flex', flexDirection: 'column',
         alignItems: 'center', textAlign: 'center', padding: '274px 90px 0'
       }}>
-        <div style={{
-          fontSize: 50, fontWeight: 'var(--label-weight)', letterSpacing: 'var(--label-track)', textTransform: 'var(--label-case)',
-          color: palette.accent, marginBottom: 52
-        }}>
-          Album #{data.albumNumber}
-        </div>
+        {!off('albumNumber') && (
+          <Removable id="albumNumber" name="the album number" onRemove={onRemovePart}>
+            <div style={{
+              fontSize: 50, fontWeight: 'var(--label-weight)', letterSpacing: 'var(--label-track)', textTransform: 'var(--label-case)',
+              color: palette.accent, marginBottom: 52
+            }}>
+              Album #{data.albumNumber}
+            </div>
+          </Removable>
+        )}
         <Cover src={album.coverProxied} size={640}
           style={{ borderRadius: 36, boxShadow: '0 50px 120px rgba(0,0,0,0.65)' }} />
         <FitText
           size={66} min={44} lines={2} weight={800} fitKey={album.name}
           style={{ letterSpacing: -1.5, marginTop: 22, width: 880, textAlign: 'center' }}
         >
-          {album.name}
+          <Editable field="albumName" value={album.name} onEdit={onEdit} />
         </FitText>
-        <FitText
-          size={42} min={28} weight={600} fitKey={album.artists.join(', ')}
-          style={{ color: 'rgba(var(--ink-rgb), 0.78)', marginTop: 10, width: 880, textAlign: 'center' }}
-        >
-          {album.artists.join(', ')}
-        </FitText>
-        <div style={{ fontSize: 32, fontWeight: 600, color: palette.accent, marginTop: 10 }}>
-          {[album.year, album.genre].filter(Boolean).join(' · ')}
-        </div>
+        {!off('artist') && (
+          <Removable id="artist" name="the credit" onRemove={onRemovePart}>
+            <FitText
+              size={42} min={28} weight={600} fitKey={album.artists.join(', ')}
+              style={{ color: 'rgba(var(--ink-rgb), 0.78)', marginTop: 10, width: 880, textAlign: 'center' }}
+            >
+              <Editable field="artist" value={album.artists.join(', ')} onEdit={onEdit} />
+            </FitText>
+          </Removable>
+        )}
+        {!off('meta') && [album.year, album.genre].filter(Boolean).length > 0 && (
+          <Removable id="meta" name="the year and genre" onRemove={onRemovePart}>
+            <div style={{ fontSize: 32, fontWeight: 600, color: palette.accent, marginTop: 10 }}>
+              {album.year
+                ? <Editable field="year" value={String(album.year)} onEdit={onEdit} />
+                : null}
+              {album.year && album.genre ? ' · ' : ''}
+              {album.genre || ''}
+            </div>
+          </Removable>
+        )}
       </div>
     </FrameShell>
   )
@@ -780,16 +842,18 @@ function NowPlaying ({ track, album, palette, theme }) {
   )
 }
 
-function Superlative ({ label, value, tone, theme }) {
+function Superlative ({ label, value, tone, theme, field, onEdit }) {
   return (
     <Surface theme={theme} radius={26} style={{ padding: '18px 24px', flex: 1, minWidth: 0 }}>
       <div style={{ fontSize: 18, fontWeight: 'var(--label-weight)', letterSpacing: 'var(--label-track)', textTransform: 'var(--label-case)', color: tone }}>{label}</div>
-      <FitText size={30} min={19} weight={700} fitKey={value} style={{ marginTop: 6 }}>{value}</FitText>
+      <FitText size={30} min={19} weight={700} fitKey={value} style={{ marginTop: 6 }}>
+        <Editable field={field} value={value} onEdit={onEdit} />
+      </FitText>
     </Surface>
   )
 }
 
-export function CriteriaFrame ({ data, palette, theme, hiddenParts = [], onRemovePart }) {
+export function CriteriaFrame ({ data, palette, theme, hiddenParts = [], onRemovePart, onEdit }) {
   const off = id => hiddenParts.includes(id)
   const { review, parts, final, tierLabels } = data
   const { album } = review
@@ -816,13 +880,15 @@ export function CriteriaFrame ({ data, palette, theme, hiddenParts = [], onRemov
           {sel.bestSong && !off('bestSong') && (
             <Removable id="bestSong" name="Best Song" onRemove={onRemovePart}
               style={{ flex: 1, minWidth: 0, display: 'flex' }}>
-              <Superlative label="Best Song" value={sel.bestSong} tone="#6ee7a0" theme={theme} />
+              <Superlative label="Best Song" value={sel.bestSong} tone="#6ee7a0" theme={theme}
+                field="selections.bestSong" onEdit={onEdit} />
             </Removable>
           )}
           {sel.worstSong && !off('worstSong') && (
             <Removable id="worstSong" name="Worst Song" onRemove={onRemovePart}
               style={{ flex: 1, minWidth: 0, display: 'flex' }}>
-              <Superlative label="Worst Song" value={sel.worstSong} tone="#f97316" theme={theme} />
+              <Superlative label="Worst Song" value={sel.worstSong} tone="#f97316" theme={theme}
+                field="selections.worstSong" onEdit={onEdit} />
             </Removable>
           )}
         </div>

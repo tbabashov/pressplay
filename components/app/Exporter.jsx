@@ -24,7 +24,11 @@ const STORE = 'ppr.export.settings'
 const PART_NAMES = {
   nowPlaying: 'Now playing',
   bestSong: 'Best song',
-  worstSong: 'Worst song'
+  worstSong: 'Worst song',
+  albumNumber: 'The album number',
+  artist: 'The credit',
+  meta: 'Year and genre',
+  dome: 'The dome'
 }
 
 // Stored preferences cannot grant a style the account does not include.
@@ -116,6 +120,68 @@ export default function Exporter ({ data, tier = 'free' }) {
     }
     return out
   }, [data.ladder])
+
+  // Text typed straight onto a slide. A dotted field takes a nested path, so
+  // one handler covers the review's own columns and the superlatives inside
+  // selections without a branch per field. The frames read from this state, so
+  // the slide updates as soon as it is committed rather than after a reload.
+  const [edits, setEdits] = useState(null)
+  const editField = useCallback((field, value) => {
+    setEdits(prev => {
+      const next = { ...(prev || {}) }
+      if (field.includes('.')) {
+        const [group, key] = field.split('.')
+        next[group] = { ...(next[group] || data.review[group] || {}), [key]: value }
+      } else {
+        next[field] = value
+      }
+
+      // The slides read the album snapshot stored on the review, not the
+      // review's own columns, so a name typed onto a slide has to reach both.
+      // Writing only the column left the edit saved and the slide unchanged
+      // the next time the page was opened.
+      const { coverProxied, ...album } = data.review.album
+      const patch = { albumId: data.review.albumId }
+      if (next.selections) patch.selections = next.selections
+      if (next.albumName !== undefined) { patch.albumName = next.albumName; album.name = next.albumName }
+      if (next.artist !== undefined) {
+        patch.artist = next.artist
+        album.artists = next.artist.split(',').map(a => a.trim()).filter(Boolean)
+      }
+      if (next.year !== undefined) { patch.year = next.year; album.year = next.year }
+      if (next.albumName !== undefined || next.artist !== undefined || next.year !== undefined) {
+        patch.album = album
+      }
+
+      fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(patch)
+      }).catch(() => setRemoveError('That edit did not save.'))
+
+      return next
+    })
+  }, [data.review])
+
+  // What the frames are given: the review as stored, with anything typed over
+  // it on top. One object, so nothing downstream has to know an edit happened.
+  const shown = useMemo(() => {
+    if (!edits) return data
+    const { albumName, artist, year, selections } = edits
+    return {
+      ...data,
+      review: {
+        ...data.review,
+        selections: selections || data.review.selections,
+        album: {
+          ...data.review.album,
+          name: albumName ?? data.review.album.name,
+          artists: artist ? artist.split(',').map(a => a.trim()).filter(Boolean) : data.review.album.artists,
+          year: year ?? data.review.album.year
+        }
+      }
+    }
+  }, [data, edits])
 
   const saveHiddenAlbums = next => {
     setHiddenAlbums(next)
@@ -225,8 +291,10 @@ export default function Exporter ({ data, tier = 'free' }) {
     const out = []
     if (on('title')) out.push({
       key: 'title', label: 'Title card',
-      node: <TitleFrame data={data} palette={palette} theme={theme} images={cutouts}
-              onImageChange={nudgeCutout} lockCutouts={preview} />
+      node: <TitleFrame data={shown} palette={palette} theme={theme} images={cutouts}
+              onImageChange={nudgeCutout} lockCutouts={preview}
+              hiddenParts={hiddenParts} onRemovePart={preview ? undefined : removePart}
+              onEdit={preview ? undefined : editField} />
     })
     if (on('songs')) pages.forEach((tracks, i) => out.push({
       key: `songs-${i}`,
@@ -238,8 +306,9 @@ export default function Exporter ({ data, tier = 'free' }) {
     if (on('criteria')) out.push({
       key: 'criteria',
       label: 'The criteria',
-      node: <CriteriaFrame data={data} palette={palette} theme={theme}
-              hiddenParts={hiddenParts} onRemovePart={preview ? undefined : removePart} />
+      node: <CriteriaFrame data={shown} palette={palette} theme={theme}
+              hiddenParts={hiddenParts} onRemovePart={preview ? undefined : removePart}
+              onEdit={preview ? undefined : editField} />
     })
     if (on('rank') && data.ladder?.length) out.push({
       key: 'rank',
@@ -280,7 +349,8 @@ export default function Exporter ({ data, tier = 'free' }) {
     })
     return out
   }, [palette, theme, data, pages, settings.include, settings.scale, settings.discPerPage,
-      settings.autoDiscography, cutouts, preview, hiddenParts, hiddenAlbums, removePart])
+      settings.autoDiscography, cutouts, preview, hiddenParts, hiddenAlbums, removePart,
+      shown, editField])
 
   // Cut-outs belong to the review, not to this page, so they persist.
   useEffect(() => {

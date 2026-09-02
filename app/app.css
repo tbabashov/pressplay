@@ -2139,3 +2139,14 @@ body:has(.app) .vignette { opacity: 0.5; }
   position: absolute; right: 12px; bottom: 10px;
   font-size: 10.5px; font-weight: 700; color: var(--fg-4);
 }
+
+/* Text you can type over, on the slide. Only marked while the pointer is on
+   it, so an arranged slide still looks like the slide it will become. It is
+   real text in the frame's own type, not an input dressed up as one, which is
+   why it survives a style change without any of the type being copied. */
+.pp-ed { cursor: text; border-radius: 4px; transition: background 140ms var(--ease), box-shadow 140ms var(--ease); }
+.pp-ed:hover { background: rgba(var(--ink-rgb), 0.08); box-shadow: 0 0 0 4px rgba(var(--ink-rgb), 0.08); }
+.pp-ed:focus {
+  background: rgba(var(--ink-rgb), 0.1);
+  box-shadow: 0 0 0 4px rgba(var(--ink-rgb), 0.18);
+}
