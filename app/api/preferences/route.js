@@ -1,6 +1,6 @@
 import { auth } from '@/auth'
 import { getPreferences, savePreferences, getProfile } from '@/lib/db'
-import { normalisePreferences, DEFAULT_PREFERENCES, DEFAULT_CRITERIA } from '@/lib/preferences'
+import { normalisePreferences, DEFAULT_PREFERENCES, DEFAULT_CRITERIA, normaliseLooks } from '@/lib/preferences'
 import { DEFAULT_SCALE } from '@/lib/scales'
 import { accountTier, limitsFor } from '@/lib/tiers'
 
@@ -31,7 +31,8 @@ export async function PUT (req) {
     superlatives: has('superlatives') ? body.superlatives : base.superlatives,
     scale: has('scale') ? body.scale : base.scale,
     hiddenAlbums: has('hiddenAlbums') ? body.hiddenAlbums : base.hiddenAlbums,
-    seenAchievements: has('seenAchievements') ? body.seenAchievements : base.seenAchievements
+    seenAchievements: has('seenAchievements') ? body.seenAchievements : base.seenAchievements,
+    looks: has('looks') ? body.looks : base.looks
   })
   // Custom criteria and custom scales are what the paid tiers are for, so the
   // check has to be here and not only on the settings screen. A free account
@@ -40,6 +41,9 @@ export async function PUT (req) {
   const limits = limitsFor(accountTier(session, await getProfile(session.user.email)))
   if (!limits.customCriteria) preferences.criteria = DEFAULT_CRITERIA
   if (!limits.customScales) preferences.scale = DEFAULT_SCALE
+  // How many looks an account may keep is a tier limit, so it is trimmed here
+  // and not only in the page that saves them.
+  preferences.looks = normaliseLooks(preferences.looks, limits.presets)
 
   await savePreferences(session.user.email, preferences)
   return Response.json({ preferences })

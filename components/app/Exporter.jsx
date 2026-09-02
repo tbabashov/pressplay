@@ -10,6 +10,7 @@ import { STYLES, STYLE_LIST } from '../../lib/export/styles.js'
 import ArtistImages from './ArtistImages'
 import { albumKey } from '../../lib/preferences'
 import Paywall from './Paywall'
+import Looks from './Looks'
 import { canUseStyle, limitsFor, TIER_DETAIL, TIERS } from '../../lib/tiers'
 import {
   TitleFrame, TracksFrame, CriteriaFrame, ComparisonFrame, DiscographyFrame
@@ -386,7 +387,13 @@ export default function Exporter ({ data, tier = 'free' }) {
     // data-no-export. Without this filter they are rasterised into the PNG, so
     // every title card ships with the editing chrome drawn over the artist.
     const opts = {
-      width: W, height: H, pixelRatio: 1, cacheBust: true,
+      width: W, height: H,
+      // Max renders at twice the linear size: 2160x3840 rather than 1080x1920.
+      // TikTok re-encodes what it is given, so the difference shows up as text
+      // that stays sharp after their compression rather than as a bigger file
+      // nobody sees.
+      pixelRatio: limits.exportScale || 1,
+      cacheBust: true,
       // Every cover reaches the page as /api/art?u=<the real url>, and the
       // rasteriser keys its inlined-image cache on the part of the URL before
       // the question mark unless told otherwise. So all of them hashed to
@@ -515,6 +522,22 @@ export default function Exporter ({ data, tier = 'free' }) {
         open={stylePanel} onClose={() => setStylePanel(false)}
         settings={settings} set={set} tier={tier}
         onLocked={reason => setWall({ tier, reason })}
+      />
+
+      <Looks
+        settings={settings}
+        apply={next => setSettings(prev => {
+          // Applying a look is a settings change like any other, so it is
+          // remembered the same way. Without this it lasted until the page
+          // was reloaded and then quietly reverted.
+          const merged = { ...prev, ...next, style: allowedStyle(tier, next.style ?? prev.style) }
+          try { window.localStorage.setItem(STORE, JSON.stringify(merged)) } catch {}
+          return merged
+        })}
+        tier={tier}
+        limit={limits.presets === Infinity ? null : limits.presets}
+        initial={data.looks || []}
+        onLocked={reason => reason && setWall({ tier, reason })}
       />
 
       {/* Everything taken off the slides, and the way back. Removing is not
