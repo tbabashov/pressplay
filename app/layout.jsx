@@ -6,6 +6,7 @@ import NowPlaying from '../components/audio/NowPlaying'
 import Atmosphere from '../components/Atmosphere'
 import ToTop from '../components/ToTop'
 import CookieBanner from '@/components/CookieBanner'
+import { SITE_URL } from '@/lib/site-url'
 
 // One family, self-hosted at build time. The width axis carries the display voice,
 // so there is no second face and nothing borrowed from the platform sans.
@@ -57,7 +58,7 @@ const glow = Outfit({
 })
 
 export const metadata = {
-  metadataBase: new URL('https://pressplayrankings.com'),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: 'Press Play Rankings. An average is not an opinion.',
     template: '%s · Press Play Rankings'

@@ -1,7 +1,7 @@
 import { listProfiles, listReviews } from '@/lib/db'
 import { published } from '@/lib/social-queries'
+import { SITE_URL as SITE } from '@/lib/site-url'
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://pressplayrankings.com'
 
 // Every published review is a page a stranger could land on, which is the only
 // way this gets found without someone posting a link. Built from the database

@@ -1,4 +1,4 @@
-const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://pressplayrankings.com'
+import { SITE_URL as SITE } from '@/lib/site-url'
 
 // The app itself is behind a sign-in and has nothing a search engine can read,
 // so it is not worth crawling; the public pages are the whole point. Blocking
