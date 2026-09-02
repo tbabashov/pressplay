@@ -1300,3 +1300,11 @@
   .tiktok-wall img { width: 104px; }
   .tiktok-veil { background: linear-gradient(180deg, var(--ink) 0%, rgba(8,8,10,0.9) 26%, rgba(8,8,10,0.94) 100%); }
 }
+
+/* ---- phone ------------------------------------------------------------
+   The demo card's vote arrows were 24 by 22, which is a target for a mouse
+   pointer and not for a thumb. */
+@media (max-width: 860px) {
+  .votes button { min-width: 42px; min-height: 40px; }
+  .wordmark { min-height: 44px; display: inline-flex; align-items: center; }
+}

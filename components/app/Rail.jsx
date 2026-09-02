@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 
@@ -23,10 +24,30 @@ const LINKS = [
   ['/app/settings', 'Profile', 'profile']
 ]
 
+// On a phone the sidebar became a strip that scrolled sideways, which put four
+// of the seven destinations off the edge where nobody would ever find them. A
+// phone gets a tab bar instead: four fixed tabs and a More sheet holding the
+// rest, so nothing is hidden and nothing has to be scrolled to.
+const TABS = ['/app', '/app/library', '/app/board', '/app/feed']
+// A tab label has about nine characters before it starts crowding its
+// neighbour, so the long ones get a short name here rather than being
+// truncated or wrapped.
+const TAB_LABEL = { '/app/board': 'Ranks' }
+const MORE = ['/app/discography', '/app/stats', '/app/settings']
+
 export default function Rail ({ image, name }) {
   const path = usePathname()
   const initial = (name || '?').trim()[0]?.toUpperCase() || '?'
+  const [more, setMore] = useState(false)
+  const on = href => (href === '/app' ? path === '/app' : path.startsWith(href))
+  const byHref = Object.fromEntries(LINKS.map(l => [l[0], l]))
+  const moreActive = MORE.some(on)
+
+  // Any navigation closes the sheet, including a back gesture.
+  useEffect(() => { setMore(false) }, [path])
+
   return (
+    <>
     <nav className="rail" aria-label="Sections">
       {LINKS.map(([href, label, icon]) => {
         const on = href === '/app' ? path === '/app' : path.startsWith(href)
@@ -42,5 +63,55 @@ export default function Rail ({ image, name }) {
         )
       })}
     </nav>
+      {/* The phone navigation. Rendered next to the rail rather than instead
+          of it, so which one is showing is a question of width and not of a
+          media query guess made in JavaScript. */}
+      <nav className="tabbar" aria-label="Sections">
+        {TABS.map(href => {
+          const [, label, icon] = byHref[href]
+          return (
+            <Link key={href} href={href} className={`tab${on(href) ? ' on' : ''}`}
+              aria-current={on(href) ? 'page' : undefined}>
+              <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">{ICONS[icon]}</svg>
+              <span>{TAB_LABEL[href] || label}</span>
+            </Link>
+          )
+        })}
+        <button
+          className={`tab${moreActive || more ? ' on' : ''}`}
+          onClick={() => setMore(v => !v)}
+          aria-expanded={more}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+            <circle cx="5" cy="12" r="2" /><circle cx="12" cy="12" r="2" /><circle cx="19" cy="12" r="2" />
+          </svg>
+          <span>More</span>
+        </button>
+      </nav>
+
+      {more && (
+        <>
+          <button className="sheet-scrim" onClick={() => setMore(false)} aria-label="Close" />
+          <div className="sheet" role="dialog" aria-label="More sections">
+            <span className="sheet-grab" aria-hidden="true" />
+            {MORE.map(href => {
+              const [, label, icon] = byHref[href]
+              return (
+                <Link key={href} href={href} className={`sheet-row${on(href) ? ' on' : ''}`}>
+                  <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">{ICONS[icon]}</svg>
+                  {label}
+                </Link>
+              )
+            })}
+            <Link href="/tiers" className="sheet-row">
+              <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+                <path d="M12 3.4 14.6 9l6.1.6-4.6 4.1 1.3 6L12 16.6 6.6 19.7l1.3-6L3.3 9.6 9.4 9Z" />
+              </svg>
+              Tiers
+            </Link>
+          </div>
+        </>
+      )}
+    </>
   )
 }
