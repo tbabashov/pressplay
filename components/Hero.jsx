@@ -282,51 +282,56 @@ export default function Hero({ albums = [], children }) {
           </div>
 
           <div className={`card${settled ? " settled" : ""}`}>
-            <div className="card-head">
-              <strong>{album.name}</strong>
-              <span>{album.artist}</span>
-            </div>
-            <ul className="card-rows">
-              {CRITERIA.map((c, n) => {
-                const target = demo.values[n] / 11;
-                const v =
-                  Math.min(1, Math.max(0, (filled - n * 0.06) / 0.5)) * target;
-                const shown = v * 11;
-                const col = ratingColor(Math.round(shown));
-                return (
-                  <li key={c} style={{ "--n": n }}>
-                    <span>{c}</span>
-                    <i>
-                      <b
-                        style={{
-                          transform: `scaleX(${v.toFixed(3)})`,
-                          background: col.bg,
-                        }}
-                      />
-                    </i>
-                    <em>{shown.toFixed(1)}</em>
-                  </li>
-                );
-              })}
-            </ul>
-            <div className="card-final">
-              <span className="card-final-label">Final rating</span>
-              {(() => {
-                const shown = filled * demo.final;
-                const col = ratingColor(Math.round(shown));
-                return (
-                  <strong
-                    className="card-chip tnum"
-                    style={{
-                      background: col.bg,
-                      color: col.fg,
-                      boxShadow: col.glow ? `0 0 38px ${col.glow}` : "none",
-                    }}
-                  >
-                    {shown.toFixed(1)}
-                  </strong>
-                );
-              })()}
+            {/* One box for the three sections, so the card can be collapsed to
+                nothing on a phone: a grid row animates from 0fr only when it has
+                a single child to measure. */}
+            <div className="card-in">
+              <div className="card-head">
+                <strong>{album.name}</strong>
+                <span>{album.artist}</span>
+              </div>
+              <ul className="card-rows">
+                {CRITERIA.map((c, n) => {
+                  const target = demo.values[n] / 11;
+                  const v =
+                    Math.min(1, Math.max(0, (filled - n * 0.06) / 0.5)) * target;
+                  const shown = v * 11;
+                  const col = ratingColor(Math.round(shown));
+                  return (
+                    <li key={c} style={{ "--n": n }}>
+                      <span>{c}</span>
+                      <i>
+                        <b
+                          style={{
+                            transform: `scaleX(${v.toFixed(3)})`,
+                            background: col.bg,
+                          }}
+                        />
+                      </i>
+                      <em>{shown.toFixed(1)}</em>
+                    </li>
+                  );
+                })}
+              </ul>
+              <div className="card-final">
+                <span className="card-final-label">Final rating</span>
+                {(() => {
+                  const shown = filled * demo.final;
+                  const col = ratingColor(Math.round(shown));
+                  return (
+                    <strong
+                      className="card-chip tnum"
+                      style={{
+                        background: col.bg,
+                        color: col.fg,
+                        boxShadow: col.glow ? `0 0 38px ${col.glow}` : "none",
+                      }}
+                    >
+                      {shown.toFixed(1)}
+                    </strong>
+                  );
+                })()}
+              </div>
             </div>
           </div>
         </div>

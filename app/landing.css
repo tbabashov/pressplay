@@ -351,8 +351,11 @@
   .hero-stage { min-height: 0; display: flex; flex-direction: column; align-items: center; }
   .rig {
     width: min(268px, 62vw);
-    margin: 0 0 0 0;
-    translate: -11% 0;   /* offset so the protruding record reads as centred */
+    margin: 0;
+    /* The square centres on itself. Nudging it left balanced the silhouette
+       including the record poking out of the right side, which put the cover
+       itself visibly off centre, and the cover is the thing being looked at. */
+    translate: 0;
   }
   .card {
     position: static;
@@ -453,9 +456,34 @@
      centre rather than hang off the right edge: flex-end is what put the
      record, the arrows and the card all 44px to one side of a screen that has
      no second column to balance them against. */
-  .hero-stage { min-height: 0; display: flex; flex-direction: column; align-items: center; gap: 22px; }
+  .hero-stage { min-height: 0; display: flex; flex-direction: column; align-items: center; gap: 0; }
   .rig-col, .hero-stage.on .rig-col { width: min(330px, 74%); translate: 0 0; }
-  .card { position: static; width: min(330px, 74%); }
+  /* centre, not flex-end: see .rig above */
+  .rig-col { align-items: center; }
+
+  /* The panel is what pressing play gets you, so before that it is not just
+     invisible, it is not there: laid out statically it went on reserving its
+     own height and held open a screen of empty space under the record. The
+     row grows from 0fr, so the card opens downward as it arrives instead of
+     the space being there all along waiting for it. */
+  .card {
+    position: static;
+    width: min(330px, 74%);
+    display: grid;
+    grid-template-rows: 0fr;
+    margin-top: 0;
+    transition:
+      grid-template-rows 640ms var(--ease),
+      margin-top 640ms var(--ease),
+      opacity 520ms var(--ease);
+  }
+  .card-in { min-height: 0; overflow: hidden; }
+  .card.settled {
+    grid-template-rows: 1fr;
+    margin-top: 22px;
+    padding: 0;
+  }
+  .card.settled .card-in { padding: 20px 21px 19px; }
 }
 @media (max-width: 780px) {
   .band { padding: 68px 0; }
@@ -1241,9 +1269,19 @@
 .cb-copy .lede { margin-top: 16px; }
 
 @media (max-width: 780px) {
+  /* A phone puts the paragraph straight through the middle of the wall, where
+     0.8 still lets a bright sleeve come up through a line of type. The covers
+     are texture here rather than content, so they go soft and sit further
+     back. The veil also has to close to solid at both ends: stopping at 0.86
+     left the bottom row cut off by the section edge as a hard seam. */
+  .cb { min-height: clamp(320px, 92vw, 460px); }
   .cb-grid { grid-template-columns: repeat(5, 1fr); }
-  .cb-veil { background:
-    linear-gradient(180deg, var(--ink) 0%, rgba(8,8,10,0.8) 30%, rgba(8,8,10,0.86) 100%); }
+  .cb-grid img {
+    filter: blur(2px) saturate(0.85);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.55);
+  }
+  .cb-veil { background: linear-gradient(180deg,
+    var(--ink) 0%, rgba(8,8,10,0.90) 14%, rgba(8,8,10,0.93) 70%, var(--ink) 100%); }
 }
 
 /* The phone shot, once there is one. */
@@ -1365,20 +1403,23 @@
    The rig is composed for a wide stage: the column sits right of centre and
    the disc slides a quarter of its own width further right again, so the
    sleeve landed 24px off centre and the disc's edge ran 12px past the side of
-   a 390px phone. On a narrow screen the pair is centred as one thing and the
-   disc peeks by less, which is the same idea at a size that fits. */
+   a 390px phone. On a narrow screen the disc peeks by less, and the cover is
+   what gets centred: it is the thing being looked at, and centring the pair
+   instead is what left the sleeve itself visibly sitting to the left. */
 @media (max-width: 900px) {
   .rig-col {
     width: min(300px, 78%);
     align-items: center;
   }
   .hero-stage.on .rig-col { translate: 0 -8%; }
-  /* Half the peek. The sleeve and the disc together then sit centred on the
-     stage without any nudge, which is the point: the pair is the object, not
-     the sleeve with something behind it. */
+  /* Half the peek, so the disc reads as coming out of the sleeve rather than
+     dragging the whole composition off to one side. */
   .disc { translate: 15% 0; }
   .rig.out .disc { translate: 26% 0; }
-  .hero-stage { min-height: 420px; }
+  /* No floor under the stage. A 420px minimum kept the empty space below the
+     record open whether or not there was ever going to be a card in it, which
+     is the same space the collapsed card used to reserve; the stage grows
+     when the panel arrives instead of waiting for it. */
 }
 
 /* ---- the rating screen as the ground ----------------------------------
@@ -1423,17 +1464,31 @@
      as texture. Behind text it has to be much further back than it is beside
      text: at the desktop weight the tracklist rows read as a second paragraph
      interleaved with the first, which is unreadable rather than layered. */
-  .rateband { padding-bottom: 0; }
-  .rateband-bg { justify-content: center; align-items: flex-end; }
+  /* So it becomes the floor instead, below the words rather than behind them.
+     A phone column is too narrow to carry a tracklist under a paragraph: at
+     any opacity where the screenshot still reads as itself, its rows land
+     between the lines of type and get read as part of them. Down here it can
+     be fully opaque and actually show what it is a picture of. */
+  .rateband { padding-bottom: 0; display: flex; flex-direction: column; }
+  .rateband-copy { order: 1; }
+  .rateband-bg {
+    order: 2; position: relative; inset: auto;
+    display: block; overflow: hidden; margin-top: 32px;
+  }
   .rateband-bg img {
-    height: auto; width: 150%;
-    transform: translate(4%, 30%);
-    opacity: 0.28; border-radius: 14px;
-    filter: saturate(0.7);
+    height: auto; width: 128%; max-width: none;
+    transform: translateX(-9%);
+    opacity: 1; border-radius: 0; filter: none;
+    /* Only the top edge has to dissolve now; the section ends at the bottom.
+       The single layer replaces the two the desktop rule intersects, so the
+       composite is reset with it: source-in against one layer is transparent
+       in WebKit, which would have removed the image on the phone entirely. */
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 18%);
+    mask-image: linear-gradient(180deg, transparent 0%, #000 18%);
+    -webkit-mask-composite: source-over;
+    mask-composite: add;
   }
-  .rateband::after {
-    background: linear-gradient(180deg,
-      var(--bg, #08080b) 0%, rgba(8,8,11,0.97) 30%, rgba(8,8,11,0.9) 62%, rgba(8,8,11,0.74) 100%);
-  }
+  /* Nothing is behind the words any more, so there is nothing to wash. */
+  .rateband::after { display: none; }
   .rateband-copy .measure { max-width: none; }
 }
