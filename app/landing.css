@@ -1479,12 +1479,18 @@
     height: auto; width: 128%; max-width: none;
     transform: translateX(-9%);
     opacity: 1; border-radius: 0; filter: none;
-    /* Only the top edge has to dissolve now; the section ends at the bottom.
+    /* Both edges dissolve. The bottom one was left hard on the theory that the
+       section ends there so the cut would land on matching ground, which is
+       wrong twice over: the screenshot's own rows are lighter than the page,
+       so the join reads as a ruled line, and the section below brings its own
+       background anyway.
        The single layer replaces the two the desktop rule intersects, so the
        composite is reset with it: source-in against one layer is transparent
        in WebKit, which would have removed the image on the phone entirely. */
-    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 18%);
-    mask-image: linear-gradient(180deg, transparent 0%, #000 18%);
+    -webkit-mask-image:
+      linear-gradient(180deg, transparent 0%, #000 16%, #000 70%, transparent 99%);
+    mask-image:
+      linear-gradient(180deg, transparent 0%, #000 16%, #000 70%, transparent 99%);
     -webkit-mask-composite: source-over;
     mask-composite: add;
   }
