@@ -1,5 +1,3 @@
-import { limit, callerKey } from '@/lib/rate-limit'
-
 // Deezer hands out signed preview URLs that expire within days, so we resolve
 // the track fresh on each request and stream it from our own origin. Same-origin
 // audio is also what lets the player run it through an AnalyserNode.
@@ -7,11 +5,6 @@ const memo = new Map()
 const TTL = 1000 * 60 * 30
 
 export async function GET(_req, { params }) {
-  // Streaming audio to anyone who asks is this server's most expensive
-  // unauthenticated act, so it is the one worth capping hardest.
-  const stop = limit(callerKey(_req, 'preview'), { max: 60, windowMs: 60 * 1000 })
-  if (stop) return stop
-
   const { id } = await params
   if (!/^\d+$/.test(id)) return new Response('bad id', { status: 400 })
 

@@ -2,16 +2,10 @@ import { getCredentials, setPassword, getProfile } from '@/lib/db'
 import { ensureProfile } from '@/lib/ensure-profile'
 import { hashPassword, passwordError } from '@/lib/password'
 import { clampName } from '@/lib/profile'
-import { limit, callerKey } from '@/lib/rate-limit'
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export async function POST (req) {
-  // Account creation is unauthenticated by definition, so this is the only
-  // thing standing between the database and a script.
-  const stop = limit(callerKey(req, 'register'), { max: 5, windowMs: 60 * 60 * 1000 })
-  if (stop) return stop
-
   let body
   try { body = await req.json() } catch { return Response.json({ error: 'Bad request.' }, { status: 400 }) }
 

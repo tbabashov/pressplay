@@ -3,7 +3,6 @@ import { addComment, getProfile, reviewId } from '@/lib/db'
 import { resolvePublicReview } from '@/lib/public-review'
 import { publicComment } from '@/lib/social-shape'
 import { commentsFor } from '@/lib/social-queries'
-import { limit, callerKey } from '@/lib/rate-limit'
 
 const BODY_MAX = 1000
 
@@ -22,9 +21,6 @@ export async function GET (req) {
 }
 
 export async function POST (req) {
-  const stop = limit(callerKey(req, 'comment'), { max: 20, windowMs: 5 * 60 * 1000 })
-  if (stop) return stop
-
   const session = await auth()
   if (!session?.user) return Response.json({ error: 'Sign in to comment.' }, { status: 401 })
 

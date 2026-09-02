@@ -1,6 +1,5 @@
 import { auth } from '@/auth'
 import { uploadCover, storageReady } from '@/lib/storage'
-import { limit, callerKey } from '@/lib/rate-limit'
 
 export const runtime = 'nodejs'
 
@@ -8,10 +7,6 @@ const MAX = 5 * 1024 * 1024
 const OK = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
 
 export async function POST (req) {
-  // Uploads are five megabytes each and land in storage that costs money.
-  const stop = limit(callerKey(req, 'upload'), { max: 30, windowMs: 10 * 60 * 1000 })
-  if (stop) return stop
-
   const session = await auth()
   if (!session?.user) return Response.json({ error: 'Sign in first.' }, { status: 401 })
 

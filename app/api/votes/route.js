@@ -1,15 +1,11 @@
 import { auth } from '@/auth'
 import { castVote, voteTotals, myVotes, reviewId } from '@/lib/db'
 import { resolvePublicReview } from '@/lib/public-review'
-import { limit, callerKey } from '@/lib/rate-limit'
 
 // A vote is a public act on someone else's page, so it goes through the same
 // resolver the comments route uses: a handle and an album id, never an address,
 // and never a review the viewer is not allowed to see.
 export async function POST (req) {
-  const stop = limit(callerKey(req, 'vote'), { max: 120, windowMs: 60 * 1000 })
-  if (stop) return stop
-
   const session = await auth()
   if (!session?.user) return Response.json({ error: 'Sign in to vote.' }, { status: 401 })
 

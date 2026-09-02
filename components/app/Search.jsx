@@ -21,11 +21,7 @@ export default function Search () {
     const ac = new AbortController()
     const t = setTimeout(async () => {
       try {
-        // no-store on the request as well as the response: a cache entry that
-        // is already poisoned is only bypassed by asking not to use the cache.
-        const r = await fetch(`/api/search?q=${encodeURIComponent(term)}`, {
-          signal: ac.signal, cache: 'no-store'
-        })
+        const r = await fetch(`/api/search?q=${encodeURIComponent(term)}`, { signal: ac.signal })
         const body = await r.json()
         if (!r.ok) throw new Error(body.error || 'Search failed.')
         setResults(body.results)

@@ -1,5 +1,4 @@
 import { decodeArtKey, fetchArt } from '../shared.js'
-import { limit, callerKey } from '@/lib/rate-limit'
 
 // The target URL is carried in the path rather than the query.
 //
@@ -16,9 +15,6 @@ import { limit, callerKey } from '@/lib/rate-limit'
 // look at these URLs, which is the difference between a patched symptom and a
 // URL that is simply correct.
 export async function GET (req, { params }) {
-  const stop = limit(callerKey(req, 'art'), { max: 300, windowMs: 60 * 1000 })
-  if (stop) return stop
-
   const { key } = await params
   const raw = decodeArtKey(key)
   if (!raw) return new Response('bad url', { status: 400 })
