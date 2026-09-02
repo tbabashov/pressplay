@@ -1,5 +1,8 @@
+'use client'
+
+import { useState } from 'react'
 import Link from 'next/link'
-import { TIER_LIST } from '@/lib/tiers'
+import { TIER_LIST, yearlySaving } from '@/lib/tiers'
 import CheckoutButton from '@/components/CheckoutButton'
 import CoverStream from '@/components/CoverStream'
 import Mark from '@/components/Mark'
@@ -9,6 +12,8 @@ import Mark from '@/components/Mark'
 // design to keep in step: being sent here by a locked style and walking here
 // from the menu arrive at the same place.
 export default function TiersScreen ({ mine, heading, reason, onClose, closeHref = '/app' }) {
+  const [period, setPeriod] = useState('monthly')
+  const yearly = period === 'yearly'
   return (
     <div className="tw">
       <CoverStream />
@@ -43,6 +48,26 @@ export default function TiersScreen ({ mine, heading, reason, onClose, closeHref
           </p>
         </div>
 
+        {/* Monthly or yearly, chosen once for the whole screen rather than
+            per card: nobody wants to compare two tiers on two different terms.
+            The saving is worked out from the prices, so it cannot drift away
+            from them. */}
+        <div className="tw-period" role="group" aria-label="Billing period">
+          <button
+            className={`tw-per${!yearly ? ' on' : ''}`}
+            onClick={() => setPeriod('monthly')}
+            aria-pressed={!yearly}
+          >Monthly</button>
+          <button
+            className={`tw-per${yearly ? ' on' : ''}`}
+            onClick={() => setPeriod('yearly')}
+            aria-pressed={yearly}
+          >
+            Yearly
+            <em>save {yearlySaving('plus')?.percent ?? 0}%</em>
+          </button>
+        </div>
+
         <div className="tw-grid">
           {TIER_LIST.map(t => {
             const current = t.key === mine
@@ -64,10 +89,21 @@ export default function TiersScreen ({ mine, heading, reason, onClose, closeHref
                 <p className="tw-price">
                   {t.monthly === 0
                     ? <strong>Free</strong>
-                    : <><strong>${t.monthly.toFixed(2)}</strong><em>a month</em></>}
+                    : yearly
+                      ? <><strong>${t.yearly.toFixed(2)}</strong><em>a year</em></>
+                      : <><strong>${t.monthly.toFixed(2)}</strong><em>a month</em></>}
                 </p>
                 <p className="tw-year">
-                  {t.yearly > 0 ? `or $${t.yearly.toFixed(2)} a year` : 'No card, ever'}
+                  {t.monthly === 0
+                    ? 'No card, ever'
+                    : yearly
+                      ? (() => {
+                          const y = yearlySaving(t.key)
+                          return y
+                            ? `${y.percent}% off — $${y.saves.toFixed(2)} against paying monthly`
+                            : `$${(t.yearly / 12).toFixed(2)} a month, billed yearly`
+                        })()
+                      : `or $${t.yearly.toFixed(2)} a year, ${yearlySaving(t.key)?.percent ?? 0}% off`}
                 </p>
 
                 <p className="tw-for">{t.blurb}</p>
@@ -88,7 +124,8 @@ export default function TiersScreen ({ mine, heading, reason, onClose, closeHref
                     ? <p className="tw-state">This is what you are on.</p>
                     : t.monthly === 0
                       ? <p className="tw-state">Where every account starts.</p>
-                      : <CheckoutButton tier={t.key} name={t.name} className="btn-primary tw-buy" />}
+                      : <CheckoutButton tier={t.key} name={t.name} period={period}
+                          className="btn-primary tw-buy" />}
                 </div>
               </section>
             )

@@ -135,3 +135,25 @@
   font-size: 11px; font-weight: 750; letter-spacing: 0.11em; text-transform: uppercase;
   color: var(--accent); margin-bottom: 12px;
 }
+
+/* Monthly or yearly, once for the whole screen. Comparing two tiers on two
+   different terms is not a comparison. */
+.tw-period {
+  display: inline-flex; align-self: flex-start; gap: 4px;
+  padding: 4px; margin-bottom: 22px; border-radius: 12px;
+  background: rgba(255,255,255,0.06);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
+}
+.tw-per {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 16px; border-radius: 9px; cursor: pointer;
+  font: inherit; font-size: 13.4px; font-weight: 620; color: var(--fg-3);
+  transition: color 160ms var(--ease), background 160ms var(--ease);
+}
+.tw-per:hover { color: var(--fg-2); }
+.tw-per.on { color: #17140c; background: var(--accent); }
+.tw-per em {
+  font-style: normal; font-size: 11px; font-weight: 750;
+  letter-spacing: 0.04em; color: var(--accent);
+}
+.tw-per.on em { color: rgba(23,20,12,0.72); }

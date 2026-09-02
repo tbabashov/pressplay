@@ -123,38 +123,32 @@ export default async function Landing () {
           </div>
         </section>
 
-        <section className="band">
-          <div className="shell criteria-grid">
-            <div>
-              <h2 className="display h2 rv">And the criteria<br />are yours too.</h2>
-              <p className="lede measure rv">
-                The song average is one input, not the verdict. Everything beside it is a
-                judgement you define: keep the defaults, rename them, drop the ones you do not
-                believe in, add the ones you do. The final score is the mean of whatever you
-                kept, so a record with flawless production and nothing to say cannot hide
-                behind its beats.
-              </p>
-              <p className="lede measure rv">Leave any of them blank and it simply does not vote.</p>
-            </div>
-            <dl className="criteria-list">
-              <div className="criterion">
-                <dt>Song average<span className="auto-tag">always on</span></dt>
-                <dd>Every track you scored, averaged. The only one you never type.</dd>
-              </div>
-              {[
-                ['Lyricism', 'What is being said, and how well.'],
-                ['Production', 'The beats, the mix, the sound of the thing.'],
-                ['Delivery', 'Flow, cadence, presence, performance.'],
-                ['Album experience', 'Sequencing, pacing, whether it holds front to back.'],
-                ['Replay value', 'Whether you will still be playing it next year.']
-              ].map(([label, copy]) => (
-                <div className="criterion" key={label}>
-                  <dt>{label}<span className="edit-tag">yours to change</span></dt>
-                  <dd>{copy}</dd>
-                </div>
-              ))}
-            </dl>
+        <section className="band" id="rating">
+          <div className="shell">
+            <h2 className="display h2 rv">Score it song by song.</h2>
+            <p className="lede measure rv">
+              The whole record, one row at a time, with a preview of every track so you are
+              rating what you actually heard. Type a number from 0 to 11, or a dash for the skits
+              that were never trying to be songs. The average moves as you go.
+            </p>
+            <p className="lede measure rv">
+              The song average is one input, not the verdict. Everything beside it is a judgement
+              you define: keep the defaults, rename them, drop the ones you do not believe in, add
+              the ones you do. Leave any of them blank and it simply does not vote — so a record
+              with flawless production and nothing to say cannot hide behind its beats.
+            </p>
           </div>
+
+          {/* The real screen, not a drawing of it: Late Registration, all
+              twenty one tracks scored, the criteria panel open beside them. */}
+          <figure className="ratefig rv">
+            <img
+              src="/photos/rating-late-registration.jpg"
+              alt="Late Registration being rated: every track scored from 0 to 11, with the criteria panel and a final score of 9.4"
+              width="1800" height="1473" loading="lazy"
+            />
+            <figcaption>Late Registration, all twenty one tracks scored. Final: 9.4.</figcaption>
+          </figure>
         </section>
 
         <section className="band band-alt" id="export">
@@ -252,6 +246,8 @@ export default async function Landing () {
             </p>
             {/* Written from the same table the app enforces, so a price on this
                 page cannot say one thing while the product does another. */}
+            {/* On a phone this is a swipe deck, so it needs to say so. */}
+            <p className="tiers-hint">Swipe to compare</p>
             <div className="tiers">
               {TIER_LIST.map(t => {
                 const cap = t.limits.generationsPerDay
@@ -324,6 +320,7 @@ export default async function Landing () {
           <nav className="foot-col" aria-label="Product">
             <h3>Product</h3>
             <a href="#how">How it works</a>
+            <a href="#rating">Rating</a>
             <a href="#reviews">Reviews</a>
             <a href="#export">Export</a>
             <a href="#tiers">Tiers</a>

@@ -29,7 +29,7 @@ export default function Nav ({ children }) {
   }, [open])
 
   const links = [
-    ['#how', 'How it works'], ['#reviews', 'Reviews'],
+    ['#how', 'How it works'], ['#rating', 'Rating'], ['#reviews', 'Reviews'],
     ['#export', 'Export'], ['#tiktok', 'TikTok'], ['#tiers', 'Tiers']
   ]
 

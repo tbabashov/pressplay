@@ -42,7 +42,12 @@
   .nav-wrap { padding: 10px 14px; }
   .nav-wrap.stuck { padding: 8px 14px; }
   .nav {
-    height: 56px; padding: 0 8px 0 18px; border-radius: 999px;
+    /* The 30px gap the desktop bar uses between its groups left the account
+       control stranded a third of the way in from the right on a phone, with
+       nothing between it and the menu button. Tighter here, so it sits where
+       a thumb reaches for it. */
+    gap: 10px;
+    height: 56px; padding: 0 10px 0 18px; border-radius: 999px;
     background: rgba(14,14,18,0.86); border-color: rgba(255,255,255,0.13);
     box-shadow: 0 14px 36px rgba(0,0,0,0.45);
   }
@@ -1307,4 +1312,68 @@
 @media (max-width: 860px) {
   .votes button { min-width: 42px; min-height: 40px; }
   .wordmark { min-height: 44px; display: inline-flex; align-items: center; }
+}
+
+/* ---- phone: the tiers are a deck, not a row ----------------------------
+   Three cards side by side on a 390px screen is three unreadable columns.
+   One card at a time, snapped, swiped through — which is what a phone is
+   for — with the row of dots saying how many there are so nobody has to
+   discover the other two by accident. */
+@media (max-width: 900px) {
+  .tiers {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 84%;
+    gap: 14px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding: 0 18px;
+    /* Bleed to both edges so the next card peeks and the swipe is obvious. */
+    margin-inline: -18px;
+    padding: 4px 18px 14px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tiers::-webkit-scrollbar { display: none; }
+  .tier { scroll-snap-align: center; }
+  /* The raised middle card is a desktop idea; in a swipe deck it just makes
+     one card sit lower than its neighbours. */
+  .tier-plus { transform: none; }
+  .tier-cap strong { font-size: 2.9rem; }
+}
+.tiers-hint { display: none; }
+@media (max-width: 900px) {
+  .tiers-hint {
+    display: block; margin-top: 26px; font-size: 12px;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-4);
+  }
+  .tiers { margin-top: 12px; }
+}
+
+/* ---- the rating screen, shown as itself --------------------------------
+   A real capture rather than an illustration, so it is held like a screen:
+   inset, edge-lit, and cut off at the bottom the way the page it came from
+   carries on below the fold. */
+.ratefig { margin: 46px auto 0; max-width: 1180px; padding: 0 24px; }
+.ratefig img {
+  display: block; width: 100%; height: auto;
+  border-radius: 18px 18px 0 0;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.1),
+    0 -1px 0 rgba(255,255,255,0.12),
+    0 50px 120px rgba(0,0,0,0.6);
+  /* Fades out at the bottom instead of stopping dead, because the screen it
+     came from does not stop there either. */
+  -webkit-mask-image: linear-gradient(180deg, #000 68%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 68%, transparent 100%);
+}
+.ratefig figcaption {
+  margin-top: -34px; text-align: center; position: relative;
+  font-size: 12.6px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--fg-4);
+}
+@media (max-width: 900px) {
+  .ratefig { margin-top: 32px; padding: 0 14px; }
+  .ratefig img { border-radius: 12px 12px 0 0; }
+  .ratefig figcaption { margin-top: -18px; font-size: 11.4px; }
 }
