@@ -92,7 +92,7 @@ export default async function Settings () {
       </div>
       <p className="set-intro measure">
         You are on <strong>{TIER_DETAIL[tier].name}</strong>. {TIER_DETAIL[tier].blurb}{' '}
-        <Link href="/app/tiers">See what each tier includes</Link>.
+        <Link href="/tiers">See what each tier includes</Link>.
       </p>
 
       <div className="set-counts">

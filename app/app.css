@@ -2014,28 +2014,17 @@ body:has(.app) .vignette { opacity: 0.5; }
    same treatment the sign-in page uses. It is a wall, not a locked door: the
    copy says plainly that nothing rated is lost and the social side is free. */
 .pw { position: fixed; inset: 0; z-index: 220; display: grid; place-items: center; padding: 24px; }
-.pw-wall { position: absolute; inset: 0; overflow: hidden; }
-.pw-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-  gap: 3px; opacity: 0.5; transform: scale(1.06);
-  /* The wall has to reach the bottom of the screen; anything short of that
-     reads as an image that failed to load. */
-  min-height: 100%;
-}
+
+
 .pw-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
-.pw-veil {
-  position: absolute; inset: 0;
-  background:
-    radial-gradient(120% 90% at 50% 45%, rgba(8,8,11,0.62) 0%, rgba(8,8,11,0.94) 62%, #08080b 100%);
-  backdrop-filter: blur(3px);
-}
+
 .pw-body {
   position: relative; z-index: 1;
   width: min(880px, 100%); max-height: calc(100dvh - 48px); overflow: auto;
   padding: 30px; border-radius: 22px;
-  background: rgba(14,14,18,0.86);
+  background: rgba(10,10,13,0.93);
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12), 0 40px 110px rgba(0,0,0,0.7);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(22px);
 }
 .pw-x {
   position: absolute; top: 16px; right: 16px;
@@ -2055,10 +2044,11 @@ body:has(.app) .vignette { opacity: 0.5; }
 .pw-sub { font-size: 13.6px; line-height: 1.6; color: var(--fg-3); margin-top: 12px; }
 
 .pw-cards { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+/* Solid. A card you can see album covers through is a card nobody can read. */
 .pw-card {
   display: flex; flex-direction: column; gap: 8px;
   padding: 18px; border-radius: 16px;
-  background: rgba(255,255,255,0.045);
+  background: #121216;
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
 }
 .pw-card.on { box-shadow: inset 0 0 0 1.5px rgba(var(--accent-rgb), 0.55); }
@@ -2142,21 +2132,48 @@ body:has(.app) .vignette { opacity: 0.5; }
   box-shadow: 0 0 0 4px rgba(var(--ink-rgb), 0.18);
 }
 
-/* The tiers page carries the same wall as the subscription screen, so the two
-   do not read as different products. It sits behind the app's own content
-   rather than over it, which is the only difference. */
 /* Inside the content column, not over the whole window: fixed to the viewport
    it washed out the rail and the top bar, which are not part of this page. */
-.tr-wall { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
-.tr-wall-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
-  gap: 3px; opacity: 0.28; min-height: 100%; transform: scale(1.05);
+
+
+
+
+
+
+
+
+
+/* The drifting cover wall, shared by the subscription screen and the tiers
+   page. Rules duplicated from tiers.css because these two shells do not load
+   each other's stylesheet, and a wall that only moves on one of them is worse
+   than one that moves on neither. */
+.cs { position: absolute; inset: 0; overflow: hidden; }
+.cs-cols {
+  display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
+  gap: 4px; height: 100%; padding: 0 4px;
 }
-.tr-wall-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
-.tr-wall-veil {
+.cs-col {
+  display: grid; gap: 4px; align-content: start;
+  animation-name: cs-drift; animation-timing-function: linear;
+  animation-iteration-count: infinite; will-change: transform;
+}
+.cs-col:nth-child(even) { animation-direction: reverse; }
+.cs-col img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; border-radius: 4px; }
+@keyframes cs-drift {
+  from { transform: translate3d(0, -50%, 0); }
+  to   { transform: translate3d(0, 0, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cs-col { animation: none; transform: translate3d(0, -25%, 0); }
+}
+/* The wall is texture behind a screen, not a picture the screen sits on. Three
+   layers: a flat floor so no cover is ever at full brightness, a top band
+   under the heading where the words are, and a vignette to keep the edges
+   from competing with the cards. */
+.cs-veil {
   position: absolute; inset: 0;
-  background: radial-gradient(110% 80% at 45% 32%, rgba(8,8,11,0.7) 0%, rgba(8,8,11,0.94) 58%, #08080b 100%);
+  background:
+    linear-gradient(180deg, rgba(8,8,11,0.97) 0%, rgba(8,8,11,0.9) 26%, rgba(8,8,11,0.74) 44%, rgba(8,8,11,0.82) 82%, rgba(8,8,11,0.97) 100%),
+    radial-gradient(120% 80% at 50% 40%, rgba(8,8,11,0.3) 0%, rgba(8,8,11,0.9) 100%),
+    rgba(8,8,11,0.34);
 }
-.app-main > .page-head, .app-main > .tr-grid, .app-main > .tr-note { position: relative; z-index: 1; }
-.tr-buy { margin-top: auto; width: 100%; }
-.tr-card .co-note { font-size: 12px; line-height: 1.5; color: var(--fg-4); margin-top: 8px; }

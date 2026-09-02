@@ -377,19 +377,19 @@ a.cm-who:hover { color: var(--accent); }
   padding: 9px 12px; border-radius: 9px; color: inherit;
 }
 .acct-plan:hover { background: rgba(255,255,255,0.07); }
-.acct-plan-go { display: grid; place-items: center; color: var(--fg-4); }
-.acct-plan-go svg { width: 14px; height: 14px; }
+.acct-plan-left { display: grid; gap: 2px; min-width: 0; }
+.acct-plan-sub { font-size: 12px; color: var(--fg-3); }
+.acct-plan-go { width: 14px; height: 14px; flex: none; color: var(--fg-4); }
 .acct-plan:hover .acct-plan-go { color: var(--fg-2); }
 .acct-tier {
-  justify-self: start;
+  display: block;
   font-size: 10.5px; font-weight: 750; letter-spacing: 0.11em; text-transform: uppercase;
   color: var(--fg-3);
 }
+/* A colour, not a gradient clipped through the letters. At ten pixels a
+   gradient reads as a rendering fault rather than as anything deliberate. */
 .acct-tier-plus { color: var(--accent); }
-.acct-tier-max {
-  background: linear-gradient(100deg, #b98cff, #ff8a9e);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-}
+.acct-tier-max { color: #c4a0ff; }
 .acct-quota {
   display: grid; gap: 6px; padding: 0 12px 10px;
   font-size: 12px; color: var(--fg-4);

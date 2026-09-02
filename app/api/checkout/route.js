@@ -20,7 +20,7 @@ export async function POST (req) {
     // Signing in first, then coming back to the same choice.
     return Response.json({
       ready: false,
-      signIn: `/join?next=${encodeURIComponent(`/app/tiers?tier=${tier}&period=${period}`)}`,
+      signIn: `/join?next=${encodeURIComponent(`/tiers?tier=${tier}&period=${period}`)}`,
       message: 'Sign in first, then pick a tier.'
     })
   }

@@ -63,7 +63,7 @@ export default function StylePicker ({ open, onClose, settings, set, tier = 'fre
             {STYLE_LIST.some(locked) && (
               <p className="style-note">
                 Aurora comes with Plus and Press Play with Max. The rest are yours at every tier.{' '}
-                <a href="/app/tiers">See the tiers</a>.
+                <a href="/tiers">See the tiers</a>.
               </p>
             )}
           </section>

@@ -253,28 +253,44 @@ export default async function Landing () {
             {/* Written from the same table the app enforces, so a price on this
                 page cannot say one thing while the product does another. */}
             <div className="tiers">
-              {TIER_LIST.map(t => (
-                <article key={t.key} className={`tier tier-${t.key}`}>
-                  <h3>{t.name}</h3>
-                  <p className="tier-cap tnum">
-                    {t.limits.generationsPerDay === Infinity ? '\u221E' : t.limits.generationsPerDay}
-                    <span>{t.limits.generationsPerDay === Infinity ? 'no daily limit' : 'records a day'}</span>
-                  </p>
-                  {t.monthly > 0 && (
-                    <p className="tier-price">
-                      <strong>${t.monthly.toFixed(2)}</strong><em>a month</em>
+              {TIER_LIST.map(t => {
+                const cap = t.limits.generationsPerDay
+                return (
+                  <article key={t.key} className={`tier tier-${t.key}`}>
+                    <h3>{t.name}</h3>
+
+                    {/* The same order on every card: what you get a day, what
+                        it costs, who it is for. Two of them leading on the cap
+                        and one on the price is what made the row read as three
+                        different designs. */}
+                    <p className="tier-cap">
+                      <strong className="tnum">{cap === Infinity ? '\u221E' : cap}</strong>
+                      <span>{cap === Infinity ? 'no daily limit' : 'records a day'}</span>
                     </p>
-                  )}
-                  {t.yearly > 0 && <p className="tier-year">or ${t.yearly.toFixed(2)} a year</p>}
-                  <p className="tier-for">{t.blurb}</p>
-                  <ul>
-                    {t.perks.map(perk => <li key={perk}>{perk}</li>)}
-                  </ul>
-                  {t.monthly === 0
-                    ? <StartButton />
-                    : <CheckoutButton tier={t.key} name={t.name} />}
-                </article>
-              ))}
+
+                    <p className="tier-price">
+                      {t.monthly === 0
+                        ? <strong>Free</strong>
+                        : <><strong>${t.monthly.toFixed(2)}</strong><em>a month</em></>}
+                    </p>
+                    <p className="tier-year">
+                      {t.yearly > 0 ? `or $${t.yearly.toFixed(2)} a year` : 'No card, ever'}
+                    </p>
+
+                    <p className="tier-for">{t.blurb}</p>
+
+                    <ul>
+                      {t.perks.map(perk => <li key={perk}>{perk}</li>)}
+                    </ul>
+
+                    <div className="tier-do">
+                      {t.monthly === 0
+                        ? <StartButton />
+                        : <CheckoutButton tier={t.key} name={t.name} />}
+                    </div>
+                  </article>
+                )
+              })}
             </div>
           </div>
         </section>

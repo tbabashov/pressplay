@@ -1,0 +1,121 @@
+/* ================================================================ tiers ==
+   Its own screen, not a page of the app. No rail, no top bar of links: a wall
+   of covers drifting behind, the three cards on solid ground so they stay
+   readable over it, and one way out in the corner. */
+
+.tw { position: relative; min-height: 100dvh; background: #08080b; overflow: hidden; }
+
+/* ---- the moving wall --------------------------------------------------- */
+.cs { position: absolute; inset: 0; overflow: hidden; }
+.cs-cols {
+  display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
+  gap: 4px; height: 100%; padding: 0 4px;
+}
+.cs-col {
+  display: grid; gap: 4px; align-content: start;
+  animation-name: cs-drift;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  /* The list is rendered twice, so half a loop is one full pass. */
+  will-change: transform;
+}
+.cs-col:nth-child(even) { animation-direction: reverse; }
+.cs-col img {
+  width: 100%; aspect-ratio: 1; object-fit: cover; display: block;
+  border-radius: 4px;
+}
+@keyframes cs-drift {
+  from { transform: translate3d(0, -50%, 0); }
+  to   { transform: translate3d(0, 0, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cs-col { animation: none; transform: translate3d(0, -25%, 0); }
+}
+
+/* Enough veil that the covers are texture and the words are words. */
+/* The wall is texture behind a screen, not a picture the screen sits on. Three
+   layers: a flat floor so no cover is ever at full brightness, a top band
+   under the heading where the words are, and a vignette to keep the edges
+   from competing with the cards. */
+.cs-veil {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, rgba(8,8,11,0.97) 0%, rgba(8,8,11,0.9) 26%, rgba(8,8,11,0.74) 44%, rgba(8,8,11,0.82) 82%, rgba(8,8,11,0.97) 100%),
+    radial-gradient(120% 80% at 50% 40%, rgba(8,8,11,0.3) 0%, rgba(8,8,11,0.9) 100%),
+    rgba(8,8,11,0.34);
+}
+
+/* ---- the screen -------------------------------------------------------- */
+.tw-body {
+  position: relative; z-index: 1;
+  max-width: 1160px; margin: 0 auto; padding: 26px 30px 90px;
+}
+.tw-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 46px; }
+.tw-mark { display: inline-flex; align-items: center; gap: 10px; color: var(--fg); }
+.tw-mark strong { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; }
+.tw-x {
+  width: 40px; height: 40px; display: grid; place-items: center;
+  border-radius: 50%; color: var(--fg-3);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18);
+  transition: color 180ms var(--ease), background 180ms var(--ease);
+}
+.tw-x:hover { color: var(--fg); background: rgba(255,255,255,0.12); }
+.tw-x svg { width: 15px; height: 15px; }
+
+.tw-head { max-width: 46ch; margin-bottom: 40px; }
+.tw-head h1 { font-size: clamp(1.9rem, 4.4vw, 3rem); letter-spacing: -0.04em; line-height: 1.05; }
+.tw-head p { margin-top: 16px; font-size: 15px; line-height: 1.6; color: var(--fg-2); max-width: 54ch; }
+
+.tw-grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); }
+
+/* Solid, not translucent. A card you can see album covers through is a card
+   nobody can read, and the wall is meant to be behind the screen and not
+   inside the price. */
+.tw-card {
+  display: flex; flex-direction: column;
+  padding: 26px 24px 24px; border-radius: 20px;
+  background: #121216;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1), 0 30px 70px rgba(0,0,0,0.5);
+}
+.tw-card.on { box-shadow: inset 0 0 0 1.5px rgba(var(--accent-rgb), 0.6), 0 30px 70px rgba(0,0,0,0.5); }
+.tw-card header { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.tw-card h2 { font-size: 15px; font-weight: 800; letter-spacing: 0.13em; text-transform: uppercase; color: var(--fg-3); }
+.tw-now {
+  font-size: 10px; font-weight: 750; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* One rhythm on every card: what you get a day, what it costs, who it is for. */
+.tw-cap { display: flex; align-items: baseline; gap: 11px; margin-top: 18px; }
+.tw-cap strong { font-size: 3.2rem; font-weight: 800; letter-spacing: -0.05em; line-height: 1; }
+.tw-cap span { font-size: 13px; color: var(--fg-4); }
+
+.tw-price { display: flex; align-items: baseline; gap: 7px; margin-top: 18px; }
+.tw-price strong { font-size: 1.6rem; font-weight: 750; letter-spacing: -0.03em; }
+.tw-price em { font-style: normal; font-size: 12.6px; color: var(--fg-4); }
+.tw-year { font-size: 12.2px; color: var(--fg-4); margin-top: 3px; }
+
+.tw-for {
+  margin-top: 18px; padding-top: 18px;
+  border-top: 1px solid rgba(255,255,255,0.09);
+  font-size: 13.4px; line-height: 1.5; color: var(--fg-2);
+}
+
+.tw-perks { list-style: none; display: grid; gap: 9px; margin-top: 16px; }
+.tw-perks li {
+  display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 10px; align-items: start;
+  font-size: 13.2px; line-height: 1.45; color: var(--fg-2);
+}
+.tw-perks svg { width: 14px; height: 14px; margin-top: 3px; color: var(--accent); }
+
+.tw-do { margin-top: auto; padding-top: 22px; }
+.tw-buy { width: 100%; }
+.tw-state { font-size: 12.4px; color: var(--fg-4); text-align: center; padding: 11px 0; }
+.tw-do .co-note { font-size: 12px; line-height: 1.5; color: var(--fg-4); margin-top: 9px; }
+
+.tw-note { max-width: 74ch; margin-top: 34px; font-size: 12.6px; line-height: 1.65; color: var(--fg-4); }
+
+@media (max-width: 620px) {
+  .tw-body { padding: 20px 18px 70px; }
+  .cs-cols { grid-auto-columns: 1fr; }
+}

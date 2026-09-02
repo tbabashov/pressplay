@@ -516,16 +516,22 @@
   color: var(--fg-3);
 }
 .tier-cap {
-  margin-top: 10px; font-size: 3.4rem; font-weight: 800; letter-spacing: -0.05em;
-  line-height: 1; display: flex; align-items: baseline; gap: 12px;
+  margin-top: 16px; display: flex; align-items: baseline; gap: 11px;
 }
+.tier-cap strong {
+  font-size: 3.2rem; font-weight: 800; letter-spacing: -0.05em; line-height: 1;
+  /* The infinity sign carries no descender and sits high in the em box, so
+     without this it floats above a row of digits that do not. */
+  display: inline-block;
+}
+.tier-cap span { font-size: 13px; color: var(--fg-4); font-weight: 500; letter-spacing: 0; }
 .tier-cap span {
   font-size: 13px; font-weight: 600; letter-spacing: 0; color: var(--fg-3);
   white-space: nowrap;
 }
 .tier-for {
-  margin-top: 16px; padding-bottom: 20px; font-size: 14px; color: var(--fg-3);
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  margin-top: 18px; padding-top: 18px; font-size: 13.6px; line-height: 1.5; color: var(--fg-2);
+  border-top: 1px solid rgba(255,255,255,0.1);
 }
 .tier ul { list-style: none; margin-top: 20px; display: grid; gap: 12px; }
 .tier li {
@@ -541,11 +547,12 @@
 .tier-inherit::before { display: none; }
 /* Prices, set as prices: the number is the thing, and the period is an aside
    next to it rather than another line competing with it. */
-.tier-price { display: flex; align-items: baseline; gap: 7px; margin-top: 4px; }
-.tier-price strong { font-size: 30px; font-weight: 800; letter-spacing: -0.035em; }
-.tier-price em { font-style: normal; font-size: 13px; color: var(--fg-4); }
-.tier-year { font-size: 12.4px; color: var(--fg-4); margin-top: 2px; }
-.tier .btn-primary, .tier .start-btn { margin-top: auto; width: 100%; }
+.tier-price { display: flex; align-items: baseline; gap: 7px; margin-top: 18px; }
+.tier-price strong { font-size: 1.6rem; font-weight: 750; letter-spacing: -0.03em; }
+.tier-price em { font-style: normal; font-size: 12.6px; color: var(--fg-4); }
+.tier-year { font-size: 12.2px; color: var(--fg-4); margin-top: 3px; }
+.tier-do { margin-top: auto; padding-top: 22px; }
+.tier-do .btn-primary, .tier-do .start-btn { width: 100%; }
 .co-note { margin-top: 9px; font-size: 12.2px; line-height: 1.5; color: var(--fg-4); }
 
 /* three genuinely different weights, not three of the same card */

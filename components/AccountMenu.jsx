@@ -68,14 +68,19 @@ export default function AccountMenu ({ name, image, handle, role }) {
           {/* Two separate statements: which tier the account is on, and what
               is left of today. Boxed together they read as one label with a
               number stuck to it. */}
-          <Link className="acct-plan" href="/app/tiers" onClick={() => setOpen(false)} role="menuitem">
-            <span className={`acct-tier acct-tier-${quota?.tier || 'free'}`}>
-              {quota ? quota.tierName : 'Your tier'}
+          <Link className="acct-plan" href="/tiers" onClick={() => setOpen(false)} role="menuitem">
+            <span className="acct-plan-left">
+              <span className={`acct-tier acct-tier-${quota?.tier || 'free'}`}>
+                {quota ? quota.tierName : 'Your tier'}
+              </span>
+              <span className="acct-plan-sub">
+                {quota?.unlimited ? 'Everything unlocked' : 'See the tiers'}
+              </span>
             </span>
-            <span className="acct-plan-go" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M9.5 5.5 16 12l-6.5 6.5" fill="none"
-                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            </span>
+            <svg className="acct-plan-go" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M9.5 5.5 16 12l-6.5 6.5" fill="none"
+                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </Link>
 
           <div className="acct-quota">

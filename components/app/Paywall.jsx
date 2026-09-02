@@ -3,15 +3,8 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { TIER_LIST, priceLabel } from '@/lib/tiers'
-import wall from '@/lib/wall.json'
 import CheckoutButton from '@/components/CheckoutButton'
-
-// The same treatment as the sign-in page: a wall of real covers behind the
-// thing being asked for, never decorative stock. Enough of them to reach the
-// bottom of a tall screen — a short grid left the lower half plain black,
-// which reads as a broken image rather than a design. Fixed order, so the
-// server and the client build the same grid.
-const COVERS = [...wall, ...wall].slice(0, 150)
+import CoverStream from '@/components/CoverStream'
 
 export default function Paywall ({ tier, used, limit, reason, onClose }) {
   // Rendered into the document rather than wherever it was called from. Inside
@@ -37,14 +30,9 @@ export default function Paywall ({ tier, used, limit, reason, onClose }) {
 
   return createPortal((
     <div className="pw" role="dialog" aria-modal="true" aria-label="Subscriptions">
-      <div className="pw-wall" aria-hidden="true">
-        <div className="pw-grid">
-          {COVERS.map((a, i) => (
-            <img key={`${a.cover}:${i}`} src={a.cover} alt="" loading="lazy" width="110" height="110" />
-          ))}
-        </div>
-        <div className="pw-veil" />
-      </div>
+      {/* The same drifting wall the tiers screen uses, so the two are one
+          place rather than two designs that happen to sell the same thing. */}
+      <CoverStream />
 
       <div className="pw-body">
         <button className="pw-x" onClick={onClose} aria-label="Close">
@@ -91,7 +79,7 @@ export default function Paywall ({ tier, used, limit, reason, onClose }) {
         </div>
 
         <footer className="pw-foot">
-          <a href="/app/tiers">See everything each tier includes</a>
+          <a href="/tiers">See everything each tier includes</a>
           <button onClick={onClose}>Not now</button>
         </footer>
       </div>
