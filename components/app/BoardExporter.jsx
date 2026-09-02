@@ -6,6 +6,7 @@ import { extractPalette, fallbackPalette, paletteFromColor } from '../../lib/rat
 import { LeaderboardTitleFrame, LeaderboardFrame, MoversFrame } from '../../lib/export/leaderboardFrames.jsx'
 import ExportSettings, { SWATCHES } from './ExportSettings'
 import { STYLES, STYLE_LIST } from '../../lib/export/styles.js'
+import { mayStore } from '@/lib/consent'
 
 const W = 1080
 const H = 1920
@@ -42,7 +43,7 @@ export default function BoardExporter ({ data, paid = false }) {
 
   const set = (key, value) => setSettings(s => {
     const next = { ...s, [key]: value }
-    try { window.localStorage.setItem(STORE, JSON.stringify(next)) } catch {}
+    try { if (mayStore()) window.localStorage.setItem(STORE, JSON.stringify(next)) } catch {}
     return next
   })
   const reset = () => {

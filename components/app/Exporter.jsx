@@ -12,6 +12,7 @@ import { albumKey } from '../../lib/preferences'
 import Paywall from './Paywall'
 import Looks from './Looks'
 import { canUseStyle, limitsFor, TIER_DETAIL, TIERS } from '../../lib/tiers'
+import { mayStore } from '@/lib/consent'
 import {
   TitleFrame, TracksFrame, CriteriaFrame, ComparisonFrame, DiscographyFrame
 } from '../../lib/export/frames.jsx'
@@ -231,7 +232,7 @@ export default function Exporter ({ data, tier = 'free' }) {
     // changed afterwards, so this is a starting point and not a lock.
     const brought = key === 'style' ? (STYLES[value]?.defaults || {}) : {}
     const next = { ...s, ...brought, [key]: value }
-    try { window.localStorage.setItem(STORE, JSON.stringify(next)) } catch {}
+    try { if (mayStore()) window.localStorage.setItem(STORE, JSON.stringify(next)) } catch {}
     return next
   })
   const reset = () => {
@@ -537,7 +538,7 @@ export default function Exporter ({ data, tier = 'free' }) {
           // remembered the same way. Without this it lasted until the page
           // was reloaded and then quietly reverted.
           const merged = { ...prev, ...next, style: allowedStyle(tier, next.style ?? prev.style) }
-          try { window.localStorage.setItem(STORE, JSON.stringify(merged)) } catch {}
+          try { if (mayStore()) window.localStorage.setItem(STORE, JSON.stringify(merged)) } catch {}
           return merged
         })}
         tier={tier}

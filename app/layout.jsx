@@ -5,6 +5,7 @@ import PlayerProvider from '../components/audio/Player'
 import NowPlaying from '../components/audio/NowPlaying'
 import Atmosphere from '../components/Atmosphere'
 import ToTop from '../components/ToTop'
+import CookieBanner from '@/components/CookieBanner'
 
 // One family, self-hosted at build time. The width axis carries the display voice,
 // so there is no second face and nothing borrowed from the platform sans.
@@ -90,6 +91,7 @@ export default function RootLayout ({ children }) {
           {children}
           <NowPlaying />
           <ToTop />
+          <CookieBanner />
         </PlayerProvider>
       </body>
     </html>

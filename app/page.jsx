@@ -335,9 +335,9 @@ export default async function Landing () {
 
           <nav className="foot-col" aria-label="Legal">
             <h3>Legal</h3>
-            <a href="/terms">Terms</a>
-            <a href="/privacy">Privacy</a>
-            <a href="/cookies">Cookies</a>
+            <a href="/legal/terms">Terms</a>
+            <a href="/legal/privacy">Privacy</a>
+            <a href="/legal/cookies">Cookies</a>
           </nav>
         </div>
         <div className="shell foot-base">

@@ -710,5 +710,37 @@
     "cover": "/wall/blue-lines-2012-mix-master-6014554.jpg",
     "track": "Blue Lines (2012 Mix/Master)",
     "dz": 61381704
+  },
+  {
+    "name": "Currents",
+    "artist": "Tame Impala",
+    "genre": "Psychedelic Pop",
+    "cover": "/wall/currents.jpg",
+    "track": "Let It Happen",
+    "dz": 10709540
+  },
+  {
+    "name": "Graduation",
+    "artist": "Kanye West",
+    "genre": "Hip-Hop/Rap",
+    "cover": "/wall/graduation.jpg",
+    "track": "Stronger",
+    "dz": 86994002
+  },
+  {
+    "name": "IGOR",
+    "artist": "Tyler, The Creator",
+    "genre": "Hip-Hop/Rap",
+    "cover": "/wall/igor.jpg",
+    "track": "EARFQUAKE",
+    "dz": 97140952
+  },
+  {
+    "name": "Take Care",
+    "artist": "Drake",
+    "genre": "Hip-Hop/Rap",
+    "cover": "/wall/take-care.jpg",
+    "track": "Marvins Room",
+    "dz": 1622724
   }
 ]
