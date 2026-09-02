@@ -246,6 +246,10 @@ img { display: block; max-width: 100%; }
 /* The preview dock owns the bottom of the screen when a record is on. */
 body:has(.dock.up) .totop { bottom: 116px; }
 @media (prefers-reduced-motion: reduce) { .totop { transition: opacity 200ms linear; translate: 0 0; } }
+/* Not on a phone. It floats over the corner of the screen with the least room
+   to spare, above the tab bar, to do something the phone already does when you
+   tap the clock. */
+@media (max-width: 860px) { .totop { display: none; } }
 
 /* --- carousel arrows and the full size viewer ---
    Used by the landing page and by the export screen, so they cannot live in

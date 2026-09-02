@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
   CRITERIA_PRESETS, CRITERIA_MAX, SUPERLATIVE_MAX,
@@ -10,7 +11,7 @@ import SuperlativePicker from './SuperlativePicker'
 import ScaleBuilder from './ScaleBuilder'
 import { normaliseScale, DEFAULT_SCALE } from '@/lib/scales'
 
-export default function RatingModel ({ initial }) {
+export default function RatingModel ({ initial, can = { scales: true, criteria: true } }) {
   const [criteria, setCriteria] = useState(initial.criteria)
   const [supers, setSupers] = useState(initial.superlatives)
   const [scale, setScale] = useState(initial.scale || DEFAULT_SCALE)
@@ -78,7 +79,14 @@ export default function RatingModel ({ initial }) {
           top is the ladder this site was built on, not a rule: pick another, rename the rungs,
           or colour them yourself.
         </p>
-        <ScaleBuilder scale={scale} onChange={touch(setScale)} />
+        {!can.scales && (
+          <p className="rm-locked">
+            Your own scale is a Plus feature. The eleven point ladder is yours either way, and
+            anything you change here would be put back when it saved rather than kept, so it is
+            shown as it is. <Link href="/tiers">See what each tier includes</Link>.
+          </p>
+        )}
+        <ScaleBuilder scale={scale} onChange={touch(setScale)} locked={!can.scales} />
       </section>
 
       <section className="rm-block">

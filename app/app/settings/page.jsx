@@ -1,12 +1,13 @@
 import Link from 'next/link'
 import { auth } from '@/auth'
-import { getProfile, listReviews, getPreferences, countCommentsBy, voteTotals, listFollowers, reviewId } from '@/lib/db'
+import { getProfile, listReviews, getPreferences, countCommentsBy, voteTotals, listFollowers, reviewId, getCredentials } from '@/lib/db'
 import { ensureProfile } from '@/lib/ensure-profile'
 import { published } from '@/lib/social-queries'
 import { normalisePreferences, DEFAULT_PREFERENCES } from '@/lib/preferences'
 import ProfileForm from '@/components/social/ProfileForm'
+import PasswordForm from '@/components/social/PasswordForm'
 import RatingModel from '@/components/app/RatingModel'
-import { accountTier, TIER_DETAIL } from '@/lib/tiers'
+import { accountTier, limitsFor, TIER_DETAIL } from '@/lib/tiers'
 import Achievements from '@/components/app/Achievements'
 import DangerZone from '@/components/social/DangerZone'
 import { achievementsFor } from '@/lib/achievements'
@@ -33,9 +34,12 @@ export default async function Settings () {
     )
   }
 
-  const [all, storedPrefs] = await Promise.all([
+  // Whether there is a password to change at all. An account that came in
+  // through Google has no credentials row, and only the server can tell.
+  const [all, storedPrefs, creds] = await Promise.all([
     listReviews(session.user.email),
-    getPreferences(session.user.email)
+    getPreferences(session.user.email),
+    getCredentials(session.user.email)
   ])
   const live = published(all)
   const tier = accountTier(session, profile)
@@ -75,9 +79,32 @@ export default async function Settings () {
       <hr className="set-rule" />
 
       <div className="page-head set-head">
+        <h1>Password</h1>
+      </div>
+      {creds
+        ? <PasswordForm />
+        : (
+          <p className="set-intro measure">
+            You sign in with Google, so there is no password on this account.
+            Your password is managed by Google.
+          </p>
+        )}
+
+      <hr className="set-rule" />
+
+      <div className="page-head set-head">
         <h1>Your rating model</h1>
       </div>
-      <RatingModel initial={preferences} />
+      {/* What the account may actually keep. The save route puts a free
+          account's model back to the built in one, so without this the screen
+          would report a save that had been undone on the way through. */}
+      <RatingModel
+        initial={preferences}
+        can={{
+          scales: limitsFor(tier).customScales,
+          criteria: limitsFor(tier).customCriteria
+        }}
+      />
 
       <hr className="set-rule" />
 

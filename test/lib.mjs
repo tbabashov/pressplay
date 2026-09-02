@@ -129,3 +129,81 @@ await test('taken off the slides is scoped to the record you are looking at', as
   assert.deepEqual(hiddenForArtist(hidden, []), [])
   assert.deepEqual(hiddenForArtist(hidden, [undefined]), [])
 })
+
+await test('a password verifies, and changing it retires the old one', async () => {
+  // The change-password route stands entirely on these two: it verifies the
+  // current password against the stored hash, refuses a new one that verifies
+  // against that same hash, and stores a fresh hash. If verify ever returned
+  // true for the wrong string the route would hand the account over.
+  const { hashPassword, verifyPassword, passwordError } =
+    await import(R + 'password.js')
+  const { PASSWORD_MAX } = await import(R + 'password-rules.js')
+
+  const stored = await hashPassword('correct horse battery')
+  assert.ok(await verifyPassword('correct horse battery', stored))
+  assert.ok(!(await verifyPassword('Correct horse battery', stored)), 'case matters')
+  assert.ok(!(await verifyPassword('', stored)))
+  assert.ok(!(await verifyPassword('correct horse battery ', stored)), 'no trimming')
+
+  // Same password, different salt: two hashes of one string never match as
+  // strings, so nothing may compare them that way.
+  const again = await hashPassword('correct horse battery')
+  assert.notEqual(again, stored)
+  assert.ok(await verifyPassword('correct horse battery', again))
+
+  // Never throws on rubbish; an account with no password just fails to verify.
+  for (const bad of [null, undefined, '', 'notahash', 'scrypt:x', 'bcrypt:1:2:3']) {
+    assert.equal(await verifyPassword('anything', bad), false, String(bad))
+  }
+
+  const rotated = await hashPassword('a whole new thing')
+  assert.ok(!(await verifyPassword('correct horse battery', rotated)), 'old one is retired')
+
+  assert.ok(passwordError('short'), 'too short is refused')
+  assert.ok(passwordError('x'.repeat(PASSWORD_MAX + 1)), 'too long is refused')
+  assert.equal(passwordError('long enough to pass'), null)
+})
+
+await test('a hand built scale survives the trip through normaliseScale', async () => {
+  // The builder can now change the top of the ladder and add or drop steps.
+  // Everything it produces goes back out through normaliseScale, which is
+  // allowed to reject a broken scale entirely and fall back to the default,
+  // so an edit the builder permits but the normaliser refuses would look like
+  // the save silently doing nothing.
+  const { normaliseScale, DEFAULT_SCALE, SCALE_MAX_CEILING } = await import(R + 'scales.js')
+
+  // A seven point ladder with only three named steps, which is the shape the
+  // preset list could never make.
+  const mine = {
+    id: 'custom', name: 'My seven', max: 7, na: true, signature: false,
+    tiers: [
+      { value: 7, name: 'Untouchable', colour: '#8b5cf6' },
+      { value: 4, name: 'Fine', colour: null },
+      { value: 0, name: 'No', colour: '#d1495b' }
+    ]
+  }
+  const out = normaliseScale(mine)
+  assert.equal(out.max, 7)
+  assert.equal(out.name, 'My seven')
+  assert.equal(out.tiers.length, 3, 'steps are kept, not filled back in')
+  assert.deepEqual(out.tiers.map(t => t.value), [7, 4, 0], 'and stay in order')
+  assert.equal(out.tiers[0].name, 'Untouchable')
+  assert.equal(out.tiers[0].colour, '#8b5cf6')
+
+  // The extremes the number field allows.
+  assert.equal(normaliseScale({ ...mine, max: 1, tiers: [
+    { value: 1, name: 'Yes' }, { value: 0, name: 'No' }] }).max, 1)
+  assert.equal(normaliseScale({ ...mine, max: SCALE_MAX_CEILING, tiers: [
+    { value: SCALE_MAX_CEILING, name: 'Top' }, { value: 0, name: 'Bottom' }] }).max,
+    SCALE_MAX_CEILING)
+
+  // A step above the top is dropped rather than taken as the new top, which is
+  // why lowering the max in the builder has to prune before it saves.
+  const pruned = normaliseScale({ ...mine, max: 5 })
+  assert.ok(!pruned.tiers.some(t => t.value > 5), 'nothing above the top survives')
+
+  // Out of range tops fall back rather than clamping, so the builder must
+  // never send one: this is the case that would wipe someone's ladder.
+  assert.equal(normaliseScale({ ...mine, max: 0 }), DEFAULT_SCALE)
+  assert.equal(normaliseScale({ ...mine, max: SCALE_MAX_CEILING + 1 }), DEFAULT_SCALE)
+})
