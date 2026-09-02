@@ -8,6 +8,7 @@ import ProfileForm from '@/components/social/ProfileForm'
 import RatingModel from '@/components/app/RatingModel'
 import { accountTier, TIER_DETAIL } from '@/lib/tiers'
 import Achievements from '@/components/app/Achievements'
+import DangerZone from '@/components/social/DangerZone'
 import { achievementsFor } from '@/lib/achievements'
 
 export const metadata = { title: 'Profile' }
@@ -103,6 +104,10 @@ export default async function Settings () {
         </p>
         <Link className="btn-ghost" href="/app/library">Publish from your library</Link>
       </div>
+
+      <hr className="set-rule" />
+
+      <DangerZone handle={profile.handle} />
     </>
   )
 }

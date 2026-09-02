@@ -424,31 +424,8 @@ export default function Exporter ({ data, tier = 'free' }) {
   const slug = `${data.review.album.artist || data.review.album.artists?.[0] || 'album'}-${data.review.album.name}`
     .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 
-  // The day's allowance is claimed at the moment slides are actually produced,
-  // not when the screen is opened: looking at what a record would make costs
-  // nothing, and an album already produced today can be produced again after a
-  // typo without spending a second one. A refusal returns what is left, which
-  // is what the wall is built from.
-  const claim = async () => {
-    try {
-      const res = await fetch('/api/generations', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ albumId: data.review.albumId })
-      })
-      const q = await res.json().catch(() => null)
-      if (res.status === 429) { setWall(q || { used: 0, limit: 0 }); return false }
-      if (q) setQuota(q)
-      return res.ok
-    } catch {
-      // A network fault is not a reason to withhold something already paid for.
-      return true
-    }
-  }
-
   const one = async i => {
     setError('')
-    if (!(await claim())) return
     setBusy(frames[i].key)
     try { save(await shoot(i), `${slug}-${String(i + 1).padStart(2, '0')}.png`) }
     catch (e) { setError(e.message || 'Could not render that slide.') }
@@ -457,7 +434,6 @@ export default function Exporter ({ data, tier = 'free' }) {
 
   const all = async () => {
     setError('')
-    if (!(await claim())) return
     setBusy('all')
     try {
       for (let i = 0; i < frames.length; i++) {

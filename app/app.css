@@ -1693,11 +1693,20 @@ body:has(.app) .vignette { opacity: 0.5; }
   color: var(--fg); font: inherit; font-size: 12.6px;
 }
 .ii-url input:focus { outline: none; border-color: rgba(var(--accent-rgb), 0.6); }
+/* Removing a picture is a destructive action, so it looks like one. It was
+   underlined grey text at the size of a footnote, which read as a caption
+   rather than as a button and could barely be seen against the panel. */
 .ii-clear {
-  justify-self: start; font-size: 12px; color: var(--fg-4);
-  text-decoration: underline; text-underline-offset: 3px;
+  justify-self: start;
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 34px; padding: 7px 13px; border-radius: 9px;
+  font-size: 12.6px; font-weight: 640; cursor: pointer;
+  color: #ff8f86;
+  background: rgba(192, 57, 47, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(255, 143, 134, 0.42);
+  transition: color 160ms var(--ease), background 160ms var(--ease);
 }
-.ii-clear:hover { color: #ef9ea0; }
+.ii-clear:hover { color: #fff; background: #c0392f; box-shadow: inset 0 0 0 1px #c0392f; }
 .ii-error { margin-top: 0; font-size: 12.4px; }
 
 /* The discography form takes a cover the same three ways the rating screen
@@ -2237,3 +2246,64 @@ body:has(.app) .vignette { opacity: 0.5; }
 /* Keeping a record off your slides is not deleting it, so it is not an X. */
 .disc-off svg { width: 15px !important; height: 15px !important; }
 .disc-groups li button.disc-off:hover { color: #fff; background: rgba(255,255,255,0.16); }
+.oor-do { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+
+/* ========================================================== danger zone ==
+   At the bottom, framed in red, and behind a typed confirmation. A dialog
+   with a red button in it gets dismissed by reflex; typing your own handle
+   does not. */
+.dz {
+  margin-top: 8px; padding: 20px;
+  border-radius: 16px;
+  background: rgba(192, 57, 47, 0.05);
+  box-shadow: inset 0 0 0 1px rgba(255, 143, 134, 0.28);
+  max-width: 860px;
+}
+.dz-title {
+  font-size: 12px; font-weight: 750; letter-spacing: 0.1em; text-transform: uppercase;
+  color: #ff8f86; margin-bottom: 16px;
+}
+.dz-row {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 20px;
+  padding: 16px 0; border-top: 1px solid rgba(255, 143, 134, 0.18);
+}
+.dz-row:first-of-type { border-top: 0; padding-top: 0; }
+.dz-row.open { flex-direction: column; gap: 14px; }
+.dz-say { min-width: 0; }
+.dz-say strong { display: block; font-size: 14.6px; font-weight: 660; }
+.dz-say p { margin-top: 5px; font-size: 13px; line-height: 1.55; color: var(--fg-4); max-width: 62ch; }
+
+.dz-open, .dz-go, .dz-cancel {
+  min-height: 40px; padding: 9px 15px; border-radius: 10px; cursor: pointer;
+  font: inherit; font-size: 13px; font-weight: 640; white-space: nowrap; flex: none;
+}
+.dz-open {
+  color: #ff8f86; background: rgba(192, 57, 47, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(255, 143, 134, 0.42);
+}
+.dz-open:hover { color: #fff; background: #c0392f; box-shadow: inset 0 0 0 1px #c0392f; }
+
+.dz-confirm { display: grid; gap: 12px; width: 100%; }
+.dz-confirm label { display: grid; gap: 6px; max-width: 320px; }
+.dz-confirm span { font-size: 12.4px; color: var(--fg-3); }
+.dz-confirm b { color: #ff8f86; font-weight: 700; }
+.dz-confirm input {
+  padding: 10px 13px; border-radius: 10px;
+  font: inherit; font-size: 14px; color: var(--fg);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255, 143, 134, 0.4);
+}
+.dz-confirm input:focus { outline: none; border-color: #ff8f86; }
+.dz-do { display: flex; flex-wrap: wrap; gap: 9px; }
+.dz-go { color: #fff; background: #c0392f; }
+.dz-go:hover:not(:disabled) { filter: brightness(1.1); }
+.dz-go:disabled { opacity: 0.45; cursor: not-allowed; }
+.dz-cancel { color: var(--fg-3); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.16); }
+.dz-cancel:hover { color: var(--fg); background: rgba(255,255,255,0.08); }
+.dz-error { margin-top: 12px; font-size: 13px; color: #ff8f86; }
+.dz-done { margin-top: 12px; font-size: 13px; color: var(--fg-2); }
+
+@media (max-width: 640px) {
+  .dz-row { flex-direction: column; gap: 12px; }
+  .dz-open, .dz-go, .dz-cancel { width: 100%; text-align: center; justify-content: center; }
+}

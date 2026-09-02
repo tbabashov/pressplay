@@ -420,25 +420,59 @@ a.cm-who:hover { color: var(--accent); }
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.14), 0 22px 60px rgba(0,0,0,0.6);
   backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
 }
+.ck-say { min-width: 0; }
+.ck-head { font-size: 14.6px; font-weight: 680; color: var(--fg); margin-bottom: 5px; }
 .ck-text { font-size: 13.2px; line-height: 1.55; color: var(--fg-3); }
 .ck-text strong { color: var(--fg); font-weight: 650; }
 .ck-text a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
 .ck-do { display: flex; gap: 9px; flex: none; }
-.ck-no, .ck-yes {
+.ck-no, .ck-mid, .ck-yes {
   min-height: 42px; padding: 10px 16px; border-radius: 10px; cursor: pointer;
   font: inherit; font-size: 13px; font-weight: 640; white-space: nowrap;
 }
-.ck-no { color: var(--fg-3); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18); }
-.ck-no:hover { color: var(--fg); background: rgba(255,255,255,0.08); }
+.ck-no, .ck-mid { color: var(--fg-3); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.18); }
+.ck-no:hover, .ck-mid:hover { color: var(--fg); background: rgba(255,255,255,0.08); }
 .ck-yes { color: #17140c; background: var(--accent); }
 .ck-yes:hover { filter: brightness(1.06); }
 
 @media (max-width: 760px) {
   .ck-body { flex-direction: column; align-items: stretch; gap: 14px; padding: 15px 16px; }
   .ck-do { justify-content: stretch; }
-  .ck-no, .ck-yes { flex: 1; justify-content: center; text-align: center; }
+  .ck-no, .ck-mid, .ck-yes { flex: 1; justify-content: center; text-align: center; }
 }
 /* Clear of the phone tab bar, which is also pinned to the bottom. */
 @media (max-width: 860px) {
   .ck { bottom: calc(66px + env(safe-area-inset-bottom, 0px)); }
 }
+
+/* The preferences panel behind Manage Preferences: one row per category, with
+   what each actually does rather than a name and a switch. */
+.ck-manage { display: grid; gap: 14px; width: 100%; }
+.ck-cat {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 18px;
+  padding: 13px 0; border-top: 1px solid rgba(255,255,255,0.1);
+}
+.ck-cat:first-of-type { border-top: 0; padding-top: 4px; }
+.ck-cat strong { display: block; font-size: 13.6px; font-weight: 660; }
+.ck-cat p { margin-top: 4px; font-size: 12.6px; line-height: 1.5; color: var(--fg-4); max-width: 62ch; }
+.ck-locked {
+  flex: none; font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--fg-4); padding-top: 3px;
+}
+.ck-switch { flex: none; display: inline-flex; align-items: center; gap: 9px; cursor: pointer; }
+.ck-switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+.ck-switch span {
+  width: 42px; height: 24px; border-radius: 999px; position: relative;
+  background: rgba(255,255,255,0.16); transition: background 180ms var(--ease);
+}
+.ck-switch span::after {
+  content: ''; position: absolute; left: 3px; top: 3px;
+  width: 18px; height: 18px; border-radius: 50%; background: #fff;
+  transition: transform 180ms var(--ease);
+}
+.ck-switch input:checked + span { background: var(--accent); }
+.ck-switch input:checked + span::after { transform: translateX(18px); }
+.ck-switch input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 3px; }
+.ck-switch em { font-style: normal; font-size: 12px; color: var(--fg-4); min-width: 22px; }
+.ck-none { font-size: 12.4px; line-height: 1.5; color: var(--fg-4); }
+.ck-none a, .ck-text a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }

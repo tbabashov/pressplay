@@ -90,7 +90,13 @@ export default function ImageInput ({ value, onChange, hint = 'cover', label = '
       </label>
 
       {value && (
-        <button type="button" className="ii-clear" onClick={() => onChange('')}>Remove</button>
+        <button type="button" className="ii-clear" onClick={() => onChange('')}>
+          <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true">
+            <path d="M6.5 6.5l11 11m0-11l-11 11" fill="none" stroke="currentColor"
+              strokeWidth="2.6" strokeLinecap="round" />
+          </svg>
+          Remove
+        </button>
       )}
       {error && <p className="notice notice-bad ii-error">{error}</p>}
     </div>
