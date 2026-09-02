@@ -7,7 +7,7 @@ import { ratingColor } from '../../lib/rating-colors'
 function Delta ({ places, isNew }) {
   if (isNew) return <span className="dl new">NEW</span>
   if (places === null || places === undefined) return <span className="dl flat">·</span>
-  if (places === 0) return <span className="dl flat">-</span>
+  if (places === 0) return <span className="dl flat">—</span>
   const up = places > 0
   return (
     <span className={`dl ${up ? 'up' : 'down'}`}>

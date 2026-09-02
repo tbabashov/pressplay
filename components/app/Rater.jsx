@@ -382,7 +382,7 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
         <div className="verdict">
           <div className="verdict-row">
             <span>Song average<i>auto</i></span>
-            <b>{songAverage === null ? ', ' : songAverage.toFixed(1)}</b>
+            <b>{songAverage === null ? '—' : songAverage.toFixed(1)}</b>
           </div>
           {CRITERIA.map(([key, label]) => (
             <label className="verdict-row" key={key}>
@@ -390,7 +390,7 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
               <input
                 value={criteria[key] ?? ''}
                 onChange={touch(e => setCriteria(c => ({ ...c, [key]: e.target.value })))}
-                placeholder=", "
+                placeholder="—"
                 inputMode="decimal"
                 aria-label={label}
               />
@@ -403,7 +403,7 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
               className={`tnum${final === null ? ' is-empty' : ''}`}
               style={finalStyle(final, scale)}
             >
-              {final === null ? ', ' : final.toFixed(1)}
+              {final === null ? '—' : final.toFixed(1)}
             </strong>
           </div>
 
@@ -412,7 +412,7 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
             <input
               value={override}
               onChange={touch(e => setOverride(e.target.value))}
-              placeholder=", "
+              placeholder="—"
               inputMode="decimal"
               aria-label="Override the final score"
             />

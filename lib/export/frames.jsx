@@ -1172,7 +1172,7 @@ function CriterionRow ({ part, theme, last }) {
         fontVariantNumeric: 'tabular-nums', color: has ? 'var(--ink)' : 'rgba(var(--ink-rgb), 0.35)',
         flexShrink: 0
       }}>
-        {has ? part.value.toFixed(1) : ', '}
+        {has ? part.value.toFixed(1) : '—'}
       </span>
     </div>
   )

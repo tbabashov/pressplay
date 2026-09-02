@@ -9,7 +9,7 @@ const UP = '#34d399'
 const DOWN = '#fb7185'
 const FLAT = 'rgba(var(--ink-rgb), 0.4)'
 
-// "▲ 6", "▼ 2", ", " or "NEW", one column, always the same width, so the rows
+// "▲ 6", "▼ 2", "—" or "NEW", one column, always the same width, so the rows
 // stay in a clean vertical rhythm no matter how far anything moved.
 function Delta ({ places, isNew, accent }) {
   if (isNew) {
@@ -21,7 +21,7 @@ function Delta ({ places, isNew, accent }) {
     )
   }
   if (places === null || places === undefined) return <span style={{ color: FLAT, fontSize: 26 }}>·</span>
-  if (places === 0) return <span style={{ color: FLAT, fontSize: 30, fontWeight: 700 }}>-</span>
+  if (places === 0) return <span style={{ color: FLAT, fontSize: 30, fontWeight: 700 }}>—</span>
   const up = places > 0
   return (
     <span style={{

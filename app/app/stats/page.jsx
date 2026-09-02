@@ -10,7 +10,7 @@ export const metadata = { title: 'Taste' }
 export const dynamic = 'force-dynamic'
 
 const TIER_NAME = Object.fromEntries(TIERS)
-const fmt = (n, d = 2) => (typeof n === 'number' ? n.toFixed(d) : '-')
+const fmt = (n, d = 2) => (typeof n === 'number' ? n.toFixed(d) : '—')
 
 export default async function Stats () {
   const session = await auth()

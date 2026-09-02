@@ -64,11 +64,28 @@ await test('achievements count off the library and never exceed their target', a
 
 await test('a score placeholder is a dash, not a comma', async () => {
   // A blanket punctuation sweep once turned every one of these into ", ".
+  // The em dash here is a glyph standing in for a number nobody has entered
+  // yet, not punctuation in a sentence, which is why it survives the rule
+  // against em dashes in prose. N/A keeps a shorter en dash so an unscorable
+  // track still reads differently from an unscored one.
   const { fmtScore } = await import(R + 'rating-scale.js')
-  const { scoreText } = await import(R + 'rating-colors.js')
-  assert.equal(fmtScore(null), '-')
+  const { scoreText, NA } = await import(R + 'rating-colors.js')
+  const { fmtScore: fmtScale } = await import(R + 'scales.js')
+  const { fmtTime } = await import(R + 'music.js')
+
+  for (const [what, got] of [
+    ['fmtScore', fmtScore(null)],
+    ['scales fmtScore', fmtScale(null)],
+    ['scoreText', scoreText(null)],
+    ['fmtTime', fmtTime(0)]
+  ]) {
+    assert.equal(got, '\u2014', `${what} should be an em dash`)
+    assert.ok(!got.includes(','), `${what} must never be a comma`)
+  }
+
   assert.equal(fmtScore(9), '9.0')
-  assert.equal(scoreText(null), '-')
+  // N/A is an en dash, unscored is an em dash. They must not collapse.
+  assert.notEqual(scoreText(NA), scoreText(null))
 })
 
 await test('paletteFromColor takes the hex the pickers actually pass', async () => {
