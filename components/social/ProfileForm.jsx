@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { slugify, HANDLE_MAX, BIO_MAX } from '@/lib/profile'
+import { fetchJson } from '@/lib/fetch-json'
 
 // A picture is squared off and shrunk in the browser before it is sent. The
 // store is a JSON file that gets parsed on every read, and a full size photo
@@ -43,13 +44,11 @@ export default function ProfileForm ({ profile }) {
     e.preventDefault()
     setBusy(true); setError(''); setSaved(false)
     try {
-      const res = await fetch('/api/profile', {
+      const data = await fetchJson('/api/profile', {
         method: 'PATCH',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ name, handle, bio, image })
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'That did not save.')
       setHandle(data.profile.handle)
       setSaved(true)
       router.refresh()
