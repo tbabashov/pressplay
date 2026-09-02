@@ -8,6 +8,7 @@ import AccountMenu from '@/components/AccountMenu'
 import Mark from '@/components/Mark'
 import AchievementToasts from '@/components/app/AchievementToasts'
 import '../app.css'
+import '../tiers.css'
 
 export const metadata = { title: 'Your library' }
 

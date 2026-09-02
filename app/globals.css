@@ -372,11 +372,15 @@ a.cm-who:hover { color: var(--accent); }
 
 /* The plan and what is left of today, in the account menu: this is where
    anyone looks when they wonder why something stopped working. */
-.acct-plan {
+/* Scoped to the menu on purpose. ".acct-menu a" is a class plus a type
+   selector, which outranks a lone class however far down the file it sits, so
+   the display: block on every menu row was beating this flex no matter what:
+   the chevron fell onto a line of its own and the row read as broken. */
+.acct-menu .acct-plan {
   display: flex; align-items: center; justify-content: space-between; gap: 10px;
   padding: 9px 12px; border-radius: 9px; color: inherit;
 }
-.acct-plan:hover { background: rgba(255,255,255,0.07); }
+.acct-menu .acct-plan:hover { background: rgba(255,255,255,0.07); }
 .acct-plan-left { display: grid; gap: 2px; min-width: 0; }
 .acct-plan-sub { font-size: 12px; color: var(--fg-3); }
 .acct-plan-go { width: 14px; height: 14px; flex: none; color: var(--fg-4); }

@@ -119,3 +119,19 @@
   .tw-body { padding: 20px 18px 70px; }
   .cs-cols { grid-auto-columns: 1fr; }
 }
+
+/* The same screen, over whatever you were doing. Only the framing differs:
+   fixed to the window, above everything, and its own scroll. */
+.pw-over {
+  position: fixed; inset: 0; z-index: 220;
+  overflow: auto; overscroll-behavior: contain;
+  background: #08080b;
+  animation: pw-in 220ms var(--ease) both;
+}
+@keyframes pw-in { from { opacity: 0 } to { opacity: 1 } }
+@media (prefers-reduced-motion: reduce) { .pw-over { animation: none } }
+
+.tw-kicker {
+  font-size: 11px; font-weight: 750; letter-spacing: 0.11em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 12px;
+}
