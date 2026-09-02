@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import { styleOf } from './styles.js'
 import { ratingColor, scoreText, SCALE_ROWS, fmtRuntime, fmtDuration } from '../rating-colors.js'
 import { NA, fmtScore } from '../rating-scale.js'
+import { readableOn } from '../scales.js'
 import {
   FrameShell, Surface, ScoreChip, FitText, Fill, surfaceStyle, rowRule,
   CONTENT_W, CONTENT_H, trackTextSize, featureDrop, useUniformFit
@@ -462,11 +463,257 @@ function ArtistCutout ({ img, index, count, onChange, locked }) {
   )
 }
 
+
+// ---------- Title cards that are not the same slide ----------
+//
+// Each of these puts the record somewhere else on the page. The signature card
+// keeps its dome and its centred stack, because that one is signed off; the
+// rest are their own arrangements, and a style picks one by its layout key.
+
+// Broadsheet: a printed page. The title is set large and ragged at the top
+// left, the cover is a plate held down the right, and the credits sit under a
+// masthead rule rather than centred under the artwork.
+function BroadsheetTitle ({ album, data, palette, onEdit, off, onRemovePart }) {
+  return (
+    <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column',
+      padding: '120px 96px 0' }}>
+      {!off('albumNumber') && (
+        <Removable id="albumNumber" name="the album number" onRemove={onRemovePart}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 22, marginBottom: 34 }}>
+            <span style={{ fontSize: 30, fontWeight: 'var(--label-weight)',
+              letterSpacing: 'var(--label-track)', textTransform: 'var(--label-case)' }}>
+              No. {data.albumNumber}
+            </span>
+            <span style={{ flex: 1, height: 2, background: 'rgba(var(--ink-rgb), 0.35)' }} />
+          </div>
+        </Removable>
+      )}
+
+      <FitText size={112} min={58} lines={3} weight={800} fitKey={album.name}
+        style={{ letterSpacing: '-0.035em', lineHeight: 1.02, textAlign: 'left', width: '100%' }}>
+        <Editable field="albumName" value={album.name} onEdit={onEdit} />
+      </FitText>
+
+      {!off('artist') && (
+        <Removable id="artist" name="the credit" onRemove={onRemovePart}>
+          <div style={{ marginTop: 26, paddingTop: 22, borderTop: '3px solid rgba(var(--ink-rgb), 0.4)' }}>
+            <FitText size={46} min={30} weight={600} fitKey={album.artists.join(', ')}
+              style={{ textAlign: 'left' }}>
+              <Editable field="artist" value={album.artists.join(', ')} onEdit={onEdit} />
+            </FitText>
+          </div>
+        </Removable>
+      )}
+
+      {!off('meta') && (album.year || album.genre) && (
+        <Removable id="meta" name="the year and genre" onRemove={onRemovePart}>
+          <div style={{ marginTop: 12, fontSize: 30, color: 'rgba(var(--ink-rgb), 0.62)' }}>
+            {album.year ? <Editable field="year" value={String(album.year)} onEdit={onEdit} /> : null}
+            {album.year && album.genre ? ' · ' : ''}
+            {album.genre || ''}
+          </div>
+        </Removable>
+      )}
+
+      {/* The plate: held to the right and hung below the type, the way a
+          picture sits in a column of text rather than above it. */}
+      <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'flex-end', paddingBottom: 150 }}>
+        <Cover src={album.coverProxied} size={620}
+          style={{ borderRadius: 0, boxShadow: '26px 26px 0 rgba(var(--ink-rgb), 0.16)' }} />
+      </div>
+    </div>
+  )
+}
+
+// Poster: the cover fills the frame and the words sit on it. Nothing is
+// centred in a column; the record is the page.
+function PosterTitle ({ album, data, palette, onEdit, off, onRemovePart }) {
+  return (
+    <div style={{ position: 'absolute', inset: 0 }}>
+      {album.coverProxied && (
+        <img src={album.coverProxied} alt="" style={{
+          position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover'
+        }} />
+      )}
+      <div style={{ position: 'absolute', inset: 0, background:
+        'linear-gradient(180deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.08) 34%, rgba(0,0,0,0.72) 76%, rgba(0,0,0,0.92) 100%)' }} />
+
+      <div style={{ position: 'absolute', left: 84, right: 84, bottom: 168, color: '#fff' }}>
+        {!off('albumNumber') && (
+          <Removable id="albumNumber" name="the album number" onRemove={onRemovePart}>
+            <div style={{ fontSize: 28, fontWeight: 'var(--label-weight)',
+              letterSpacing: 'var(--label-track)', textTransform: 'var(--label-case)',
+              color: palette.accent, marginBottom: 20 }}>
+              Album #{data.albumNumber}
+            </div>
+          </Removable>
+        )}
+        <FitText size={124} min={62} lines={3} weight={800} fitKey={album.name}
+          style={{ letterSpacing: '-0.04em', lineHeight: 0.98, textAlign: 'left', width: '100%',
+            textShadow: '0 8px 40px rgba(0,0,0,0.6)' }}>
+          <Editable field="albumName" value={album.name} onEdit={onEdit} />
+        </FitText>
+        {!off('artist') && (
+          <Removable id="artist" name="the credit" onRemove={onRemovePart}>
+            <FitText size={44} min={28} weight={600} fitKey={album.artists.join(', ')}
+              style={{ marginTop: 18, textAlign: 'left', color: 'rgba(255,255,255,0.86)' }}>
+              <Editable field="artist" value={album.artists.join(', ')} onEdit={onEdit} />
+            </FitText>
+          </Removable>
+        )}
+        {!off('meta') && (album.year || album.genre) && (
+          <Removable id="meta" name="the year and genre" onRemove={onRemovePart}>
+            <div style={{ marginTop: 14, fontSize: 28, letterSpacing: '0.06em',
+              textTransform: 'uppercase', color: 'rgba(255,255,255,0.66)' }}>
+              {album.year ? <Editable field="year" value={String(album.year)} onEdit={onEdit} /> : null}
+              {album.year && album.genre ? '  ·  ' : ''}
+              {album.genre || ''}
+            </div>
+          </Removable>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// Split: the frame is halved. The record sits in the top half, everything that
+// describes it in the bottom, divided by a hard rule.
+function SplitTitle ({ album, data, palette, theme, onEdit, off, onRemovePart }) {
+  return (
+    <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <div style={{ height: 1020, position: 'relative', overflow: 'hidden',
+        borderBottom: '4px solid rgba(var(--ink-rgb), 0.5)' }}>
+        {album.coverProxied && (
+          <img src={album.coverProxied} alt="" style={{
+            position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover'
+          }} />
+        )}
+        {!off('albumNumber') && (
+          <Removable id="albumNumber" name="the album number" onRemove={onRemovePart}
+            style={{ position: 'absolute', left: 0, top: 64 }}>
+            <div style={{
+              padding: '14px 30px 14px 84px',
+              // readableOn rather than comparing against one known ink: a
+              // style whose ink is a shade off that exact string got white
+              // text on a white tab, which is a number nobody can read.
+              background: styleOf(theme).ink, color: readableOn(styleOf(theme).ink),
+              fontSize: 30, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase'
+            }}>
+              {String(data.albumNumber).padStart(2, '0')}
+            </div>
+          </Removable>
+        )}
+      </div>
+
+      <div style={{ flex: 1, padding: '58px 84px 0', display: 'flex', flexDirection: 'column' }}>
+        <FitText size={92} min={50} lines={2} weight={800} fitKey={album.name}
+          style={{ letterSpacing: '-0.035em', lineHeight: 1.02, textAlign: 'left', width: '100%' }}>
+          <Editable field="albumName" value={album.name} onEdit={onEdit} />
+        </FitText>
+        {!off('artist') && (
+          <Removable id="artist" name="the credit" onRemove={onRemovePart}>
+            <FitText size={42} min={28} weight={500} fitKey={album.artists.join(', ')}
+              style={{ marginTop: 16, textAlign: 'left', color: 'rgba(var(--ink-rgb), 0.7)' }}>
+              <Editable field="artist" value={album.artists.join(', ')} onEdit={onEdit} />
+            </FitText>
+          </Removable>
+        )}
+        {!off('meta') && (album.year || album.genre) && (
+          <Removable id="meta" name="the year and genre" onRemove={onRemovePart}>
+            <div style={{ marginTop: 'auto', paddingBottom: 150, fontSize: 28,
+              letterSpacing: '0.14em', textTransform: 'uppercase',
+              color: 'rgba(var(--ink-rgb), 0.5)' }}>
+              {album.year ? <Editable field="year" value={String(album.year)} onEdit={onEdit} /> : null}
+              {album.year && album.genre ? '   ·   ' : ''}
+              {album.genre || ''}
+            </div>
+          </Removable>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// Stack: the cover is a small plate at the top with the words stacked under it
+// in a tight column, everything left aligned against one margin.
+function StackTitle ({ album, data, palette, onEdit, off, onRemovePart }) {
+  return (
+    <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column',
+      justifyContent: 'center', padding: '0 96px 150px' }}>
+      <Cover src={album.coverProxied} size={420}
+        style={{ borderRadius: 'var(--cover-radius)', boxShadow: '0 40px 90px rgba(0,0,0,0.5)' }} />
+
+      {!off('albumNumber') && (
+        <Removable id="albumNumber" name="the album number" onRemove={onRemovePart}>
+          <div style={{ marginTop: 46, fontSize: 28, fontWeight: 'var(--label-weight)',
+            letterSpacing: 'var(--label-track)', textTransform: 'var(--label-case)',
+            color: palette.accent }}>
+            Album #{data.albumNumber}
+          </div>
+        </Removable>
+      )}
+
+      <FitText size={96} min={52} lines={2} weight={800} fitKey={album.name}
+        style={{ marginTop: 24, letterSpacing: '-0.035em', lineHeight: 1.06,
+          textAlign: 'left', width: '100%' }}>
+        <Editable field="albumName" value={album.name} onEdit={onEdit} />
+      </FitText>
+
+      {!off('artist') && (
+        <Removable id="artist" name="the credit" onRemove={onRemovePart}>
+          <FitText size={44} min={28} weight={600} fitKey={album.artists.join(', ')}
+            style={{ marginTop: 18, textAlign: 'left', color: 'rgba(var(--ink-rgb), 0.74)' }}>
+            <Editable field="artist" value={album.artists.join(', ')} onEdit={onEdit} />
+          </FitText>
+        </Removable>
+      )}
+
+      {!off('meta') && (album.year || album.genre) && (
+        <Removable id="meta" name="the year and genre" onRemove={onRemovePart}>
+          <div style={{ marginTop: 12, fontSize: 28, color: 'rgba(var(--ink-rgb), 0.52)' }}>
+            {album.year ? <Editable field="year" value={String(album.year)} onEdit={onEdit} /> : null}
+            {album.year && album.genre ? ' · ' : ''}
+            {album.genre || ''}
+          </div>
+        </Removable>
+      )}
+    </div>
+  )
+}
+
+const TITLE_LAYOUTS = {
+  broadsheet: BroadsheetTitle,
+  poster: PosterTitle,
+  split: SplitTitle,
+  stack: StackTitle
+}
+
 export function TitleFrame ({ data, palette, theme, images, onImageChange, lockCutouts,
   hiddenParts = [], onRemovePart, onEdit }) {
   const off = id => hiddenParts.includes(id)
   const { album } = data.review
   const cutouts = images || data.review.artistImages || []
+
+  // A style can put the record somewhere else entirely rather than recolour
+  // the same centred stack. The signature card is not in this table on
+  // purpose: that one is signed off and stays as it is.
+  const Layout = TITLE_LAYOUTS[styleOf(theme).layout]
+  if (Layout) {
+    return (
+      <FrameShell palette={palette} theme={theme} cover={album.coverProxied} fullBleed>
+        {cutouts.map((img, i) => (
+          <ArtistCutout
+            key={i} img={img} index={i} count={cutouts.length}
+            onChange={onImageChange} locked={lockCutouts || img.locked}
+          />
+        ))}
+        <Layout
+          album={album} data={data} palette={palette} theme={theme}
+          onEdit={onEdit} off={off} onRemovePart={onRemovePart}
+        />
+      </FrameShell>
+    )
+  }
 
   return (
     <FrameShell palette={palette} theme={theme} cover={album.coverProxied} fullBleed>
@@ -731,6 +978,91 @@ export function TracksFrame ({ data, palette, theme, tracks, showScale, dense })
   const rowH = Math.max(28, Math.min(dense ? 60 : 68, Math.floor(room / Math.max(1, tracks.length))))
   const baseSize = Math.max(13, Math.min(trackTextSize(theme, dense), rowH - 22))
   const chipSize = Math.max(28, Math.min(dense ? 42 : 46, rowH - 14))
+
+  // Split puts the songs down the left and everything that reads them down the
+  // right — the scale, and what the record's best and worst turned out to be.
+  // The other layouts stack, which is a different slide rather than the same
+  // one with the panel moved.
+  if (styleOf(theme).layout === 'split') {
+    const sel = review.selections || {}
+    const colRoom = CONTENT_H - HEADER_H - SURFACE_PAD - SAFETY
+    const splitRowH = Math.max(26, Math.min(dense ? 54 : 60, Math.floor(colRoom / Math.max(1, tracks.length))))
+    const splitSize = Math.max(12, Math.min(trackTextSize(theme, dense), splitRowH - 20))
+    return (
+      <FrameShell palette={palette} theme={theme} cover={coverForBg}>
+        <Header album={album} palette={palette} theme={theme} />
+        <div style={{ flex: 1, display: 'flex', gap: 34, minHeight: 0 }}>
+          <div style={{ flex: '1 1 62%', minWidth: 0 }}>
+            <div style={{ fontSize: 22, fontWeight: 'var(--label-weight)',
+              letterSpacing: 'var(--label-track)', textTransform: 'var(--label-case)',
+              color: 'rgba(var(--ink-rgb), 0.5)', marginBottom: 18 }}>
+              The songs
+            </div>
+            <TrackRows
+              tracks={tracks} ratings={review.ratings} theme={theme}
+              rowH={splitRowH} baseSize={splitSize} drop={featureDrop(theme)}
+              chip={{ size: Math.max(26, splitRowH - 16), fontSize: Math.round(Math.max(26, splitRowH - 16) * 0.56) }}
+            />
+          </div>
+
+          <div style={{ width: 3, background: 'rgba(var(--ink-rgb), 0.18)', flexShrink: 0 }} />
+
+          <div style={{ flex: '1 1 38%', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 26 }}>
+            {(sel.bestSong || sel.worstSong) && (
+              <div>
+                <div style={{ fontSize: 22, fontWeight: 'var(--label-weight)',
+                  letterSpacing: 'var(--label-track)', textTransform: 'var(--label-case)',
+                  color: 'rgba(var(--ink-rgb), 0.5)', marginBottom: 16 }}>
+                  The picks
+                </div>
+                {sel.bestSong && (
+                  <div style={{ marginBottom: 18 }}>
+                    <div style={{ fontSize: 19, letterSpacing: '0.1em', textTransform: 'uppercase',
+                      color: '#6ee7a0', marginBottom: 5 }}>Best</div>
+                    <FitText size={30} min={18} lines={2} weight={700} fitKey={sel.bestSong}
+                      style={{ textAlign: 'left' }}>{sel.bestSong}</FitText>
+                  </div>
+                )}
+                {sel.worstSong && (
+                  <div>
+                    <div style={{ fontSize: 19, letterSpacing: '0.1em', textTransform: 'uppercase',
+                      color: '#f97316', marginBottom: 5 }}>Worst</div>
+                    <FitText size={30} min={18} lines={2} weight={700} fitKey={sel.worstSong}
+                      style={{ textAlign: 'left' }}>{sel.worstSong}</FitText>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div style={{ marginTop: 'auto' }}>
+              <div style={{ fontSize: 22, fontWeight: 'var(--label-weight)',
+                letterSpacing: 'var(--label-track)', textTransform: 'var(--label-case)',
+                color: 'rgba(var(--ink-rgb), 0.5)', marginBottom: 14 }}>
+                The scale
+              </div>
+              <div style={{ display: 'grid', gap: 7 }}>
+                {SCALE_ROWS.map(v => {
+                  const c = ratingColor(v)
+                  return (
+                    <div key={v} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <span style={{
+                        width: 52, height: 30, borderRadius: 7, flexShrink: 0,
+                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                        background: c.bg, color: c.fg, fontSize: 17, fontWeight: 800
+                      }}>{v}</span>
+                      <span style={{ fontSize: 20, color: 'rgba(var(--ink-rgb), 0.72)' }}>
+                        {tierLabels[v] || ''}
+                      </span>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      </FrameShell>
+    )
+  }
 
   return (
     <FrameShell palette={palette} theme={theme} cover={coverForBg}>
