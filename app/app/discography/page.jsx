@@ -29,7 +29,11 @@ export default async function DiscographyPage () {
   const rated = reviews.map(r => ({ artist: r.artist || (r.artists || [])[0] || '', name: r.albumName || '' }))
 
   const catalogue = await Promise.all(
-    artists.map(async a => ({ artist: a, albums: await discographyByName(a).catch(() => []) }))
+    // Everything the artist has, singles and EPs included. This screen is
+    // where you decide what belongs on a slide, and an entry you were never
+    // shown is one you cannot turn off — which is how the stray singles ended
+    // up on finished slides with nothing here to remove them.
+    artists.map(async a => ({ artist: a, albums: await discographyByName(a, 60, true).catch(() => []) }))
   )
 
   return (
@@ -37,9 +41,9 @@ export default async function DiscographyPage () {
       <div className="page-head">
         <h1>Discographies</h1>
         <p className="page-sub">
-          These are the albums each of your artists brings to a discography slide. The catalogue
-          fills most of it in, so usually there is nothing to do here. Add one by hand when the
-          catalogue is missing it, and remove anything you would rather not see on a slide.
+          Everything the catalogue has for each of your artists, singles and EPs included. Use the
+          eye to keep something off your discography slides — it stays here, and you can put it
+          back. Add one by hand when the catalogue is missing it.
         </p>
       </div>
       <Discography

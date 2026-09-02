@@ -2096,3 +2096,6 @@ body:has(.app) .vignette { opacity: 0.5; }
 .pw-foot a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
 .pw-foot button { color: var(--fg-4); cursor: pointer; font: inherit; }
 .pw-foot button:hover { color: var(--fg-2); }
+/* Keeping a record off your slides is not deleting it, so it is not an X. */
+.disc-off svg { width: 15px !important; height: 15px !important; }
+.disc-groups li button.disc-off:hover { color: #fff; background: rgba(255,255,255,0.16); }

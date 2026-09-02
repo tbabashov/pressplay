@@ -39,7 +39,8 @@ export default function Discography ({ initial, artists, catalogue = [], hidden 
         if (taken.has(key)) continue
         taken.add(key)
         const row = { id: `auto:${a.id}`, key, name: a.name, year: a.year, cover: a.cover,
-          artists: [artist], source: ratedSet.has(key) ? 'rated' : 'auto' }
+          artists: [artist], kind: a.kind || 'album',
+          source: ratedSet.has(key) ? 'rated' : 'auto' }
         ;(hiddenSet.has(key) ? g.hidden : g.albums).push(row)
       }
     }
@@ -137,7 +138,7 @@ export default function Discography ({ initial, artists, catalogue = [], hidden 
 
       {hiddenCount > 0 && (
         <button type="button" className="disc-toggle" onClick={() => setShowHidden(v => !v)}>
-          {showHidden ? 'Hide' : 'Show'} {hiddenCount} removed {hiddenCount === 1 ? 'album' : 'albums'}
+          {showHidden ? 'Hide' : 'Show'} {hiddenCount} kept off the slides
         </button>
       )}
 
@@ -162,19 +163,28 @@ export default function Discography ({ initial, artists, catalogue = [], hidden 
                       {a.year && <em>{a.year}</em>}
                       {a.artists.length > 1 && <i>with {a.artists.filter(x => x !== g.artist).join(', ')}</i>}
                     </span>
-                    {a.source !== 'manual' && (
-                      <span className={`disc-tag${a.source === 'rated' ? ' is-rated' : ''}`}>
-                        {a.source === 'rated' ? 'rated' : 'catalogue'}
-                      </span>
-                    )}
+                    {a.source === 'rated'
+                      ? <span className="disc-tag is-rated">rated</span>
+                      : a.source === 'auto' && a.kind !== 'album'
+                        ? <span className="disc-tag">{a.kind}</span>
+                        : null}
                     {a.source === 'rated' ? (
                       <span className="disc-locked" title="Remove this from your library to drop it" />
                     ) : (
                       <button
+                        className="disc-off"
                         onClick={() => (a.source === 'auto' ? hide(a.key) : drop(a.id))}
-                        aria-label={`Remove ${a.name}`}>
-                        <svg viewBox="0 0 24 24"><path d="M6.5 6.5l11 11m0-11l-11 11" fill="none"
-                          stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" /></svg>
+                        title={a.source === 'auto'
+                          ? 'Keep this off your slides'
+                          : 'Delete this entry'}
+                        aria-label={a.source === 'auto'
+                          ? `Keep ${a.name} off your slides`
+                          : `Delete ${a.name}`}>
+                        {a.source === 'auto'
+                          ? <svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 5.3A9 9 0 0 1 12 5c5 0 9 4.5 9 7a11 11 0 0 1-2.3 3.4M6.2 6.5A11.7 11.7 0 0 0 3 12c0 2.5 4 7 9 7a9.5 9.5 0 0 0 4-.9"
+                              fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
+                          : <svg viewBox="0 0 24 24"><path d="M6.5 6.5l11 11m0-11l-11 11" fill="none"
+                              stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" /></svg>}
                       </button>
                     )}
                   </li>
@@ -191,7 +201,8 @@ export default function Discography ({ initial, artists, catalogue = [], hidden 
                         <strong>{a.name}</strong>
                         {a.year && <em>{a.year}</em>}
                       </span>
-                      <button onClick={() => unhide(a.key)} aria-label={`Put ${a.name} back`}>
+                      <button onClick={() => unhide(a.key)} title="Put it back on your slides"
+                        aria-label={`Put ${a.name} back on your slides`}>
                         <svg viewBox="0 0 24 24"><path d="M4 12h13m-5-5l5 5-5 5" fill="none"
                           stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"
                           strokeLinejoin="round" /></svg>
