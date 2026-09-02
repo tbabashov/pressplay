@@ -6,7 +6,7 @@ import { canUseStyle, TIER_DETAIL, TIERS } from '../../lib/tiers'
 // The style is not a setting. It decides what the whole set of slides looks
 // like, so it gets its own door next to Settings rather than sitting at the top
 // of a panel of toggles.
-export default function StylePicker ({ open, onClose, settings, set, tier = 'free' }) {
+export default function StylePicker ({ open, onClose, settings, set, tier = 'free', onLocked }) {
   // Which tier a style needs, rather than a single paid flag: Aurora comes
   // with Plus and Press Play only with Max, and saying "Plus" against both
   // would be a promise the smaller subscription does not keep.
@@ -39,7 +39,12 @@ export default function StylePicker ({ open, onClose, settings, set, tier = 'fre
                   <button
                     key={st.id}
                     className={`style${settings.style === st.id ? ' on' : ''}${isLocked ? ' locked' : ''}`}
-                    onClick={() => !isLocked && set('style', st.id)}
+                    // A locked style opens the subscription screen rather than
+                    // doing nothing. Silently ignoring the press is the worst
+                    // of both: it reads as broken, and it never says why.
+                    onClick={() => (isLocked
+                      ? onLocked?.(`${st.name} comes with ${TIER_DETAIL[needs(st)]?.name || 'Plus'}.`)
+                      : set('style', st.id))}
                     aria-pressed={settings.style === st.id}
                     aria-disabled={isLocked}
                   >

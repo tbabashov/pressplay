@@ -10,6 +10,8 @@ import { SignIn, StartButton } from '@/components/AuthButtons'
 import Nav from '@/components/Nav'
 import wall from '@/lib/wall.json'
 import slidesByAlbum from '@/lib/slides.json'
+import { TIER_LIST } from '@/lib/tiers'
+import CheckoutButton from '@/components/CheckoutButton'
 import './landing.css'
 
 // TODO: set this to the real account before launch. One line, used in two places.
@@ -242,49 +244,37 @@ export default async function Landing () {
 
         <section className="band band-alt" id="tiers">
           <div className="shell">
-            <h2 className="display h2 rv">Rate three a day for nothing.</h2>
+            <h2 className="display h2 rv">Two records a day, for nothing.</h2>
             <p className="lede measure rv">
-              Billing is not switched on, so nothing here has a price and nothing is charged.
+              Rating is unlimited at every tier, and so is everything social. What a subscription
+              buys is how many records a day you turn into slides, and the styles you turn them
+              into.
             </p>
+            {/* Written from the same table the app enforces, so a price on this
+                page cannot say one thing while the product does another. */}
             <div className="tiers">
-              <article className="tier tier-free">
-                <h3>Free</h3>
-                <p className="tier-cap tnum">3<span>albums a day</span></p>
-                <p className="tier-for">For seeing whether you like it.</p>
-                <ul>
-                  <li>Any scale you build</li>
-                  <li>Your own criteria</li>
-                  <li>Every export slide, no watermark</li>
-                  <li>Your own leaderboard</li>
-                </ul>
-              </article>
-
-              <article className="tier tier-plus">
-                <span className="tier-flag">Most people</span>
-                <h3>Plus</h3>
-                <p className="tier-cap tnum">10<span>albums a day</span></p>
-                <p className="tier-for">For rating most of what you listen to.</p>
-                <ul>
-                  <li className="tier-inherit">Everything in Free</li>
-                  <li>Gradient and crystal glass slides</li>
-                  <li>Analytics on your own taste</li>
-                  <li>Import a whole discography at once</li>
-                </ul>
-              </article>
-
-              <article className="tier tier-max">
-                <span className="tier-flag">Everything</span>
-                <h3>Max</h3>
-                <p className="tier-cap tnum">&#8734;<span>no daily limit</span></p>
-                <p className="tier-for">For running this like a channel.</p>
-                <ul>
-                  <li className="tier-inherit">Everything in Plus</li>
-                  <li>Export the set as video</li>
-                  <li>Your own palette, fonts and watermark</li>
-                  <li>Year in review, built automatically</li>
-                  <li>Verified profile and pinned reviews</li>
-                </ul>
-              </article>
+              {TIER_LIST.map(t => (
+                <article key={t.key} className={`tier tier-${t.key}`}>
+                  <h3>{t.name}</h3>
+                  <p className="tier-cap tnum">
+                    {t.limits.generationsPerDay === Infinity ? '\u221E' : t.limits.generationsPerDay}
+                    <span>{t.limits.generationsPerDay === Infinity ? 'no daily limit' : 'records a day'}</span>
+                  </p>
+                  {t.monthly > 0 && (
+                    <p className="tier-price">
+                      <strong>${t.monthly.toFixed(2)}</strong><em>a month</em>
+                    </p>
+                  )}
+                  {t.yearly > 0 && <p className="tier-year">or ${t.yearly.toFixed(2)} a year</p>}
+                  <p className="tier-for">{t.blurb}</p>
+                  <ul>
+                    {t.perks.map(perk => <li key={perk}>{perk}</li>)}
+                  </ul>
+                  {t.monthly === 0
+                    ? <StartButton />
+                    : <CheckoutButton tier={t.key} name={t.name} />}
+                </article>
+              ))}
             </div>
           </div>
         </section>
@@ -293,7 +283,7 @@ export default async function Landing () {
           <div className="shell closer-inner">
             <h2 className="display h2 rv">Put a number on it.</h2>
             <p className="lede closer-sub">
-              Three albums a day, free, no card. Your first review can be up in ten minutes.
+              Two records a day, free, no card. Your first review can be up in ten minutes.
             </p>
             <StartButton large />
           </div>

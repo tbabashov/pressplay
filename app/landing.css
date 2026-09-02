@@ -539,11 +539,14 @@
 }
 .tier-inherit { color: var(--fg-4); font-weight: 600; }
 .tier-inherit::before { display: none; }
-.tier-flag {
-  position: absolute; top: -11px; left: 28px;
-  font-size: 10px; font-weight: 800; letter-spacing: .11em; text-transform: uppercase;
-  border-radius: 999px; padding: 4px 12px;
-}
+/* Prices, set as prices: the number is the thing, and the period is an aside
+   next to it rather than another line competing with it. */
+.tier-price { display: flex; align-items: baseline; gap: 7px; margin-top: 4px; }
+.tier-price strong { font-size: 30px; font-weight: 800; letter-spacing: -0.035em; }
+.tier-price em { font-style: normal; font-size: 13px; color: var(--fg-4); }
+.tier-year { font-size: 12.4px; color: var(--fg-4); margin-top: 2px; }
+.tier .btn-primary, .tier .start-btn { margin-top: auto; width: 100%; }
+.co-note { margin-top: 9px; font-size: 12.2px; line-height: 1.5; color: var(--fg-4); }
 
 /* three genuinely different weights, not three of the same card */
 .tier-free {

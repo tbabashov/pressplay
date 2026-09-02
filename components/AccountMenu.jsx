@@ -65,11 +65,21 @@ export default function AccountMenu ({ name, image, handle, role }) {
 
           {/* What you are on, and what is left of today. Both here because this
               is where anyone looks when they wonder why something stopped. */}
+          {/* Two separate statements: which tier the account is on, and what
+              is left of today. Boxed together they read as one label with a
+              number stuck to it. */}
           <Link className="acct-plan" href="/app/tiers" onClick={() => setOpen(false)} role="menuitem">
             <span className={`acct-tier acct-tier-${quota?.tier || 'free'}`}>
-              {quota ? quota.tierName : '—'}
+              {quota ? quota.tierName : 'Your tier'}
             </span>
-            <span className="acct-quota">
+            <span className="acct-plan-go" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M9.5 5.5 16 12l-6.5 6.5" fill="none"
+                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            </span>
+          </Link>
+
+          <div className="acct-quota">
+            <span>
               {!quota
                 ? 'Checking today…'
                 : quota.unlimited
@@ -81,7 +91,7 @@ export default function AccountMenu ({ name, image, handle, role }) {
                 <i style={{ width: `${Math.round((quota.used / quota.limit) * 100)}%` }} />
               </span>
             )}
-          </Link>
+          </div>
 
           <Link role="menuitem" href="/app/settings" onClick={() => setOpen(false)}>
             Account

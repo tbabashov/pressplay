@@ -43,11 +43,12 @@ body:has(.app) .vignette { opacity: 0.5; }
 }
 .topbar-out { font-size: 13.5px; color: var(--fg-4); transition: color 200ms var(--ease); }
 .topbar-out:hover { color: var(--fg); }
+/* No pill. A label is lettering, not text parked inside an ellipse: the
+   background and the rounded box add nothing the letter spacing and the colour
+   are not already saying, and a page of them reads like a form. */
 .chip-owner {
-  font-size: 10px; font-weight: 640; letter-spacing: 0.06em; text-transform: uppercase;
-  color: var(--accent); padding: 3px 7px; border-radius: 999px;
-  background: rgba(var(--accent-rgb), 0.14);
-  box-shadow: inset 0 0 0 1px rgba(var(--accent-rgb), 0.3);
+  font-size: 10px; font-weight: 750; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent);
 }
 
 /* ── Rail ─────────────────────────────────────────────────────────────────*/
@@ -74,7 +75,7 @@ body:has(.app) .vignette { opacity: 0.5; }
 }
 .rail-item.on svg { color: var(--accent); opacity: 1; }
 
-.app-main { padding: 34px 30px 140px; min-width: 0; }
+.app-main { padding: 34px 30px 140px; min-width: 0; position: relative; }
 /* A measure, not the whole monitor. */
 .app-main > * { max-width: 1080px; }
 /* Lists read at a measure; grids of artwork can use the room. */
@@ -293,10 +294,8 @@ body:has(.app) .vignette { opacity: 0.5; }
 }
 .verdict-row span { font-size: 13.2px; color: var(--fg-3); display: flex; align-items: center; gap: 7px; }
 .verdict-row span i {
-  font-style: normal; font-size: 9.5px; font-weight: 640; letter-spacing: 0.06em;
+  font-style: normal; font-size: 9.5px; font-weight: 750; letter-spacing: 0.1em;
   text-transform: uppercase; color: var(--accent);
-  padding: 2.5px 6px; border-radius: 999px;
-  background: rgba(var(--accent-rgb), 0.14);
 }
 .verdict-row b { font-size: 14px; font-weight: 660; font-variant-numeric: tabular-nums; }
 .verdict-row input, .verdict-override input {
@@ -1068,10 +1067,8 @@ body:has(.app) .vignette { opacity: 0.5; }
   font-size: 13.4px; font-weight: 640; letter-spacing: -0.014em;
 }
 .style-text strong em {
-  font-style: normal; font-size: 9.4px; font-weight: 660; letter-spacing: 0.07em;
+  font-style: normal; font-size: 9.6px; font-weight: 750; letter-spacing: 0.1em;
   text-transform: uppercase; color: var(--accent);
-  padding: 2px 6px; border-radius: 999px;
-  background: rgba(var(--accent-rgb), 0.16);
 }
 .style-text span { font-size: 11.4px; line-height: 1.4; color: var(--fg-4); }
 .style-note { margin-top: 10px; font-size: 11.6px; color: var(--fg-4); }
@@ -1753,9 +1750,8 @@ body:has(.app) .vignette { opacity: 0.5; }
    deleting something that was never there to delete. */
 .disc-tag {
   grid-column: 3;
-  font-size: 10px; letter-spacing: .08em; text-transform: uppercase; font-weight: 700;
-  color: var(--fg-3); border: 1px solid var(--line); border-radius: 999px;
-  padding: 3px 8px; white-space: nowrap; flex: none;
+  font-size: 10px; letter-spacing: .1em; text-transform: uppercase; font-weight: 750;
+  color: var(--fg-4); white-space: nowrap; flex: none;
 }
 .disc-toggle {
   align-self: flex-start; background: none; border: 1px solid var(--line);
@@ -1785,9 +1781,8 @@ body:has(.app) .vignette { opacity: 0.5; }
 .tr-card header { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .tr-card h2 { font-size: 17px; font-weight: 700; letter-spacing: -0.02em; }
 .tr-now {
-  font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
-  color: var(--accent); padding: 3px 8px; border-radius: 999px;
-  background: rgba(var(--accent-rgb), 0.14);
+  font-size: 10px; font-weight: 750; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent);
 }
 .tr-blurb { font-size: 13px; color: var(--fg-3); }
 .tr-price { display: flex; align-items: baseline; gap: 7px; margin-top: 2px; }
@@ -2070,9 +2065,8 @@ body:has(.app) .vignette { opacity: 0.5; }
 .pw-card header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .pw-card h3 { font-size: 16px; font-weight: 700; letter-spacing: -0.02em; }
 .pw-now {
-  font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
-  color: var(--accent); padding: 3px 8px; border-radius: 999px;
-  background: rgba(var(--accent-rgb), 0.14);
+  font-size: 10px; font-weight: 750; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent);
 }
 .pw-price { display: flex; align-items: baseline; gap: 6px; }
 .pw-price strong { font-size: 27px; font-weight: 780; letter-spacing: -0.035em; }
@@ -2084,11 +2078,8 @@ body:has(.app) .vignette { opacity: 0.5; }
   font-size: 12.8px; color: var(--fg-2); line-height: 1.45;
 }
 .pw-card svg { width: 13px; height: 13px; margin-top: 3px; color: var(--accent); }
-.pw-soon {
-  margin-top: auto; padding: 9px 12px; border-radius: 9px; text-align: center;
-  font-size: 11.8px; font-weight: 600; color: var(--fg-4);
-  border: 1px dashed rgba(255,255,255,0.18);
-}
+.pw-buy { margin-top: auto; width: 100%; }
+.pw-card .co-note { font-size: 11.8px; line-height: 1.5; color: var(--fg-4); margin-top: 8px; }
 .pw-foot {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
   margin-top: 20px; font-size: 13px;
@@ -2150,3 +2141,22 @@ body:has(.app) .vignette { opacity: 0.5; }
   background: rgba(var(--ink-rgb), 0.1);
   box-shadow: 0 0 0 4px rgba(var(--ink-rgb), 0.18);
 }
+
+/* The tiers page carries the same wall as the subscription screen, so the two
+   do not read as different products. It sits behind the app's own content
+   rather than over it, which is the only difference. */
+/* Inside the content column, not over the whole window: fixed to the viewport
+   it washed out the rail and the top bar, which are not part of this page. */
+.tr-wall { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.tr-wall-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: 3px; opacity: 0.28; min-height: 100%; transform: scale(1.05);
+}
+.tr-wall-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+.tr-wall-veil {
+  position: absolute; inset: 0;
+  background: radial-gradient(110% 80% at 45% 32%, rgba(8,8,11,0.7) 0%, rgba(8,8,11,0.94) 58%, #08080b 100%);
+}
+.app-main > .page-head, .app-main > .tr-grid, .app-main > .tr-note { position: relative; z-index: 1; }
+.tr-buy { margin-top: auto; width: 100%; }
+.tr-card .co-note { font-size: 12px; line-height: 1.5; color: var(--fg-4); margin-top: 8px; }

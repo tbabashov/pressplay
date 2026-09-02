@@ -1,8 +1,10 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { TIER_LIST, priceLabel } from '@/lib/tiers'
 import wall from '@/lib/wall.json'
+import CheckoutButton from '@/components/CheckoutButton'
 
 // The same treatment as the sign-in page: a wall of real covers behind the
 // thing being asked for, never decorative stock. Enough of them to reach the
@@ -12,6 +14,13 @@ import wall from '@/lib/wall.json'
 const COVERS = [...wall, ...wall].slice(0, 150)
 
 export default function Paywall ({ tier, used, limit, reason, onClose }) {
+  // Rendered into the document rather than wherever it was called from. Inside
+  // the app shell it inherited a stacking context and a scroll container, so a
+  // full screen overlay was only as full screen as the column it was declared
+  // in. This is a screen of its own.
+  const [host, setHost] = useState(null)
+  useEffect(() => { setHost(document.body) }, [])
+
   useEffect(() => {
     const esc = e => { if (e.key === 'Escape') onClose?.() }
     document.addEventListener('keydown', esc)
@@ -24,8 +33,10 @@ export default function Paywall ({ tier, used, limit, reason, onClose }) {
     }
   }, [onClose])
 
-  return (
-    <div className="pw" role="dialog" aria-modal="true" aria-label="Out of records for today">
+  if (!host) return null
+
+  return createPortal((
+    <div className="pw" role="dialog" aria-modal="true" aria-label="Subscriptions">
       <div className="pw-wall" aria-hidden="true">
         <div className="pw-grid">
           {COVERS.map((a, i) => (
@@ -42,13 +53,14 @@ export default function Paywall ({ tier, used, limit, reason, onClose }) {
         </button>
 
         <header className="pw-head">
-          <p className="pw-kicker">That is today</p>
+          <p className="pw-kicker">{reason ? 'Not on your tier' : 'That is today'}</p>
           <h2 className="display">
             {reason || `${used} of ${limit} records used. It resets at midnight.`}
           </h2>
           <p className="pw-sub">
             Nothing you have rated is going anywhere, and the social side has no limits at any
-            tier. This is only about how many records a day you turn into slides.
+            tier. This is only about how many records a day you turn into slides, and what you
+            can turn them into.
           </p>
         </header>
 
@@ -73,7 +85,7 @@ export default function Paywall ({ tier, used, limit, reason, onClose }) {
                   </li>
                 ))}
               </ul>
-              <p className="pw-soon">Checkout is not connected yet.</p>
+              <CheckoutButton tier={t.key} name={t.name} className="btn-primary pw-buy" />
             </section>
           ))}
         </div>
@@ -84,5 +96,5 @@ export default function Paywall ({ tier, used, limit, reason, onClose }) {
         </footer>
       </div>
     </div>
-  )
+  ), host)
 }

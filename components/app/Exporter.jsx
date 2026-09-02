@@ -462,7 +462,7 @@ export default function Exporter ({ data, tier = 'free' }) {
     <div className="exp">
       {wall && (
         <Paywall
-          tier={wall.tier} used={wall.used} limit={wall.limit}
+          tier={wall.tier} used={wall.used} limit={wall.limit} reason={wall.reason}
           onClose={() => setWall(null)}
         />
       )}
@@ -514,6 +514,7 @@ export default function Exporter ({ data, tier = 'free' }) {
       <StylePicker
         open={stylePanel} onClose={() => setStylePanel(false)}
         settings={settings} set={set} tier={tier}
+        onLocked={reason => setWall({ tier, reason })}
       />
 
       {/* Everything taken off the slides, and the way back. Removing is not
