@@ -10,6 +10,7 @@ import { STYLES, STYLE_LIST } from '../../lib/export/styles.js'
 import ArtistImages from './ArtistImages'
 import { albumKey } from '../../lib/preferences'
 import Paywall from './Paywall'
+import { canUseStyle, limitsFor, TIER_DETAIL, TIERS } from '../../lib/tiers'
 import {
   TitleFrame, TracksFrame, CriteriaFrame, ComparisonFrame, DiscographyFrame
 } from '../../lib/export/frames.jsx'
@@ -27,8 +28,10 @@ const PART_NAMES = {
 }
 
 // Stored preferences cannot grant a style the account does not include.
-const freeFallback = id =>
-  STYLES[id]?.tier === 'paid' ? (STYLE_LIST.find(s => s.tier === 'free')?.id || 'paper') : id
+// A style the account cannot use falls back to one it can, rather than the
+// slides quietly rendering in something that was never chosen.
+const allowedStyle = (tier, id) =>
+  canUseStyle(tier, id) ? id : (limitsFor(tier).styles?.[0] || 'paper')
 
 const DEFAULTS = {
   gradient: true, glass: true, align: 'top', textSize: 'auto', featureDrop: 2,
@@ -49,7 +52,9 @@ function loadSettings () {
   } catch { return DEFAULTS }
 }
 
-export default function Exporter ({ data, paid = false }) {
+export default function Exporter ({ data, tier = 'free' }) {
+  const limits = limitsFor(tier)
+  const paid = !limits.watermark
   const [coverPalette, setCoverPalette] = useState(null)
   // Start from defaults so server and client markup agree, then adopt whatever
   // was saved once mounted.
@@ -145,9 +150,12 @@ export default function Exporter ({ data, paid = false }) {
   useEffect(() => {
     const saved = loadSettings()
     // Stored preferences cannot grant what the plan does not include.
-    if (!paid) { saved.style = freeFallback(saved.style); saved.watermark = true }
+    // The tier decides, not what happens to be in the browser's saved settings:
+    // a lapsed subscription must not keep rendering a paid style.
+    saved.style = allowedStyle(tier, saved.style)
+    if (limits.watermark) saved.watermark = true
     setSettings(saved)
-  }, [paid])
+  }, [tier])
 
   const set = (key, value) => setSettings(s => {
     const next = { ...s, [key]: value }
@@ -435,7 +443,7 @@ export default function Exporter ({ data, paid = false }) {
 
       <StylePicker
         open={stylePanel} onClose={() => setStylePanel(false)}
-        settings={settings} set={set} paid={paid}
+        settings={settings} set={set} tier={tier}
       />
 
       {/* Everything taken off the slides, and the way back. Removing is not

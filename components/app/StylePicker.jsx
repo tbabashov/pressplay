@@ -1,12 +1,17 @@
 'use client'
 
 import { STYLE_LIST } from '../../lib/export/styles.js'
+import { canUseStyle, TIER_DETAIL, TIERS } from '../../lib/tiers'
 
 // The style is not a setting. It decides what the whole set of slides looks
 // like, so it gets its own door next to Settings rather than sitting at the top
 // of a panel of toggles.
-export default function StylePicker ({ open, onClose, settings, set, paid }) {
-  const locked = st => st.tier === 'paid' && !paid
+export default function StylePicker ({ open, onClose, settings, set, tier = 'free' }) {
+  // Which tier a style needs, rather than a single paid flag: Aurora comes
+  // with Plus and Press Play only with Max, and saying "Plus" against both
+  // would be a promise the smaller subscription does not keep.
+  const needs = st => TIERS.find(t => canUseStyle(t, st.id))
+  const locked = st => !canUseStyle(tier, st.id)
 
   return (
     <>
@@ -40,16 +45,20 @@ export default function StylePicker ({ open, onClose, settings, set, paid }) {
                   >
                     <span className={`style-swatch sw-${st.id}`} aria-hidden="true" />
                     <span className="style-text">
-                      <strong>{st.name}{st.tier === 'paid' && <em>Plus</em>}</strong>
+                      <strong>
+                        {st.name}
+                        {isLocked && <em>{TIER_DETAIL[needs(st)]?.name || 'Plus'}</em>}
+                      </strong>
                       <span>{st.blurb}</span>
                     </span>
                   </button>
                 )
               })}
             </div>
-            {!paid && (
+            {STYLE_LIST.some(locked) && (
               <p className="style-note">
-                Aurora and Press Play come with a subscription. The other three are yours.
+                Aurora comes with Plus and Press Play with Max. The rest are yours at every tier.{' '}
+                <a href="/app/tiers">See the tiers</a>.
               </p>
             )}
           </section>

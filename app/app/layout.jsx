@@ -6,6 +6,7 @@ import { ensureProfile } from '@/lib/ensure-profile'
 import Rail from '@/components/app/Rail'
 import AccountMenu from '@/components/AccountMenu'
 import Mark from '@/components/Mark'
+import AchievementToasts from '@/components/app/AchievementToasts'
 import '../app.css'
 
 export const metadata = { title: 'Your library' }
@@ -38,6 +39,8 @@ export default async function AppLayout ({ children }) {
         <Rail image={profile?.image || image} name={profile?.name || name} />
         <main className="app-main">{children}</main>
       </div>
+
+      <AchievementToasts />
     </div>
   )
 }

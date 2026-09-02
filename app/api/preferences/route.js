@@ -30,7 +30,8 @@ export async function PUT (req) {
     criteria: has('criteria') ? body.criteria : base.criteria,
     superlatives: has('superlatives') ? body.superlatives : base.superlatives,
     scale: has('scale') ? body.scale : base.scale,
-    hiddenAlbums: has('hiddenAlbums') ? body.hiddenAlbums : base.hiddenAlbums
+    hiddenAlbums: has('hiddenAlbums') ? body.hiddenAlbums : base.hiddenAlbums,
+    seenAchievements: has('seenAchievements') ? body.seenAchievements : base.seenAchievements
   })
   // Custom criteria and custom scales are what the paid tiers are for, so the
   // check has to be here and not only on the settings screen. A free account

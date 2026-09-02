@@ -4,6 +4,8 @@ import { auth } from '@/auth'
 import { buildExport } from '@/lib/export/build'
 import Exporter from '@/components/app/Exporter'
 import { param } from '@/lib/route-param'
+import { getProfile } from '@/lib/db'
+import { accountTier } from '@/lib/tiers'
 
 export const metadata = { title: 'Export' }
 export const dynamic = 'force-dynamic'
@@ -13,7 +15,11 @@ export default async function ExportPage ({ params }) {
   const session = await auth()
   if (!session?.user) redirect('/')
 
-  const data = await buildExport(session.user.email, id)
+  const [data, profile] = await Promise.all([
+    buildExport(session.user.email, id),
+    getProfile(session.user.email)
+  ])
+  const tier = accountTier(session, profile)
   if (!data) {
     return (
       <>
@@ -35,7 +41,7 @@ export default async function ExportPage ({ params }) {
         </div>
         <Link className="btn-ghost" href={`/app/rate/${id}`}>Back to the rating</Link>
       </div>
-      <Exporter data={data} paid={session.user.role === 'owner'} />
+      <Exporter data={data} tier={tier} />
     </>
   )
 }
