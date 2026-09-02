@@ -48,7 +48,7 @@ export default function TermsPage () {
         Covers, track listings and previews come from third parties, chiefly Deezer, and belong
         to their owners. They appear here to identify records being reviewed. If you own artwork
         that appears here and want it removed, write to{' '}
-        <a href="mailto:fmteamrater@gmail.com">fmteamrater@gmail.com</a> and it will be taken down.
+        <a href="mailto:medicalbruh@gmail.com">medicalbruh@gmail.com</a> and it will be taken down.
       </p>
 
       <h2>How to behave</h2>
@@ -93,7 +93,7 @@ export default function TermsPage () {
 
       <h2>Getting in touch</h2>
       <p>
-        <a href="mailto:fmteamrater@gmail.com">fmteamrater@gmail.com</a>. Also see{' '}
+        <a href="mailto:medicalbruh@gmail.com">medicalbruh@gmail.com</a>. Also see{' '}
         <a href="/legal/privacy">privacy</a> and <a href="/legal/cookies">cookies</a>.
       </p>
     </>

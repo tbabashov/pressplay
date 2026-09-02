@@ -96,7 +96,7 @@ export default function PrivacyPage () {
       <h2>What you can ask for</h2>
       <p>
         A copy of everything held about you, a correction, or deletion. Write to{' '}
-        <a href="mailto:fmteamrater@gmail.com">fmteamrater@gmail.com</a> and it will be answered
+        <a href="mailto:medicalbruh@gmail.com">medicalbruh@gmail.com</a> and it will be answered
         within thirty days. If you are in the UK or EU you can also complain to your data
         protection regulator; in the UK that is the Information Commissioner&apos;s Office.
       </p>
