@@ -714,7 +714,11 @@ body:has(.app) .vignette { opacity: 0.5; }
   gap: 26px 20px;
 }
 .exp-grid::-webkit-scrollbar { display: none; }
-.exp-grid > li { flex: none; scroll-snap-align: center; }
+/* The slide's own width, so nothing under it can widen it. The caption used to
+   sit on one unwrapped line and a long one, which is every discography page,
+   made the item wider than the picture and pushed the next slide away. That
+   space between slides was the caption, not a gap. */
+.exp-grid > li { flex: none; width: var(--pw); scroll-snap-align: center; }
 .exp-shot {
   width: var(--pw);
   aspect-ratio: 1080 / 1920;
@@ -762,13 +766,23 @@ body:has(.app) .vignette { opacity: 0.5; }
    opposite edges. Under space-between the gap between them was whatever the
    label did not use, 57px on one card and 105px on the next, so no two
    captions in the row looked alike. */
+/* The label above, the button under it. Side by side they had to share a line
+   the width of a thumbnail, so the label was either truncated to nothing or it
+   stretched the slide. Stacked, it wraps within the picture's width and the
+   button lands in the same place on every slide in the row. */
 .exp-meta {
-  display: flex; align-items: center; justify-content: flex-start;
-  gap: 9px; margin-top: 10px;
+  display: grid; justify-items: start;
+  gap: 8px; margin-top: 10px;
 }
 .exp-meta span {
   font-size: 12.6px; color: var(--fg-4);
-  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  line-height: 1.35; min-width: 0;
+  overflow-wrap: anywhere;
+  /* Room for two lines whether or not this one needs them, so the buttons sit
+     on one line across the row instead of stepping down under the longer
+     captions. Three lines are allowed to push; two covers every label the deck
+     actually produces. */
+  min-height: 2.7em;
 }
 .exp-meta button { flex: none; }
 .exp-meta button {
