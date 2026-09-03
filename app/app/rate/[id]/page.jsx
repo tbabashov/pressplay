@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { auth } from '@/auth'
 import { getAlbum } from '@/lib/music'
 import { getReview, getProfile, getPreferences } from '@/lib/db'
-import { fromSnapshot } from '@/lib/album-shape'
+import { fromSnapshot, preferSaved } from '@/lib/album-shape'
 import { param } from '@/lib/route-param'
 import Rater from '@/components/app/Rater'
 import PublishToggle from '@/components/social/PublishToggle'
@@ -30,14 +30,17 @@ export default async function RateAlbum ({ params }) {
     : [null, null, null]
   const preferences = storedPrefs ? normalisePreferences(storedPrefs) : DEFAULT_PREFERENCES
 
-  // An imported review has its own snapshot, so it opens even though the
-  // catalogue has never heard of its id.
-  let album = null
-  try {
-    album = await getAlbum(id)
-  } catch {
-    album = fromSnapshot(initial?.album)
-  }
+  // What the rater saved wins. Reading the catalogue first and only falling
+  // back to the snapshot meant every correction, a fixed track title, an added
+  // feature, a renamed album, was written to the database and then thrown away
+  // on the next page load, because the catalogue's version replaced it. The
+  // catalogue is merged in behind it for the things a snapshot cannot carry.
+  //
+  // It is also how an imported review opens at all: the catalogue has never
+  // heard of its id, so there is nothing to merge and the snapshot stands
+  // alone.
+  const catalogue = await getAlbum(id).catch(() => null)
+  const album = preferSaved(fromSnapshot(initial?.album), catalogue)
 
   if (!album) {
     return (

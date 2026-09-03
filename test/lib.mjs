@@ -382,3 +382,57 @@ await test('best and worst song fill themselves in from the scores', async () =>
   assert.equal(autoBestSong(scores, raw), 'The Peak', 'the saved album shape works too')
   assert.equal(autoWorstSong(scores, raw), 'The Dud')
 })
+
+await test('an edited album survives a save and a reload', async () => {
+  // Corrections were being written to the database and then discarded on the
+  // next page load, because the rating screen read the catalogue first and
+  // only fell back to the saved snapshot. This is that whole round trip.
+  const { toSnapshot, fromSnapshot, preferSaved } = await import(R + 'album-shape.js')
+
+  const catalogue = {
+    id: '1', name: 'Bandana', artist: 'Freddie Gibbs',
+    artists: ['Freddie Gibbs', 'Madlib'], artistId: '99', label: 'Keep Cool',
+    cover: 'cover.jpg', year: '2019', genre: 'Rap', runtime: 2000,
+    tracks: [
+      { id: 't1', n: 1, title: 'Freestyle Shit', duration: 100, preview: true, features: [] },
+      { id: 't2', n: 2, title: 'Half Manne Half Cocaine', duration: 200, preview: true, features: [] }
+    ]
+  }
+
+  // What a rater does: fix a title, add a feature, rename the album.
+  const edited = {
+    ...catalogue,
+    name: 'Bandana (Deluxe)',
+    tracks: [
+      { ...catalogue.tracks[0], title: 'Freestyle Shit', features: ['Black Thought'] },
+      { ...catalogue.tracks[1], title: 'Half Manne, Half Cocaine' }
+    ]
+  }
+
+  // Saved, then read back the way the page reads it.
+  const reloaded = preferSaved(fromSnapshot(toSnapshot(edited)), catalogue)
+
+  assert.equal(reloaded.name, 'Bandana (Deluxe)', 'the renamed album survives')
+  assert.deepEqual(reloaded.tracks[0].features, ['Black Thought'], 'the added feature survives')
+  assert.equal(reloaded.tracks[1].title, 'Half Manne, Half Cocaine', 'the fixed title survives')
+
+  // Both main credits survive. Keeping only the first is why a record by two
+  // people came back credited to one.
+  assert.deepEqual(reloaded.artists, ['Freddie Gibbs', 'Madlib'])
+
+  // The catalogue still supplies what a snapshot cannot carry.
+  assert.equal(reloaded.tracks[0].preview, true, 'previews come back')
+  assert.equal(reloaded.artistId, '99')
+
+  // Editing the artist wins over the stored list rather than being ignored.
+  const renamed = toSnapshot({ ...edited, artist: 'Freddie Gibbs & Madlib' })
+  assert.equal(renamed.artists[0], 'Freddie Gibbs & Madlib')
+  assert.ok(renamed.artists.includes('Madlib'))
+
+  // An import has no catalogue entry at all and must still open.
+  const imported = preferSaved(fromSnapshot(toSnapshot(edited)), null)
+  assert.equal(imported.name, 'Bandana (Deluxe)')
+
+  // A first rating has no snapshot yet, so the catalogue stands alone.
+  assert.equal(preferSaved(null, catalogue).name, 'Bandana')
+})
