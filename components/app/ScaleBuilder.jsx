@@ -75,8 +75,13 @@ export default function ScaleBuilder ({ scale, onChange, locked = false }) {
   // same rung rather than an unrelated second colour to go and pick.
   const toggleGradient = (value, on) => {
     const t = scale.tiers.find(x => x.value === value)
-    const base = t?.colour || swatch(t) || rampColour(value, scale.max)
-    recolour(value, on ? { colour: base, colour2: darken(base) } : { colour2: null })
+    const paint = effective(t)
+    // The colour is written down either way. A rung on the house ladder has
+    // none of its own, so without this, switching its gradient off would leave
+    // it with nothing and it would fall back to the ramp.
+    recolour(value, on
+      ? { colour: paint.a, colour2: paint.b || darken(paint.a) }
+      : { colour: paint.a, colour2: null })
   }
 
   const setMax = raw => {
@@ -114,8 +119,19 @@ export default function ScaleBuilder ({ scale, onChange, locked = false }) {
     setAdding('')
   }
 
-  const swatch = t => t.colour || (scale.signature ? null : rampColour(t.value, scale.max))
-  const isGradient = t => Boolean(t.colour2)
+  // What a rung actually looks like, even when the scale stores no colour for
+  // it. The house ladder stores none, because its 10 and 11 are gradients and
+  // the rest come off a ramp, so every swatch fell back to one placeholder
+  // purple and the column of numbers went grey. It looked like the colours had
+  // been lost when they were only never written down.
+  const effective = t => {
+    if (t.colour) return { a: t.colour, b: t.colour2 || null }
+    const bg = String(chipColour(t.value, scale.signature ? null : scale).bg || '')
+    const stops = bg.match(/#[0-9a-f]{6}/gi) || []
+    return { a: stops[0] || rampColour(t.value, scale.max), b: stops[1] || null }
+  }
+  const swatch = t => effective(t).a
+  const isGradient = t => Boolean(effective(t).b)
 
   const addNum = Math.round(Number(adding))
   const canAdd = adding !== '' && Number.isFinite(addNum) &&
@@ -178,12 +194,16 @@ export default function ScaleBuilder ({ scale, onChange, locked = false }) {
 
       <ul className="sb-tiers glass-list">
         {scale.tiers.map(t => {
-          const hex = swatch(t)
+          const paint = effective(t)
+          const hex = paint.a
+          const fill = paint.b
+            ? `linear-gradient(180deg, ${paint.a} 0%, ${paint.b} 100%)`
+            : paint.a
           return (
             <li key={t.value}>
               <span
                 className="sb-chip tnum"
-                style={hex ? { background: hex, color: readableOn(hex) } : undefined}
+                style={hex ? { background: fill, color: readableOn(hex) } : undefined}
                 data-house={hex ? undefined : 'on'}
               >
                 {t.value}
@@ -207,7 +227,7 @@ export default function ScaleBuilder ({ scale, onChange, locked = false }) {
                   <input
                     type="color"
                     className="sb-colour"
-                    value={t.colour2}
+                    value={paint.b}
                     onChange={e => recolour(t.value, { colour2: e.target.value })} disabled={locked}
                     aria-label={`Second colour for ${t.value}`}
                   />

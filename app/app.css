@@ -181,9 +181,15 @@ body:has(.app) .vignette { opacity: 0.5; }
 }
 .board-clear:hover { color: var(--accent); border-color: rgba(var(--accent-rgb), 0.5); }
 .board-count {
-  margin: 10px 0 0; font-size: 12.4px; color: var(--fg-4);
+  margin: 12px 0 0; font-size: 12.4px; color: var(--fg-4);
   font-variant-numeric: tabular-nums;
 }
+/* The filters are a row of controls, and the line under them is a sentence
+   about the standings, not a caption on the last select. It was sitting
+   directly against the bottom of them. */
+.board-filters + .board-note,
+.board-filters + .board-count { margin-top: 14px; }
+.board-count + .board-note { margin-top: 6px; }
 /* A button that has to read as a link, for a sentence that offers a way out. */
 .link-button {
   font: inherit; color: var(--accent); background: none; border: 0; padding: 0;
@@ -395,9 +401,13 @@ body:has(.app) .vignette { opacity: 0.5; }
   text-shadow: none;
   box-shadow: none;
 }
+/* An outline, not another box-shadow: the halo on a 10 or an 11 is set inline
+   and inline always wins, so a focus ring drawn as a shadow would never show
+   on exactly the two chips that have one. */
 .trk-score.is-scored:focus {
   border-color: transparent;
-  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.38);
+  outline: 2px solid rgba(var(--accent-rgb), 0.85);
+  outline-offset: 2px;
 }
 .trk-score:focus {
   outline: none; border-color: rgba(var(--accent-rgb), 0.6);

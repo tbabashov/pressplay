@@ -46,7 +46,15 @@ function parseScore (raw, max, allowNA = true) {
 // room accent whenever its tier is a gradient.
 const tierStyle = (v, scale) => {
   const c = chipColour(v, scale)
-  return { background: c.bg, color: c.fg, borderColor: 'transparent' }
+  return {
+    background: c.bg,
+    color: c.fg,
+    borderColor: 'transparent',
+    // The top of the ladder carries a halo everywhere else it is drawn: the
+    // leaderboard, the library, the final rating. The one place you actually
+    // give the score was the one place it did not.
+    boxShadow: c.glow ? `0 0 20px ${c.glow}` : undefined
+  }
 }
 const finalStyle = (v, scale) => {
   if (v === null) return undefined
