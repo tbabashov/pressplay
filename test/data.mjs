@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import path from 'node:path'
 import { test } from './harness.mjs'
+import { previewId } from '../lib/preview-source.js'
 
 const root = path.join(import.meta.dirname, '..')
 const wall = JSON.parse(fs.readFileSync(path.join(root, 'lib/wall.json'), 'utf8'))
@@ -11,7 +12,13 @@ await test('every wall record has the fields the hero reads', async () => {
     assert.ok(a.name && a.artist, `${a.name}: name and artist`)
     assert.ok(a.cover?.startsWith('/wall/'), `${a.name}: cover path`)
     assert.ok(a.track, `${a.name}: a track label`)
-    assert.equal(typeof a.dz, 'number', `${a.name}: dz must be a number`)
+    // Either catalogue, but exactly one of them. Deezer is a bare number and
+    // Apple is an am prefix; a record with neither is a sleeve that does
+    // nothing when pressed.
+    assert.ok(previewId(a), `${a.name}: needs a dz or an am id`)
+    if (a.dz !== undefined) assert.equal(typeof a.dz, 'number', `${a.name}: dz is a number`)
+    if (a.am !== undefined) assert.equal(typeof a.am, 'number', `${a.name}: am is a number`)
+    assert.ok(!(a.dz && a.am), `${a.name}: one source, not both`)
   }
 })
 
@@ -27,7 +34,7 @@ await test('wall dz values are track ids, not album ids', async () => {
   // completely unrelated song. Album ids on Deezer are short; track ids for
   // anything modern are long. This will not catch every case, but it catches
   // the mistake that was actually made.
-  const suspicious = wall.filter(a => String(a.dz).length < 6)
+  const suspicious = wall.filter(a => a.dz && String(a.dz).length < 6)
   assert.equal(suspicious.length, 0,
     'suspiciously short ids: ' + suspicious.map(a => `${a.name}=${a.dz}`).join(', '))
 })
@@ -35,8 +42,12 @@ await test('wall dz values are track ids, not album ids', async () => {
 await test('no two wall records share a preview', async () => {
   const seen = new Map()
   for (const a of wall) {
-    assert.ok(!seen.has(a.dz), `${a.name} and ${seen.get(a.dz)} both play ${a.dz}`)
-    seen.set(a.dz, a.name)
+    // Compared on the resolved id, not on dz. Two Apple records both have an
+    // undefined dz, so keying on that made them collide with each other and
+    // report that they play "undefined".
+    const id = previewId(a)
+    assert.ok(!seen.has(id), `${a.name} and ${seen.get(id)} both play ${id}`)
+    seen.set(id, a.name)
   }
 })
 
