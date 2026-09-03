@@ -4,6 +4,7 @@ import { useState } from 'react'
 import {
   SCALE_PRESETS, SCALE_MAX_CEILING, TIER_NAME_MAX, rampColour, readableOn
 } from '@/lib/scales'
+import { chipColour } from '@/lib/rating-colors'
 
 // PRODUCT.md: a scale is an ordered list of tiers, each with a value, a name and
 // a colour, plus one value reservable as N/A so interludes stay out of the
@@ -19,10 +20,40 @@ const SCALE_NAME_MAX = 32
 // names every score the same, which is not a scale.
 const MIN_TIERS = 2
 
+// A shade of the same colour, for the far end of a new gradient.
+const darken = (h, by = 0.34) => {
+  const m = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(h || '')
+  if (!m) return h
+  const c = [1, 2, 3].map(i => Math.round(parseInt(m[i], 16) * (1 - by)))
+  return `#${c.map(v => Math.max(0, Math.min(255, v)).toString(16).padStart(2, '0')).join('')}`
+}
+
 export default function ScaleBuilder ({ scale, onChange, locked = false }) {
   const [adding, setAdding] = useState('')
 
   const pick = preset => onChange({ ...preset, tiers: preset.tiers.map(t => ({ ...t })) })
+
+  // Starting your own. The rungs keep the colours they are showing right now
+  // rather than going blank or grey, so it begins from what is on screen and
+  // is edited from there. On the house ladder those colours are null and the
+  // swatches were all showing the same placeholder purple, which is what made
+  // it look like there was nothing to customise.
+  const startCustom = () => onChange({
+    ...scale,
+    id: 'custom',
+    name: scale.name && scale.id !== 'custom' ? `${scale.name} (yours)` : (scale.name || 'Custom'),
+    signature: false,
+    tiers: scale.tiers.map(t => {
+      if (t.colour) return { ...t }
+      const bg = chipColour(t.value, scale.signature ? null : scale).bg || ''
+      const stops = bg.match(/#[0-9a-f]{6}/gi) || []
+      return {
+        ...t,
+        colour: stops[0] || rampColour(t.value, scale.max),
+        colour2: stops[1] || null
+      }
+    })
+  })
 
   // Anything below is a change to the ladder itself, so it stops being the
   // preset it started as.
@@ -32,12 +63,21 @@ export default function ScaleBuilder ({ scale, onChange, locked = false }) {
     tiers: scale.tiers.map(t => (t.value === value ? { ...t, name: name.slice(0, TIER_NAME_MAX) } : t))
   })
 
-  const recolour = (value, colour) => edit({
+  const recolour = (value, patch) => edit({
     // Colouring a tier by hand takes the ladder off the house look, since the
     // signature gradients are not a colour anyone can type.
     signature: false,
-    tiers: scale.tiers.map(t => (t.value === value ? { ...t, colour } : t))
+    tiers: scale.tiers.map(t => (t.value === value ? { ...t, ...patch } : t))
   })
+
+  // A rung is a gradient when it has a second colour. Turning it on starts from
+  // a darker version of the colour already there, so it reads as a shade of the
+  // same rung rather than an unrelated second colour to go and pick.
+  const toggleGradient = (value, on) => {
+    const t = scale.tiers.find(x => x.value === value)
+    const base = t?.colour || swatch(t) || rampColour(value, scale.max)
+    recolour(value, on ? { colour: base, colour2: darken(base) } : { colour2: null })
+  }
 
   const setMax = raw => {
     const max = Math.round(Number(raw))
@@ -75,6 +115,7 @@ export default function ScaleBuilder ({ scale, onChange, locked = false }) {
   }
 
   const swatch = t => t.colour || (scale.signature ? null : rampColour(t.value, scale.max))
+  const isGradient = t => Boolean(t.colour2)
 
   const addNum = Math.round(Number(adding))
   const canAdd = adding !== '' && Number.isFinite(addNum) &&
@@ -92,6 +133,17 @@ export default function ScaleBuilder ({ scale, onChange, locked = false }) {
             {p.name}
           </button>
         ))}
+        {/* Named, so building your own is a thing you can see and press rather
+            than something you discover by editing a preset until it stops
+            being one. */}
+        <button
+          type="button"
+          title="Start from what is on screen and change anything"
+          className={`rm-preset${scale.id === 'custom' ? ' on' : ''}`}
+          onClick={startCustom} disabled={locked}
+        >
+          Custom
+        </button>
       </div>
 
       <div className="sb-shape">
@@ -143,13 +195,35 @@ export default function ScaleBuilder ({ scale, onChange, locked = false }) {
                 maxLength={TIER_NAME_MAX} disabled={locked}
                 aria-label={`Name for ${t.value}`}
               />
-              <input
-                type="color"
-                className="sb-colour"
-                value={hex || '#8b5cf6'}
-                onChange={e => recolour(t.value, e.target.value)} disabled={locked}
-                aria-label={`Colour for ${t.value}`}
-              />
+              <span className="sb-paint">
+                <input
+                  type="color"
+                  className="sb-colour"
+                  value={hex || '#8b5cf6'}
+                  onChange={e => recolour(t.value, { colour: e.target.value })} disabled={locked}
+                  aria-label={`Colour for ${t.value}`}
+                />
+                {isGradient(t) && (
+                  <input
+                    type="color"
+                    className="sb-colour"
+                    value={t.colour2}
+                    onChange={e => recolour(t.value, { colour2: e.target.value })} disabled={locked}
+                    aria-label={`Second colour for ${t.value}`}
+                  />
+                )}
+                <button
+                  type="button"
+                  className={`sb-grad${isGradient(t) ? ' on' : ''}`}
+                  onClick={() => toggleGradient(t.value, !isGradient(t))}
+                  disabled={locked}
+                  aria-pressed={isGradient(t)}
+                  title={isGradient(t) ? 'Make it one flat colour' : 'Shade it into a second colour'}
+                  aria-label={`Gradient for ${t.value}`}
+                >
+                  <i aria-hidden="true" />
+                </button>
+              </span>
               <button
                 type="button"
                 className="sb-drop"
