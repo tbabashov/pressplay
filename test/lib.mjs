@@ -477,3 +477,33 @@ await test('a collaboration is rated on both artists discographies', async () =>
   assert.equal(albumTitleKey('???'), '???')
   assert.notEqual(albumTitleKey('???'), albumTitleKey('!!!'))
 })
+
+await test('every review field the app saves has a column to land in', async () => {
+  // criteriaModel, scaleModel and hiddenParts were written by the route, kept
+  // by the file store, and silently dropped by Postgres, because the table had
+  // nowhere to put them. It passed every local test: the file store keeps whole
+  // objects and has no columns to forget. So this reads the SQL instead.
+  const { readFileSync } = await import('node:fs')
+  const src = readFileSync(new URL('../lib/db/postgres.js', import.meta.url), 'utf8')
+
+  const insert = src.slice(src.indexOf('insert into reviews'))
+  const columns = insert.slice(insert.indexOf('(') + 1, insert.indexOf(')'))
+    .split(',').map(c => c.trim()).filter(Boolean)
+
+  // The highest $n in the values clause has to be the number of columns, or the
+  // insert is malformed or a column is silently taking a default.
+  const valuesClause = insert.slice(insert.indexOf('values ('), insert.indexOf('on conflict'))
+  const highest = Math.max(...[...valuesClause.matchAll(/\$(\d+)/g)].map(m => Number(m[1])))
+  assert.equal(highest, columns.length,
+    `${columns.length} columns but the values clause goes up to $${highest}`)
+
+  // Everything the review shape reads back has to be a column too, or it is
+  // being saved into nothing.
+  const shape = src.slice(src.indexOf('const shape ='), src.indexOf('export async function getReview'))
+  for (const col of ['criteria_model', 'scale_model', 'hidden_parts', 'selections', 'album']) {
+    assert.ok(columns.includes(col), `${col} is missing from the insert`)
+    assert.ok(shape.includes(col), `${col} is never read back`)
+    assert.ok(insert.includes(`${col} = excluded.${col}`) || col === 'album',
+      `${col} is inserted but never updated, so a second save would not change it`)
+  }
+})

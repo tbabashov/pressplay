@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
-import { ratingColor } from '../../lib/rating-colors'
+import { chipColour } from '../../lib/rating-colors'
 
 // Your own albums of the year, for every year you have rated something from.
 //
@@ -65,7 +65,7 @@ export default function AlbumsOfTheYear ({ albums }) {
 
       <ol className="aoty-list glass-list">
         {list.map((a, i) => {
-          const c = ratingColor(Math.round(a.final), a.scaleModel)
+          const c = chipColour(Math.round(a.final), a.scaleModel)
           return (
             <li key={a.albumId}>
               <span className="aoty-rank tnum">{i + 1}</span>

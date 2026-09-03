@@ -8,7 +8,7 @@ import { publicReview } from '@/lib/social-shape'
 import { SUPERLATIVES } from '@/lib/preferences'
 import { param } from '@/lib/route-param'
 import { fullDate } from '@/lib/when'
-import { ratingColor, scoreText, fmtDuration } from '@/lib/rating-colors'
+import { chipColour, scoreText, fmtDuration } from '@/lib/rating-colors'
 import Score from '@/components/Score'
 import Comments from '@/components/social/Comments'
 
@@ -109,7 +109,7 @@ export default async function PublicReview ({ params }) {
           <h2 className="pr-h2">The criteria</h2>
           <dl className="pr-crit">
             {r.criteria.filter(c => c.value !== null).map(c => {
-              const col = ratingColor(Math.round(c.value))
+              const col = chipColour(Math.round(c.value))
               return (
                 <div key={c.key}>
                   <dt>{c.label}</dt>
@@ -148,7 +148,7 @@ export default async function PublicReview ({ params }) {
           <h2 className="pr-h2">Every song</h2>
           <ol className="pr-tracks glass-list">
             {r.tracks.map(t => {
-              const c = ratingColor(t.score)
+              const c = chipColour(t.score)
               return (
                 <li key={t.id} className="pr-track">
                   <span className="pr-n tnum">{t.n}</span>

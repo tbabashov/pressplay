@@ -59,6 +59,54 @@ const WALL_SLIDES = (() => {
   return out
 })()
 
+// Real questions, in the order somebody weighing this up would think of them.
+const FAQS = [
+  ['Is it actually free?',
+    'Yes, and without a card. A free account rates as many albums as it likes and ' +
+    'gets two of them a day as slides, with three of the five styles and a small ' +
+    'Press Play mark in the corner. Paid tiers raise the daily limit, drop the mark ' +
+    'and unlock the scale and criteria editors. Nothing you have already rated is ' +
+    'ever locked behind a tier.'],
+
+  ['Do I have to score every song?',
+    'No. The album average only counts the songs you scored, so you can rate the ' +
+    'six that matter and leave the rest. Skits and interludes get a dash instead of ' +
+    'a number and stay out of the average entirely, which is the point of having one.'],
+
+  ['Where do the albums and previews come from?',
+    'The catalogue is Deezer: real tracklists, artwork, running times and thirty ' +
+    'second previews. It is not always right, so everything is editable. A title you ' +
+    'fix or a feature you add is saved on your own copy of the record and stays ' +
+    'fixed, whatever the catalogue does later.'],
+
+  ['Can other people see what I rate?',
+    'Only what you publish, one album at a time. Everything else is private to your ' +
+    'account, including scores you are still arguing with yourself about. Publishing ' +
+    'gives that one review a public page; you can unpublish it again.'],
+
+  ['Do I have to use your scale?',
+    'No. Ten is the default, and there is an eleven with a Majestic on top, five ' +
+    'stars, and a hundred point for anyone who wants the room. On a paid tier you ' +
+    'can build your own: set the top, name the rungs, colour them.'],
+
+  ['What happens to old ratings if I change the scale?',
+    'Nothing. Every review remembers the scale it was rated on, so a nine out of ten ' +
+    'stays a nine out of ten even after you move to a hundred point. Changing the ' +
+    'model changes what you rate next, not what you already said.'],
+
+  ['What are the slides for?',
+    'Posting. Every rating exports as a set of 1080 by 1920 images, sized for TikTok ' +
+    'and Stories and laid out so nothing important sits under a caption or a button ' +
+    'rail. Title card, every song scored, your criteria, where the album lands ' +
+    'against everything else you have rated, the discography, and whatever you wrote ' +
+    'about it.'],
+
+  ['Can I take my ratings out, or delete them?',
+    'Yes, both, from the bottom of your profile. You can delete your ratings and keep ' +
+    'the account, or delete the account and everything attached to it. It is not a ' +
+    'support request and there is no retention period.']
+]
+
 const STEPS = [
   ['Find it', 'Search once and get the real tracklist, artwork and running times.'],
   ['Play it', 'Thirty second previews sit next to every track.'],
@@ -291,6 +339,32 @@ export default async function Landing () {
           </div>
         </section>
 
+        {/* Questions people actually ask, answered honestly. A FAQ that only
+            asks the questions the product is happy to answer is an advert with
+            question marks in it, so the awkward ones are here too: what the
+            free tier really costs you, where the data comes from, and what
+            happens to a library when you change the scale under it. */}
+        <section className="band faq" id="faq">
+          <div className="shell">
+            <h2 className="display h2 rv">Before you start</h2>
+            <p className="lede measure rv">
+              The things worth knowing, including the ones that are not a sales pitch.
+            </p>
+
+            <div className="faq-list">
+              {FAQS.map(([q, a]) => (
+                <details className="faq-item" key={q}>
+                  <summary>
+                    <span>{q}</span>
+                    <i aria-hidden="true" />
+                  </summary>
+                  <div className="faq-a">{a}</div>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className="band closer" id="start">
           <div className="shell closer-inner">
             <h2 className="display h2 rv">Put a number on it.</h2>
@@ -324,6 +398,7 @@ export default async function Landing () {
             <a href="#reviews">Reviews</a>
             <a href="#export">Export</a>
             <a href="#tiers">Tiers</a>
+            <a href="#faq">Questions</a>
           </nav>
 
           <nav className="foot-col" aria-label="Company">

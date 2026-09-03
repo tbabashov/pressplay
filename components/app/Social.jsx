@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { ratingColor } from '@/lib/rating-colors'
+import { chipColour } from '@/lib/rating-colors'
 import { ago } from '@/lib/when'
 import Comments from '@/components/social/Comments'
 
@@ -72,7 +72,7 @@ function CriteriaBars ({ criteria, scale, max = 11 }) {
   return (
     <ul className="sc-crit">
       {criteria.map(c => {
-        const col = ratingColor(Math.round(c.value), scale)
+        const col = chipColour(Math.round(c.value), scale)
         return (
           <li key={c.key}>
             <span className="sc-crit-label">{c.label}</span>
@@ -95,7 +95,7 @@ function TrackList ({ tracks, scale }) {
     <ol className="sc-tracks">
       {tracks.map(t => {
         const has = t.score !== null && t.score !== undefined
-        const col = has ? ratingColor(Math.round(t.score), scale) : null
+        const col = has ? chipColour(Math.round(t.score), scale) : null
         return (
           <li key={t.id}>
             <span className="sc-tn tnum">{t.n}</span>
@@ -204,7 +204,7 @@ export default function Social ({ rows: initial, tab, viewer }) {
 
   const Post = ({ row }) => {
     const expanded = open?.id === row.id
-    const c = row.final === null ? null : ratingColor(Math.round(row.final), row.scaleModel)
+    const c = row.final === null ? null : chipColour(Math.round(row.final), row.scaleModel)
     const mine = viewer?.handle && row.by.handle === viewer.handle
     const max = row.scaleModel?.max ?? 11
     return (

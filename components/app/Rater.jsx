@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePlayer } from '../audio/Player'
 import Meter from '../audio/Meter'
 import { dominant } from '../../lib/palette'
-import { ratingColor } from '../../lib/rating-colors'
+import { chipColour } from '../../lib/rating-colors'
 import { autoBestSong, autoWorstSong } from '../../lib/auto-picks'
 import { NA } from '../../lib/rating-scale'
 import { superlativeByKey, DEFAULT_PREFERENCES, SUPERLATIVE_MAX, TEXT_SUPERLATIVE_MAX } from '../../lib/preferences'
@@ -41,16 +41,16 @@ function parseScore (raw, max, allowNA = true) {
   return Math.min(max, Math.max(0, n))
 }
 
-// ratingColor returns { bg, fg }: bg may be a gradient, which is fine behind a
+// chipColour returns { bg, fg }: bg may be a gradient, which is fine behind a
 // chip but never as a text colour, so the headline number falls back to the
 // room accent whenever its tier is a gradient.
 const tierStyle = (v, scale) => {
-  const c = ratingColor(v, scale)
+  const c = chipColour(v, scale)
   return { background: c.bg, color: c.fg, borderColor: 'transparent' }
 }
 const finalStyle = (v, scale) => {
   if (v === null) return undefined
-  const c = ratingColor(Math.round(v), scale)
+  const c = chipColour(Math.round(v), scale)
   return {
     background: c.bg,
     color: c.fg,

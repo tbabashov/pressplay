@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
-import { ratingColor } from '../../lib/rating-colors'
+import { chipColour } from '../../lib/rating-colors'
 
 function Delta ({ places, isNew }) {
   if (isNew) return <span className="dl new">NEW</span>
@@ -154,7 +154,7 @@ export default function Board ({ rows, snapshot }) {
 
       <ol className="board glass-list">
         {shown.map(r => {
-          const c = ratingColor(Math.round(r.final), r.scaleModel)
+          const c = chipColour(Math.round(r.final), r.scaleModel)
           return (
             <li key={r.albumId} className={r.rank <= 3 ? 'top' : undefined}>
               <span className="bd-rank tnum">{r.rank}</span>

@@ -1498,3 +1498,53 @@
   .rateband::after { display: none; }
   .rateband-copy .measure { max-width: none; }
 }
+
+/* ── Questions ──────────────────────────────────────────────────────────────
+   Native details elements, so a question opens with no javascript, is findable
+   with the browser's own find, and is one tab stop each. */
+.faq-list {
+  margin-top: 30px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  max-width: 74ch;
+}
+.faq-item { border-bottom: 1px solid rgba(255,255,255,0.1); }
+.faq-item summary {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 20px;
+  padding: 19px 2px;
+  cursor: pointer; list-style: none;
+  font-size: 1.06rem; font-weight: 600; letter-spacing: -0.012em; line-height: 1.4;
+  color: var(--fg-2);
+  transition: color 180ms var(--ease);
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary:hover { color: var(--fg); }
+.faq-item[open] summary { color: var(--fg); }
+.faq-item summary:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px;
+}
+
+/* The marker is drawn rather than typed: a plus that becomes a minus, so the
+   state is readable without reading the answer. */
+.faq-item summary i {
+  position: relative; flex: none;
+  width: 15px; height: 15px; margin-top: 5px;
+}
+.faq-item summary i::before, .faq-item summary i::after {
+  content: ''; position: absolute; inset: 50% 0 auto 0;
+  height: 1.6px; border-radius: 2px; background: var(--fg-4);
+  transition: transform 260ms var(--ease), background 180ms var(--ease);
+}
+.faq-item summary i::after { transform: rotate(90deg); }
+.faq-item[open] summary i::after { transform: rotate(0deg); }
+.faq-item summary:hover i::before, .faq-item summary:hover i::after { background: var(--accent); }
+
+.faq-a {
+  padding: 0 44px 22px 2px;
+  font-size: 1rem; line-height: 1.72; color: var(--fg-3);
+  max-width: 66ch;
+}
+
+@media (max-width: 780px) {
+  .faq-item summary { font-size: 1rem; padding: 17px 2px; }
+  .faq-a { padding-right: 30px; font-size: 0.96rem; }
+}

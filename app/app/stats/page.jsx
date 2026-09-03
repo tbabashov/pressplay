@@ -3,7 +3,7 @@ import { auth } from '@/auth'
 import { listReviews } from '@/lib/db'
 import { taste } from '@/lib/taste'
 import { projectReview } from '@/lib/library-shape'
-import { ratingColor, scoreText } from '@/lib/rating-colors'
+import { chipColour, scoreText } from '@/lib/rating-colors'
 import { TIERS } from '@/lib/rating-scale'
 import AlbumTint from '@/components/app/AlbumTint'
 import AlbumsOfTheYear from '@/components/app/AlbumsOfTheYear'
@@ -54,7 +54,7 @@ export default async function Stats () {
         </p>
         <ol className="ts-ladder">
           {[...t.buckets].reverse().map(b => {
-            const c = ratingColor(b.score)
+            const c = chipColour(b.score)
             return (
               <li key={b.score}>
                 <span className="ts-tier tnum" style={{ color: c.bg.startsWith('#') ? c.bg : undefined }}>
@@ -81,7 +81,7 @@ export default async function Stats () {
           )}
           <ul className="ts-crit glass-list">
             {t.criteria.map(c => {
-              const col = ratingColor(Math.round(c.avg))
+              const col = chipColour(Math.round(c.avg))
               return (
                 <li key={c.key}>
                   <span>{c.label}</span>
@@ -101,7 +101,7 @@ export default async function Stats () {
           <h2 className="ts-h2">The years you reach for</h2>
           <ul className="ts-decades glass-list">
             {t.decades.map(d => {
-              const col = ratingColor(Math.round(d.avg))
+              const col = chipColour(Math.round(d.avg))
               return (
                 <li key={d.decade}>
                   <span className="tnum">{d.decade}s</span>
@@ -122,7 +122,7 @@ export default async function Stats () {
         <h2 className="ts-h2">Who you keep going back to</h2>
         <ul className="ts-artists glass-list">
           {t.artists.map(a => {
-            const col = ratingColor(Math.round(a.avg))
+            const col = chipColour(Math.round(a.avg))
             return (
               <li key={a.artist}>
                 <strong>{a.artist}</strong>
@@ -141,7 +141,7 @@ export default async function Stats () {
         // page, set smaller than the artist rows above it. It is the one album
         // this whole page is building towards, so it gets the cover, the score
         // in its own colour, and room to be looked at.
-        const col = ratingColor(Math.round(t.best.final))
+        const col = chipColour(Math.round(t.best.final))
         return (
           <section className="ts-block">
             <h2 className="ts-h2">Your highest</h2>
