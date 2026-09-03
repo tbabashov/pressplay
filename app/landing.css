@@ -93,6 +93,11 @@
 }
 .sheet-end { margin-top: 30px; }
 .sheet-end .account, .sheet-end form { margin: 0; }
+/* Signed in, the account chip already sits in the bar above the open sheet, so
+   the copy down here was the same button twice. Signed out it is not a
+   duplicate at all, it is the big sign in the sheet exists to offer, so only
+   the account form is hidden and the button stays. */
+.sheet-end .acct { display: none; }
 .sheet-end .btn-google { width: 100%; justify-content: center; padding: 15px; font-size: 16px; }
 @media (min-width: 901px) { .sheet { display: none; } }
 

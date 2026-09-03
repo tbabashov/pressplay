@@ -36,12 +36,14 @@ const noise = (seed, n) => {
   return ((x ^ (x >>> 15)) >>> 0) / 4294967296;
 };
 
-// Kept in the upper half of the scale: these stand in for a record someone
-// cared enough to write about, not a random draw across the whole ladder.
+// Kept high, not merely above the middle. Every sleeve on this wall is a record
+// people already agree about, so a spread starting at 7.1 was handing Aquemini
+// a 7.9 on the front page and picking an argument the demo cannot win. The
+// range is 8.6 to 10.7, which is what these records actually get.
 const scoresFor = (name) => {
   const seed = seedOf(name || "untitled");
   const values = CRITERIA.map(
-    (_, i) => Math.round((7.1 + noise(seed, i) * 3.7) * 10) / 10,
+    (_, i) => Math.round((8.6 + noise(seed, i) * 2.1) * 10) / 10,
   );
   const final =
     Math.round((values.reduce((a, b) => a + b, 0) / values.length) * 10) / 10;

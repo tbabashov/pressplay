@@ -38,7 +38,9 @@ const TABS = ['/app', '/app/library', '/app/board', '/app/feed']
 // neighbour, so the long ones get a short name here rather than being
 // truncated or wrapped.
 const TAB_LABEL = { '/app/board': 'Ranks' }
-const MORE = ['/app/discography', '/app/stats', '/app/scoring', '/app/settings']
+// Profile is not here: the account chip in the top bar is on every screen and
+// opens straight onto it, so a row for it was the same destination twice.
+const MORE = ['/app/discography', '/app/stats', '/app/scoring']
 
 export default function Rail ({ image, name }) {
   const path = usePathname()
@@ -108,11 +110,14 @@ export default function Rail ({ image, name }) {
                 </Link>
               )
             })}
+            {/* Named for what it is here rather than for the page it opens.
+                In a list of places to go, next to Taste and Scoring, "Tiers"
+                reads like another part of the rating model. */}
             <Link href="/tiers" className="sheet-row">
               <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
                 <path d="M12 3.4 14.6 9l6.1.6-4.6 4.1 1.3 6L12 16.6 6.6 19.7l1.3-6L3.3 9.6 9.4 9Z" />
               </svg>
-              Tiers
+              Subscriptions
             </Link>
           </div>
         </>
