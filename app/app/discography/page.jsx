@@ -26,7 +26,13 @@ export default async function DiscographyPage () {
   // An album you have actually rated reaches a slide through the review, not
   // through this list, so hiding it here would do nothing. It is marked rather
   // than given a remove button that quietly fails.
-  const rated = reviews.map(r => ({ artist: r.artist || (r.artists || [])[0] || '', name: r.albumName || '' }))
+  // One entry per credit, not one per review. Keying a rated album to its first
+  // artist alone is why a record by two people showed as rated on one of their
+  // discographies and unrated on the other.
+  const rated = reviews.flatMap(r => {
+    const credits = (r.album?.artists?.length ? r.album.artists : [r.artist]).filter(Boolean)
+    return credits.map(a => ({ artist: a, name: r.albumName || '' }))
+  })
 
   const catalogue = await Promise.all(
     // Everything the artist has, singles and EPs included. This screen is

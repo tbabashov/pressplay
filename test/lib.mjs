@@ -436,3 +436,44 @@ await test('an edited album survives a save and a reload', async () => {
   // A first rating has no snapshot yet, so the catalogue stands alone.
   assert.equal(preferSaved(null, catalogue).name, 'Bandana')
 })
+
+await test('a collaboration is rated on both artists discographies', async () => {
+  // Scaring The Hoes is credited to JPEGMAFIA and Danny Brown, and the review
+  // stored both. Everything downstream read the single artist column, so the
+  // record belonged to JPEGMAFIA alone: Danny Brown's discography slide showed
+  // it as an unrated question mark on a record he is on.
+  const { creditsOf, creditsInclude, albumTitleKey } =
+    await import(R + 'discography-match.js')
+
+  const review = {
+    albumName: 'Scaring The Hoes',
+    artist: 'JPEGMAFIA',
+    album: { artists: ['JPEGMAFIA', 'Danny Brown'] }
+  }
+
+  assert.deepEqual(creditsOf(review), ['JPEGMAFIA', 'Danny Brown'])
+  assert.ok(creditsInclude(review, 'Danny Brown'), 'the second credit counts')
+  assert.ok(creditsInclude(review, 'JPEGMAFIA'))
+  assert.ok(creditsInclude(review, '  danny brown '), 'case and spacing do not matter')
+  assert.ok(!creditsInclude(review, 'Madlib'))
+  assert.ok(!creditsInclude(review, ''), 'no artist matches nothing')
+
+  // A review with no snapshot still works off its single column.
+  assert.deepEqual(creditsOf({ artist: 'Danny Brown' }), ['Danny Brown'])
+  assert.ok(creditsInclude({ artist: 'Danny Brown' }, 'Danny Brown'))
+
+  // Titles: one album typed two ways is one album.
+  assert.equal(albumTitleKey('uknowhatimsayin\u00bf'), albumTitleKey('uknowhatimsayin'))
+  assert.equal(albumTitleKey('Atrocity Exhibition'), albumTitleKey('atrocity  exhibition'))
+  assert.equal(albumTitleKey('Old (Deluxe Edition)'), albumTitleKey('Old'))
+
+  // But a genuinely different release stays different. A director's cut is not
+  // the album, and merging them would hide one behind the other.
+  assert.notEqual(albumTitleKey('SCARING THE HOES'), albumTitleKey("SCARING THE HOES: DIRECTOR'S CUT"))
+  assert.notEqual(albumTitleKey('Hot Soup'), albumTitleKey('Hot Soup - Instrumentals'))
+
+  // A title of nothing but punctuation keeps itself rather than collapsing to
+  // an empty string that every other one would collide with.
+  assert.equal(albumTitleKey('???'), '???')
+  assert.notEqual(albumTitleKey('???'), albumTitleKey('!!!'))
+})
