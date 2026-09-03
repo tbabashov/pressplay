@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Shuffle from './Shuffle'
 
 // What to rate next, under the search box.
 //
@@ -12,7 +13,10 @@ export default function Suggestions ({ kind, items }) {
   return (
     <section className="sg">
       <div className="sg-head">
-        <h2>{kind === 'popular' ? 'Somewhere to start' : 'Rate next'}</h2>
+        <div className="sg-head-row">
+          <h2>{kind === 'popular' ? 'Somewhere to start' : 'Rate next'}</h2>
+          <Shuffle />
+        </div>
         <p>
           {kind === 'popular'
             ? 'Records most people already have an opinion about.'

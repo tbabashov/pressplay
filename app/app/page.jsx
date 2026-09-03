@@ -21,11 +21,12 @@ export default async function RatePage () {
   const profile = session?.user?.email ? await getProfile(session.user.email) : null
   const name = String(profile?.name || session?.user?.name || '').trim()
 
-  // What to rate next. The seed is the day, so the strip is stable while you
-  // are using it and different when you come back, without reshuffling on every
-  // render and disagreeing between the server and the browser.
+  // What to rate next. A fresh order on every render, so reloading the page or
+  // pressing shuffle gives a different set. Drawn on the server, so the markup
+  // the browser receives is already ordered and hydration has nothing to
+  // disagree about.
   const reviews = session?.user?.email ? await listReviews(session.user.email) : []
-  const seed = Math.floor(Date.now() / 86400000)
+  const seed = Math.floor(Math.random() * 0x7fffffff)
   const suggested = await suggestionsFor(reviews, { limit: 12, seed, popular: wall })
     .catch(() => ({ kind: 'popular', items: [] }))
 

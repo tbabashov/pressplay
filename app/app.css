@@ -2618,9 +2618,36 @@ body:has(.app) .vignette { opacity: 0.5; }
    that scrolls hides most of itself from somebody who has nothing yet. */
 .sg { margin-top: 46px; }
 .sg-head { margin-bottom: 18px; }
+.sg-head-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; margin-bottom: 5px;
+}
+.sg-shuffle {
+  display: inline-flex; align-items: center; gap: 7px; flex: none;
+  padding: 7px 12px; border-radius: 10px;
+  font: inherit; font-size: 12.4px; font-weight: 600;
+  color: var(--fg-3);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  cursor: pointer;
+  transition: color 170ms var(--ease), background 170ms var(--ease), border-color 170ms var(--ease);
+}
+.sg-shuffle svg {
+  width: 14px; height: 14px;
+  /* Turns half a revolution per press, so the button confirms it did something
+     even when the strip it changed is below the fold. */
+  transition: rotate 520ms var(--ease);
+}
+.sg-shuffle:hover:not(:disabled) {
+  color: var(--fg); background: rgba(var(--accent-rgb), 0.12);
+  border-color: rgba(var(--accent-rgb), 0.5);
+}
+.sg-shuffle:disabled { opacity: 0.6; cursor: default; }
+.sg-shuffle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .sg-shuffle svg { transition: none; } }
 .sg-head h2 {
   font-size: 11.4px; font-weight: 700; letter-spacing: 0.12em;
-  text-transform: uppercase; color: var(--fg-3); margin: 0 0 5px;
+  text-transform: uppercase; color: var(--fg-3); margin: 0;
 }
 .sg-head p { margin: 0; font-size: 13.2px; color: var(--fg-4); }
 
