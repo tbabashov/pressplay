@@ -136,10 +136,10 @@ body:has(.app) .vignette { opacity: 0.5; }
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .aoty-main:hover strong { color: var(--accent); }
+/* Flat, like the chips on the rating screen. */
 .aoty-score {
   min-width: 46px; padding: 5px 9px; border-radius: 9px;
-  font-size: 13.2px; font-weight: 720; text-align: center;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), inset 0 -1px 0 rgba(0,0,0,0.22);
+  font-size: 13.2px; font-weight: 700; text-align: center;
 }
 
 /* ── Leaderboard filters ──────────────────────────────────────────────────
@@ -383,25 +383,21 @@ body:has(.app) .vignette { opacity: 0.5; }
 .trk-score::placeholder { color: var(--fg-4); font-weight: 500; }
 /* A scored chip is the one saturated thing on the row, and a flat fill with a
    transparent border was reading as a coloured rectangle rather than a chip.
-   It gets what every other raised surface here gets: a lit top edge, a shaded
-   bottom one, and enough shadow to sit above the row instead of in it. */
+   It is flat. A lit top edge and a shadow under it were an attempt to give it
+   presence, and they gave it a bevel instead: the chip stopped being a colour
+   and became a button pretending to be pressable. The colour is the whole
+   point, so nothing sits on top of it. */
 .trk-score.is-scored {
   border-color: transparent;
   border-radius: 10px;
-  font-weight: 720;
-  letter-spacing: -0.015em;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.32);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.3),
-    inset 0 -1px 0 rgba(0,0,0,0.24),
-    0 3px 9px rgba(0,0,0,0.42);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-shadow: none;
+  box-shadow: none;
 }
 .trk-score.is-scored:focus {
   border-color: transparent;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.3),
-    0 3px 9px rgba(0,0,0,0.42),
-    0 0 0 3px rgba(var(--accent-rgb), 0.38);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.38);
 }
 .trk-score:focus {
   outline: none; border-color: rgba(var(--accent-rgb), 0.6);
