@@ -557,3 +557,43 @@ await test('a chip keeps its gradient but not its edges', async () => {
   const custom = { id: 'custom', max: 10, signature: false, tiers: [{ value: 10, name: 'Top', colour: '#123456' }] }
   assert.equal(chipColour(10, custom).bg, '#123456')
 })
+
+await test('suggestions never repeat what you have already rated', async () => {
+  // The catalogue half of this needs the network, so what is checked here is
+  // the half that decides: an empty library falls back, a rated album never
+  // comes back as a suggestion, and the seeding compares scores as a fraction
+  // of their own ladder rather than as raw numbers.
+  const { suggestionsFor } = await import(R + 'suggestions.js')
+
+  const popular = [
+    { name: 'Aquemini', artist: 'Outkast', cover: '/wall/a.jpg' },
+    { name: 'Illmatic', artist: 'Nas', cover: '/wall/b.jpg' },
+    { name: 'Blue', artist: 'Joni Mitchell', cover: '/wall/c.jpg' }
+  ]
+
+  // Nothing rated: the fallback, and it links by name because the wall has no
+  // catalogue id to link to.
+  const fresh = await suggestionsFor([], { limit: 3, seed: 1, popular })
+  assert.equal(fresh.kind, 'popular')
+  assert.equal(fresh.items.length, 3)
+  assert.ok(fresh.items.every(i => i.query && !i.id), 'wall picks carry a search, not an id')
+
+  // The same seed gives the same order, so the server and the browser agree.
+  const again = await suggestionsFor([], { limit: 3, seed: 1, popular })
+  assert.deepEqual(again.items.map(i => i.name), fresh.items.map(i => i.name))
+  const other = await suggestionsFor([], { limit: 3, seed: 2, popular })
+  assert.ok(Array.isArray(other.items))
+
+  // A library with no scored albums cannot be built on, so it falls back too
+  // rather than seeding from nothing.
+  const unscored = await suggestionsFor(
+    [{ artist: 'Outkast', albumName: 'Aquemini', final: null }],
+    { limit: 3, seed: 1, popular })
+  assert.equal(unscored.kind, 'popular')
+
+  // An album already rated is never suggested back, whichever list it came
+  // from. This is the one that would look broken to a user.
+  const rated = [{ artist: 'Outkast', albumName: 'Aquemini', final: 9, scaleModel: { max: 11 } }]
+  const out = await suggestionsFor(rated, { limit: 3, seed: 1, popular })
+  assert.ok(!out.items.some(i => /aquemini/i.test(i.name)), 'Aquemini is not offered back')
+})

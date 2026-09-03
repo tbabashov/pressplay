@@ -1,17 +1,25 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export default function Search () {
-  const [q, setQ] = useState('')
+  // A suggestion for a record the wall knows by name rather than by catalogue
+  // id links here with the name in the query string. Reading it means those
+  // cards land on results instead of an empty box, and it makes any search
+  // shareable as a link.
+  const params = useSearchParams()
+  const [q, setQ] = useState(() => params.get('q') || '')
   const [results, setResults] = useState([])
   const [state, setState] = useState('idle')   // idle | loading | done | error
   const [error, setError] = useState('')
   const box = useRef(null)
   const router = useRouter()
 
-  useEffect(() => { box.current?.focus() }, [])
+  // Focus only when there is nothing to read yet. Arriving with a query and
+  // having the page jump to a focused box hides the results behind a keyboard
+  // on a phone.
+  useEffect(() => { if (!params.get('q')) box.current?.focus() }, [params])
 
   // Debounced so a fast typist makes one request, not eight.
   useEffect(() => {
