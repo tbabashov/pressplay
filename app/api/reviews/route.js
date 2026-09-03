@@ -1,7 +1,7 @@
 import { auth } from '@/auth'
 import { listReviews, saveReview, countToday, getReview, getProfile } from '@/lib/db'
 import { accountTier, limitsFor } from '@/lib/tiers'
-import { normaliseCriteria } from '@/lib/preferences'
+import { normaliseCriteria, normaliseSelections } from '@/lib/preferences'
 import { normaliseScale } from '@/lib/scales'
 
 // The cap comes from the account's tier now. It used to be a two row table
@@ -56,7 +56,7 @@ export async function POST (req) {
     year: take('year'),
     scores: take('scores', v => v ?? {}),
     criteria: take('criteria', v => v ?? {}),
-    selections: take('selections', v => v ?? {}),
+    selections: take('selections', normaliseSelections),
     nowPlaying: take('nowPlaying'),
     album: take('album', v => v ?? existing?.album ?? null),
     artistImages: has('artistImages')

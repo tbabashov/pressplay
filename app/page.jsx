@@ -139,7 +139,7 @@ export default async function Landing () {
             <h2 className="display h2 rv">Score it song by song.</h2>
             <p className="lede measure rv">
               The whole record, one row at a time, with a preview of every track so you are
-              rating what you actually heard. Type a number from 0 to 11, or a dash for the skits
+              rating what you actually heard. Type a number on whatever scale you set, or a dash for the skits
               that were never trying to be songs. The average moves as you go.
             </p>
             <p className="lede measure rv">

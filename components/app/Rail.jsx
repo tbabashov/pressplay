@@ -11,7 +11,11 @@ const ICONS = {
   stats: <path d="M4.6 18.2 9.4 12l3.5 3.4 6.3-8.2 1.5 1.2-7.6 9.9-3.5-3.4-3.6 4.6Z" />,
   disc: <path d="M12 3.2a8.8 8.8 0 1 0 0 17.6 8.8 8.8 0 0 0 0-17.6Zm0 6.6a2.2 2.2 0 1 1 0 4.4 2.2 2.2 0 0 1 0-4.4Z" />,
   feed: <path d="M9 4.4a3.3 3.3 0 1 1 0 6.6 3.3 3.3 0 0 1 0-6.6Zm7.4 1.2a2.6 2.6 0 1 1 0 5.2 2.6 2.6 0 0 1 0-5.2ZM9 12.6c3.2 0 5.8 1.6 5.8 3.6v3H3.2v-3c0-2 2.6-3.6 5.8-3.6Zm7.4.4c2.4 0 4.4 1.3 4.4 2.9v2.9h-4.6v-2.6c0-1.2-.6-2.3-1.6-3.1a8 8 0 0 1 1.8-.1Z" />,
-  profile: <path d="M12 4.2a3.9 3.9 0 1 1 0 7.8 3.9 3.9 0 0 1 0-7.8Zm0 9.4c4 0 7.2 2 7.2 4.4v1.8H4.8V18c0-2.4 3.2-4.4 7.2-4.4Z" />
+  profile: <path d="M12 4.2a3.9 3.9 0 1 1 0 7.8 3.9 3.9 0 0 1 0-7.8Zm0 9.4c4 0 7.2 2 7.2 4.4v1.8H4.8V18c0-2.4 3.2-4.4 7.2-4.4Z" />,
+  // A ladder of rungs getting shorter: the scale, which is what this one is
+  // mostly about. Not the vertical bars of the leaderboard or the line of the
+  // taste chart, so the three do not read as each other at rail size.
+  scoring: <path d="M4 5h16v2.6H4Zm0 5.7h11.4v2.6H4Zm0 5.7h6.8v2.6H4Z" />
 }
 
 const LINKS = [
@@ -21,6 +25,7 @@ const LINKS = [
   ['/app/discography', 'Discographies', 'disc'],
   ['/app/stats', 'Taste', 'stats'],
   ['/app/feed', 'Social', 'feed'],
+  ['/app/scoring', 'Scoring', 'scoring'],
   ['/app/settings', 'Profile', 'profile']
 ]
 
@@ -33,7 +38,7 @@ const TABS = ['/app', '/app/library', '/app/board', '/app/feed']
 // neighbour, so the long ones get a short name here rather than being
 // truncated or wrapped.
 const TAB_LABEL = { '/app/board': 'Ranks' }
-const MORE = ['/app/discography', '/app/stats', '/app/settings']
+const MORE = ['/app/discography', '/app/stats', '/app/scoring', '/app/settings']
 
 export default function Rail ({ image, name }) {
   const path = usePathname()

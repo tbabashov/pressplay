@@ -1,12 +1,13 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import Link from 'next/link'
 import { usePlayer } from '../audio/Player'
 import Meter from '../audio/Meter'
 import { dominant } from '../../lib/palette'
 import { ratingColor } from '../../lib/rating-colors'
 import { NA } from '../../lib/rating-scale'
-import { superlativeByKey, DEFAULT_PREFERENCES, SUPERLATIVE_MAX } from '../../lib/preferences'
+import { superlativeByKey, DEFAULT_PREFERENCES, SUPERLATIVE_MAX, TEXT_SUPERLATIVE_MAX } from '../../lib/preferences'
 import { DEFAULT_SCALE } from '../../lib/scales'
 import ImageInput from './ImageInput'
 import SuperlativePicker from './SuperlativePicker'
@@ -397,6 +398,14 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
             </label>
           ))}
 
+          {/* The criteria above and the scale the songs are given are both
+              editable, and both used to be findable only at the bottom of the
+              profile screen. The place to say so is here, where somebody is
+              looking at the ones they were handed. */}
+          <Link className="verdict-model" href="/app/scoring">
+            Change your criteria and scale
+          </Link>
+
           <div className="verdict-final">
             <span>Final</span>
             <strong
@@ -440,6 +449,28 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
                         <option value="">Not chosen</option>
                         {album.tracks.map(t => <option key={t.id} value={t.id}>{t.title}</option>)}
                       </select>
+                    </label>
+                  )
+                }
+                if (p.kind === 'text') {
+                  const said = selections[p.key] ?? ''
+                  return (
+                    <label className="pick pick-text" key={p.key}>
+                      <span>{p.label}</span>
+                      <textarea
+                        value={said}
+                        onChange={e => pick(p.key, e.target.value.slice(0, TEXT_SUPERLATIVE_MAX))}
+                        maxLength={TEXT_SUPERLATIVE_MAX}
+                        rows={3}
+                        placeholder="What did you actually think of it?"
+                      />
+                      {/* Only once it is close enough to matter. A counter on an
+                          empty box is noise about a limit nobody is near. */}
+                      {said.length > TEXT_SUPERLATIVE_MAX - 120 && (
+                        <em className="pick-count">
+                          {TEXT_SUPERLATIVE_MAX - said.length} characters left
+                        </em>
+                      )}
                     </label>
                   )
                 }

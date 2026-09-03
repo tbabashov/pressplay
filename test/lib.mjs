@@ -270,3 +270,57 @@ await test('a subscription status becomes the right tier', async () => {
   assert.equal(
     emailFor({ data: { attributes: { user_email: 'Till@Example.com' } } }), 'till@example.com')
 })
+
+await test('the default ladder is the ten, and a stored eleven survives it', async () => {
+  const { DEFAULT_SCALE, LEGACY_SCALE_ID, SCALE_PRESETS, normaliseScale } =
+    await import(R + 'scales.js')
+
+  assert.equal(DEFAULT_SCALE.id, 'ten', 'a new account starts on the ten')
+  assert.equal(DEFAULT_SCALE.max, 10)
+
+  // The eleven is not gone, it is just not the default any more. Removing it
+  // would strand every account already scoring against it.
+  const eleven = SCALE_PRESETS.find(sc => sc.id === LEGACY_SCALE_ID)
+  assert.ok(eleven, 'the eleven is still a preset')
+  assert.equal(eleven.max, 11)
+
+  // What is stored is what is read: an account on the eleven keeps it without
+  // anything having to know about the change.
+  assert.equal(normaliseScale(eleven).id, 'eleven')
+  assert.equal(normaliseScale(eleven).max, 11)
+
+  // Nothing stored falls to the new default, which is exactly the case the
+  // grandfather script exists to remove before the change ships.
+  assert.equal(normaliseScale(null).id, 'ten')
+  assert.equal(normaliseScale(undefined).id, 'ten')
+})
+
+await test('a typed superlative is bounded before it is stored', async () => {
+  // Selections used to be written exactly as they arrived, which was fine while
+  // every one was a track title picked off the page. One that is typed is not.
+  const { normaliseSelections, TEXT_SUPERLATIVE_MAX, superlativeByKey } =
+    await import(R + 'preferences.js')
+
+  assert.equal(superlativeByKey.thoughts?.kind, 'text')
+
+  const long = 'x'.repeat(TEXT_SUPERLATIVE_MAX + 500)
+  assert.equal(normaliseSelections({ thoughts: long }).thoughts.length, TEXT_SUPERLATIVE_MAX)
+
+  // A key nobody defined is not stored, so the review cannot be used as a bag
+  // to keep arbitrary data in.
+  assert.deepEqual(normaliseSelections({ notAThing: 'hello' }), {})
+  assert.deepEqual(normaliseSelections('not an object'), {})
+  assert.deepEqual(normaliseSelections(null), {})
+  assert.deepEqual(normaliseSelections(['a']), {})
+
+  // Blank stays blank rather than being stored as an empty answer.
+  assert.deepEqual(normaliseSelections({ thoughts: '   ' }), {})
+
+  // Line breaks the writer put in are kept; a wall of them is not, because a
+  // slide has a fixed amount of room.
+  assert.equal(normaliseSelections({ thoughts: 'one\n\ntwo' }).thoughts, 'one\n\ntwo')
+  assert.equal(normaliseSelections({ thoughts: 'one\n\n\n\n\ntwo' }).thoughts, 'one\n\ntwo')
+
+  // A chosen superlative is still capped, just far shorter.
+  assert.equal(normaliseSelections({ bestSong: 'y'.repeat(500) }).bestSong.length, 200)
+})

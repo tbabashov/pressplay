@@ -5,6 +5,7 @@ import { getProfile, reviewId } from '@/lib/db'
 import { resolvePublicReview } from '@/lib/public-review'
 import { commentsFor } from '@/lib/social-queries'
 import { publicReview } from '@/lib/social-shape'
+import { SUPERLATIVES } from '@/lib/preferences'
 import { param } from '@/lib/route-param'
 import { fullDate } from '@/lib/when'
 import { ratingColor, scoreText, fmtDuration } from '@/lib/rating-colors'
@@ -33,13 +34,12 @@ export async function generateMetadata ({ params }) {
   }
 }
 
-const SELECTIONS = [
-  ['bestSong', 'Best song'],
-  ['worstSong', 'Worst song'],
-  ['mostUnderrated', 'Most underrated'],
-  ['mostOverrated', 'Most overrated'],
-  ['bestFeature', 'Best feature']
-]
+// Read off the catalogue rather than listed again here. A second hand written
+// list of superlatives is a second place to forget: this page showed five of
+// the thirty, so anything else somebody filled in was saved and never shown.
+const SELECTIONS = SUPERLATIVES
+  .filter(sp => sp.key !== 'nowPlaying')
+  .map(sp => [sp.key, sp.label, sp.kind])
 
 export default async function PublicReview ({ params }) {
   const { handle: rawHandle, albumId: rawAlbum } = await params
@@ -58,9 +58,14 @@ export default async function PublicReview ({ params }) {
     session?.user ? getProfile(session.user.email) : null
   ])
 
-  const picks = SELECTIONS
-    .map(([key, label]) => [label, r.selections[key]])
-    .filter(([, value]) => value)
+  const chosen = SELECTIONS
+    .map(([key, label, kind]) => ({ key, label, kind, value: r.selections[key] }))
+    .filter(p => p.value)
+
+  // A paragraph someone wrote does not belong in a row of one-line answers, so
+  // it gets its own block and keeps its line breaks.
+  const picks = chosen.filter(p => p.kind !== 'text')
+  const written = chosen.filter(p => p.kind === 'text')
 
   return (
     <article className="pr">
@@ -124,12 +129,19 @@ export default async function PublicReview ({ params }) {
         <section className="pr-block">
           <h2 className="pr-h2">The picks</h2>
           <dl className="pr-picks">
-            {picks.map(([label, value]) => (
-              <div key={label}><dt>{label}</dt><dd>{value}</dd></div>
+            {picks.map(p => (
+              <div key={p.key}><dt>{p.label}</dt><dd>{p.value}</dd></div>
             ))}
           </dl>
         </section>
       )}
+
+      {written.map(p => (
+        <section className="pr-block" key={p.key}>
+          <h2 className="pr-h2">{p.label}</h2>
+          <p className="pr-said">{p.value}</p>
+        </section>
+      ))}
 
       {r.tracks.length > 0 && (
         <section className="pr-block">

@@ -1,13 +1,11 @@
 import Link from 'next/link'
 import { auth } from '@/auth'
-import { getProfile, listReviews, getPreferences, countCommentsBy, voteTotals, listFollowers, reviewId, getCredentials } from '@/lib/db'
+import { getProfile, listReviews, countCommentsBy, voteTotals, listFollowers, reviewId, getCredentials } from '@/lib/db'
 import { ensureProfile } from '@/lib/ensure-profile'
 import { published } from '@/lib/social-queries'
-import { normalisePreferences, DEFAULT_PREFERENCES } from '@/lib/preferences'
 import ProfileForm from '@/components/social/ProfileForm'
 import PasswordForm from '@/components/social/PasswordForm'
-import RatingModel from '@/components/app/RatingModel'
-import { accountTier, limitsFor, TIER_DETAIL } from '@/lib/tiers'
+import { accountTier, TIER_DETAIL } from '@/lib/tiers'
 import Achievements from '@/components/app/Achievements'
 import DangerZone from '@/components/social/DangerZone'
 import { achievementsFor } from '@/lib/achievements'
@@ -36,9 +34,8 @@ export default async function Settings () {
 
   // Whether there is a password to change at all. An account that came in
   // through Google has no credentials row, and only the server can tell.
-  const [all, storedPrefs, creds] = await Promise.all([
+  const [all, creds] = await Promise.all([
     listReviews(session.user.email),
-    getPreferences(session.user.email),
     getCredentials(session.user.email)
   ])
   const live = published(all)
@@ -58,7 +55,6 @@ export default async function Settings () {
     upvotes: Object.values(votes).reduce((n, v) => n + v.up, 0),
     followers: followers.length
   })
-  const preferences = storedPrefs ? normalisePreferences(storedPrefs) : DEFAULT_PREFERENCES
 
   return (
     <>
@@ -95,16 +91,14 @@ export default async function Settings () {
       <div className="page-head set-head">
         <h1>Your rating model</h1>
       </div>
-      {/* What the account may actually keep. The save route puts a free
-          account's model back to the built in one, so without this the screen
-          would report a save that had been undone on the way through. */}
-      <RatingModel
-        initial={preferences}
-        can={{
-          scales: limitsFor(tier).customScales,
-          criteria: limitsFor(tier).customCriteria
-        }}
-      />
+      {/* The form itself moved to its own screen. Two copies of it would be two
+          places editing one thing, and whichever was left open would save over
+          the other. A pointer, so anyone who learned it was here still finds
+          it. */}
+      <p className="set-intro measure">
+        Your scale, your criteria and your superlatives now have their own
+        screen. <Link href="/app/scoring">Open scoring</Link> to change them.
+      </p>
 
       <hr className="set-rule" />
 
