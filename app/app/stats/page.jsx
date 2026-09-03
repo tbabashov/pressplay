@@ -2,9 +2,11 @@ import Link from 'next/link'
 import { auth } from '@/auth'
 import { listReviews } from '@/lib/db'
 import { taste } from '@/lib/taste'
+import { projectReview } from '@/lib/library-shape'
 import { ratingColor, scoreText } from '@/lib/rating-colors'
 import { TIERS } from '@/lib/rating-scale'
 import AlbumTint from '@/components/app/AlbumTint'
+import AlbumsOfTheYear from '@/components/app/AlbumsOfTheYear'
 
 export const metadata = { title: 'Taste' }
 export const dynamic = 'force-dynamic'
@@ -16,7 +18,9 @@ export default async function Stats () {
   const session = await auth()
   if (!session?.user) return null
 
-  const t = taste(await listReviews(session.user.email))
+  const reviews = await listReviews(session.user.email)
+  const t = taste(reviews)
+  const rated = reviews.map(projectReview)
 
   if (t.albums === 0) {
     return (
@@ -111,6 +115,8 @@ export default async function Stats () {
           </ul>
         </section>
       </div>
+
+      <AlbumsOfTheYear albums={rated} />
 
       <section className="ts-block">
         <h2 className="ts-h2">Who you keep going back to</h2>

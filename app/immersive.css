@@ -22,7 +22,12 @@
   z-index: 60;
   pointer-events: none;
   opacity: 0.42;
-  mix-blend-mode: overlay;
+  /* Soft-light, not overlay. Overlay does its hardest work in the mid tones,
+     which is exactly where a saturated score chip sits, so it was chewing the
+     one set of colours on the screen that carry meaning. On the near black the
+     page is mostly made of, the two are almost the same, so the grain is still
+     there and the chips stop looking like they have been sanded. */
+  mix-blend-mode: soft-light;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   animation: grain-drift 5.2s steps(6) infinite;
 }

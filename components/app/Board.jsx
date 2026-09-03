@@ -16,17 +16,58 @@ function Delta ({ places, isNew }) {
   )
 }
 
+// Bands rather than a slider: the point of filtering a leaderboard is usually
+// "show me the good ones", and a number nobody can quite hit is worse at that
+// than four honest thresholds.
+const BANDS = [
+  ['9', 'Nine and up'],
+  ['8', 'Eight and up'],
+  ['7', 'Seven and up'],
+  ['0', 'Under seven']
+]
+
+const ALL = 'all'
+
 export default function Board ({ rows, snapshot }) {
   const [q, setQ] = useState('')
+  const [year, setYear] = useState(ALL)
+  const [artist, setArtist] = useState(ALL)
+  const [genre, setGenre] = useState(ALL)
+  const [band, setBand] = useState(ALL)
   const [snap, setSnap] = useState(snapshot)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
 
+  // Built from what has actually been rated, so no filter can ever be chosen
+  // that returns nothing, and the lists shrink as the library does.
+  const options = useMemo(() => {
+    const uniq = pick => [...new Set(rows.map(pick).filter(Boolean))]
+    return {
+      years: uniq(r => r.year).sort((a, b) => Number(b) - Number(a)),
+      artists: uniq(r => r.artist).sort((a, b) => a.localeCompare(b)),
+      genres: uniq(r => r.genre).sort((a, b) => a.localeCompare(b))
+    }
+  }, [rows])
+
+  const filtered = year !== ALL || artist !== ALL || genre !== ALL || band !== ALL || q.trim()
+
   const shown = useMemo(() => {
     const term = q.trim().toLowerCase()
-    if (!term) return rows
-    return rows.filter(r => `${r.albumName} ${r.artist}`.toLowerCase().includes(term))
-  }, [rows, q])
+    return rows.filter(r => {
+      if (term && !`${r.albumName} ${r.artist}`.toLowerCase().includes(term)) return false
+      if (year !== ALL && String(r.year ?? '') !== year) return false
+      if (artist !== ALL && r.artist !== artist) return false
+      if (genre !== ALL && r.genre !== genre) return false
+      if (band !== ALL) {
+        const n = Number(r.final)
+        // The bottom band is the only one that is a ceiling rather than a floor.
+        if (band === '0' ? !(n < 7) : !(n >= Number(band))) return false
+      }
+      return true
+    })
+  }, [rows, q, year, artist, genre, band])
+
+  const clear = () => { setQ(''); setYear(ALL); setArtist(ALL); setGenre(ALL); setBand(ALL) }
 
   const freeze = async () => {
     setBusy(true); setError('')
@@ -58,6 +99,50 @@ export default function Board ({ rows, snapshot }) {
           <Link className="btn-primary" href="/app/board/export">Export the board</Link>
         </div>
       </div>
+
+      <div className="board-filters">
+        <label>
+          <span>Year</span>
+          <select value={year} onChange={e => setYear(e.target.value)}>
+            <option value={ALL}>All years</option>
+            {options.years.map(y => <option key={y} value={String(y)}>{y}</option>)}
+          </select>
+        </label>
+        <label>
+          <span>Artist</span>
+          <select value={artist} onChange={e => setArtist(e.target.value)}>
+            <option value={ALL}>All artists</option>
+            {options.artists.map(a => <option key={a} value={a}>{a}</option>)}
+          </select>
+        </label>
+        {options.genres.length > 0 && (
+          <label>
+            <span>Genre</span>
+            <select value={genre} onChange={e => setGenre(e.target.value)}>
+              <option value={ALL}>All genres</option>
+              {options.genres.map(g => <option key={g} value={g}>{g}</option>)}
+            </select>
+          </label>
+        )}
+        <label>
+          <span>Score</span>
+          <select value={band} onChange={e => setBand(e.target.value)}>
+            <option value={ALL}>Any score</option>
+            {BANDS.map(([v, label]) => <option key={v} value={v}>{label}</option>)}
+          </select>
+        </label>
+        {filtered && (
+          <button type="button" className="board-clear" onClick={clear}>
+            Clear
+          </button>
+        )}
+      </div>
+
+      {filtered && (
+        <p className="board-count">
+          {shown.length} of {rows.length}, keeping the place each one holds overall.
+        </p>
+      )}
 
       <p className="board-note">
         {snap
@@ -92,7 +177,12 @@ export default function Board ({ rows, snapshot }) {
         })}
       </ol>
 
-      {shown.length === 0 && <p className="notice">Nothing matches “{q}”.</p>}
+      {shown.length === 0 && (
+        <p className="notice">
+          Nothing matches that.{' '}
+          <button type="button" className="link-button" onClick={clear}>Clear the filters</button>
+        </p>
+      )}
     </>
   )
 }

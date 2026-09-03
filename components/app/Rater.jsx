@@ -364,7 +364,7 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
                     : <span className="trk-time">{fmtTime(t.duration)}</span>}
 
                 <input
-                  className="trk-score"
+                  className={`trk-score${has ? ' is-scored' : ''}`}
                   value={v === NA ? '–' : v ?? ''}
                   onChange={e => setScore(t.id, e.target.value)}
                   placeholder=""
