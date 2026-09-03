@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { usePlayer } from "./audio/Player";
 import { dominant } from "../lib/palette";
 import { ratingColor } from "../lib/rating-colors";
+import { samePreview } from "../lib/preview-source";
 
 // The hero is a listening station, not a product card. A sleeve with the record
 // half out of it: press it and the disc spins, the room takes the cover's colour,
@@ -111,7 +112,7 @@ export default function Hero({ albums = [], children }) {
   // running and then takes a moment, the way a rating is arrived at rather than
   // looked up.
   useEffect(() => {
-    if (!(track?.dz === albums[i]?.dz) || !playing) return;
+    if (!samePreview(track, albums[i]) || !playing) return;
     const t = setTimeout(() => setSettled(true), 1200);
     return () => clearTimeout(t);
   }, [track, playing, albums, i]);
@@ -149,7 +150,7 @@ export default function Hero({ albums = [], children }) {
   }, []);
 
   if (!album) return null;
-  const live = track?.dz === album.dz;
+  const live = samePreview(track, album);
   const spinning = live && playing;
   // At rest the panel shows a finished review; pressing play re-scores it live, so
   // the resting state is never a wall of zeroes.

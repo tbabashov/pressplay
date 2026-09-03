@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useCallback, useEffect, useRef, useState } from 'react'
 import { coverColour } from '../../lib/palette'
+import { previewId, samePreview } from '../../lib/preview-source'
 
 const Ctx = createContext(null)
 export const usePlayer = () => useContext(Ctx)
@@ -136,11 +137,12 @@ export default function PlayerProvider ({ children }) {
   }, [])
 
   const play = useCallback(async album => {
-    if (!album?.dz) return
+    const id = previewId(album)
+    if (!id) return
     const el = audioRef.current
     if (!el) return
 
-    if (track?.dz === album.dz) {
+    if (samePreview(track, album)) {
       if (playing) { el.pause(); setPlaying(false) }
       else { graph(); try { await el.play(); setPlaying(true) } catch {} }
       return
@@ -149,7 +151,7 @@ export default function PlayerProvider ({ children }) {
     setTrack(album)
     setProgress(0)
     setLoading(true)
-    el.src = `/api/preview/${album.dz}`
+    el.src = `/api/preview/${id}`
     graph()
     try {
       await el.play()

@@ -6,6 +6,26 @@ import { limit, callerKey } from '@/lib/rate-limit'
 const memo = new Map()
 const TTL = 1000 * 60 * 30
 
+const deezerPreview = async id => {
+  const r = await fetch(`https://api.deezer.com/track/${id}`)
+  if (!r.ok) return null
+  const t = await r.json().catch(() => null)
+  return t?.preview || null
+}
+
+// Apple serves this as text/javascript, so the body is parsed rather than
+// assumed to be JSON. The preview url it hands back is a plain mp3 on its own
+// CDN, which streams the same way Deezer's does.
+const applePreview = async id => {
+  const r = await fetch(`https://itunes.apple.com/lookup?id=${id}&entity=song`)
+  if (!r.ok) return null
+  const text = await r.text().catch(() => '')
+  let body = null
+  try { body = JSON.parse(text) } catch { return null }
+  const row = (body?.results || []).find(x => x.wrapperType === 'track' && x.previewUrl)
+  return row?.previewUrl || null
+}
+
 export async function GET(_req, { params }) {
   // Streaming audio to anyone who asks is this server's most expensive
   // unauthenticated act, so it is the one worth capping hardest.
@@ -13,15 +33,17 @@ export async function GET(_req, { params }) {
   if (stop) return stop
 
   const { id } = await params
-  if (!/^\d+$/.test(id)) return new Response('bad id', { status: 400 })
+  // A bare number is Deezer, the main catalogue. An am prefix is Apple, for the
+  // records Deezer does not carry at all.
+  if (!/^(am)?\d+$/.test(id)) return new Response('bad id', { status: 400 })
 
   let url = memo.get(id)
   if (!url || url.at < Date.now() - TTL) {
-    const r = await fetch(`https://api.deezer.com/track/${id}`)
-    if (!r.ok) return new Response('lookup failed', { status: 502 })
-    const t = await r.json()
-    if (!t.preview) return new Response('no preview', { status: 404 })
-    url = { href: t.preview, at: Date.now() }
+    const href = id.startsWith('am')
+      ? await applePreview(id.slice(2))
+      : await deezerPreview(id)
+    if (!href) return new Response('no preview', { status: 404 })
+    url = { href, at: Date.now() }
     memo.set(id, url)
   }
 

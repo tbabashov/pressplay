@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { usePlayer } from './audio/Player'
+import { samePreview } from '../lib/preview-source'
 
 // Not texture any more: every cover here is playable. Two rows drifting in
 // opposite directions, each duplicated so the loop is seamless. Hovering a row
@@ -47,7 +48,7 @@ export default function Wall ({ albums }) {
         <div className="wall-row" key={i} data-dir={i === 1 ? 'rev' : undefined}>
           <div className="wall-track" style={{ '--dur': `${74 + i * 18}s` }}>
             {[...row, ...row].map((a, j) => {
-              const on = track?.dz === a.dz
+              const on = samePreview(track, a)
               return (
                 <button
                   key={`${a.cover}-${j}`}

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { usePlayer } from '../audio/Player'
 import Meter from '../audio/Meter'
 import { dominant } from '../../lib/palette'
@@ -74,6 +75,7 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
   // The album is editable, so it is state rather than a prop read straight
   // through. Corrections are saved on the review's own snapshot with everything
   // else, which is why they survive the catalogue changing underneath.
+  const router = useRouter()
   const [album, setAlbum] = useState(source)
   const [editing, setEditing] = useState(false)
   useEffect(() => { setAlbum(source) }, [source])
@@ -204,6 +206,11 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
       const body = await r.json()
       if (!r.ok) throw new Error(body.error || 'Could not save.')
       setSave({ state: 'saved', message: '' })
+      // The publish control is rendered by the server component beside this
+      // one, and only once a review exists. Saving through fetch does not make
+      // the server render again, so on a first rating the button stayed missing
+      // until you navigated away and came back. This asks for that render.
+      router.refresh()
     } catch (e) {
       setSave({ state: 'error', message: e.message })
     }

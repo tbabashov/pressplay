@@ -176,20 +176,20 @@
     "dz": 77096688
   },
   {
-    "name": "A Seat at the Table",
-    "artist": "Solange",
-    "genre": null,
-    "cover": "/wall/a-seat-at-the-table.jpg",
-    "track": "Interlude: The Glory is in You",
-    "dz": 133103634
-  },
-  {
     "name": "m b v",
     "artist": "my bloody valentine",
     "genre": "Alternative",
     "cover": "/wall/m-b-v.jpg",
     "track": "new you",
     "dz": 1265941812
+  },
+  {
+    "name": "A Seat at the Table",
+    "artist": "Solange",
+    "genre": null,
+    "cover": "/wall/a-seat-at-the-table.jpg",
+    "track": "Interlude: The Glory is in You",
+    "dz": 133103634
   },
   {
     "name": "Songs in the Key of Life",
@@ -200,6 +200,14 @@
     "dz": 676011672
   },
   {
+    "name": "Spiderland",
+    "artist": "Slint",
+    "genre": "Alternative",
+    "cover": "/wall/spiderland-remastered.jpg",
+    "track": "Nosferatu Man",
+    "dz": 125953471
+  },
+  {
     "name": "Music Has the Right to Children",
     "artist": "Boards of Canada",
     "genre": "Electronic",
@@ -208,12 +216,12 @@
     "dz": 29373661
   },
   {
-    "name": "Spiderland",
-    "artist": "Slint",
-    "genre": "Alternative",
-    "cover": "/wall/spiderland-remastered.jpg",
-    "track": "Nosferatu Man",
-    "dz": 125953471
+    "name": "Unknown Pleasures",
+    "artist": "Joy Division",
+    "genre": "Goth Rock",
+    "cover": "/wall/unknown-pleasures-2019-digital-master.jpg",
+    "dz": 1467845572,
+    "track": "Insight"
   },
   {
     "name": "People's Instinctive Travels and the Paths of Rhythm",
@@ -240,14 +248,6 @@
     "dz": 7011525
   },
   {
-    "name": "Unknown Pleasures",
-    "artist": "Joy Division",
-    "genre": "Goth Rock",
-    "cover": "/wall/unknown-pleasures-2019-digital-master.jpg",
-    "dz": 1467845572,
-    "track": "Insight"
-  },
-  {
     "name": "Thriller",
     "artist": "Michael Jackson",
     "genre": "Pop",
@@ -264,20 +264,20 @@
     "track": "Once In A Lifetime (Live)"
   },
   {
-    "name": "Paid In Full",
-    "artist": "Eric B. & Rakim",
-    "genre": "Hip-Hop/Rap",
-    "cover": "/wall/paid-in-full.jpg",
-    "track": "Paid In Full",
-    "dz": 25858131
-  },
-  {
     "name": "Fear of a Blank Planet",
     "artist": "Porcupine Tree",
     "genre": "Rock",
     "cover": "/wall/fear-of-a-blank-planet-2024-remaster.jpg",
     "track": "Anesthetize",
     "dz": 1082589472
+  },
+  {
+    "name": "Paid In Full",
+    "artist": "Eric B. & Rakim",
+    "genre": "Hip-Hop/Rap",
+    "cover": "/wall/paid-in-full.jpg",
+    "track": "Paid In Full",
+    "dz": 25858131
   },
   {
     "name": "Rooty",
@@ -288,14 +288,6 @@
     "dz": 2661882
   },
   {
-    "name": "Random Access Memories",
-    "artist": "Daft Punk",
-    "genre": "Pop",
-    "cover": "/wall/random-access-memories.jpg",
-    "track": "Instant Crush",
-    "dz": 67238732
-  },
-  {
     "name": "Ege Bamyasi",
     "artist": "Can",
     "genre": "Rock",
@@ -304,12 +296,28 @@
     "dz": 70880322
   },
   {
+    "name": "Random Access Memories",
+    "artist": "Daft Punk",
+    "genre": "Pop",
+    "cover": "/wall/random-access-memories.jpg",
+    "track": "Instant Crush",
+    "dz": 67238732
+  },
+  {
     "name": "What's Going On",
     "artist": "Marvin Gaye",
     "genre": "R&B/Soul",
     "cover": "/wall/what-s-going-on.jpg",
     "track": "What's Going On",
     "dz": 1133408852
+  },
+  {
+    "name": "Homogenic (Live)",
+    "artist": "Björk",
+    "genre": "Alternative",
+    "cover": "/wall/homogenic-live.jpg",
+    "track": "Jóga",
+    "dz": 2629693852
   },
   {
     "name": "Ready to Die",
@@ -328,20 +336,20 @@
     "dz": 1012602
   },
   {
-    "name": "Homogenic (Live)",
-    "artist": "Björk",
-    "genre": "Alternative",
-    "cover": "/wall/homogenic-live.jpg",
-    "track": "Jóga",
-    "dz": 2629693852
-  },
-  {
     "name": "Since I Left You",
     "artist": "The Avalanches",
     "genre": "Alternative",
     "cover": "/wall/since-i-left-you-20th-anniversary-deluxe-editi.jpg",
     "track": "Frontier Psychiatrist",
     "dz": 1280128812
+  },
+  {
+    "name": "The Dark Side of the Moon",
+    "artist": "Pink Floyd",
+    "genre": "Rock",
+    "cover": "/wall/the-dark-side-of-the-moon.jpg",
+    "track": "On the Run",
+    "dz": 116914020
   },
   {
     "name": "Bach: Goldberg Variations, BWV 988 (1981 Recording)",
@@ -392,20 +400,20 @@
     "dz": 3750650202
   },
   {
-    "name": "The Dark Side of the Moon",
-    "artist": "Pink Floyd",
-    "genre": "Rock",
-    "cover": "/wall/the-dark-side-of-the-moon.jpg",
-    "track": "On the Run",
-    "dz": 116914020
-  },
-  {
     "name": "Abbey Road",
     "artist": "The Beatles",
     "genre": "Rock",
     "cover": "/wall/abbey-road-super-deluxe-edition.jpg",
     "track": "Come Together",
     "dz": 1041479362
+  },
+  {
+    "name": "Nevermind",
+    "artist": "Nirvana",
+    "genre": "Rock",
+    "cover": "/wall/nevermind-deluxe-edition.jpg",
+    "track": "Come As You Are",
+    "dz": 13791932
   },
   {
     "name": "The Köln Concert",
@@ -424,12 +432,12 @@
     "dz": 2132918987
   },
   {
-    "name": "Nevermind",
-    "artist": "Nirvana",
+    "name": "The Velvet Underground & Nico",
+    "artist": "The Velvet Underground",
     "genre": "Rock",
-    "cover": "/wall/nevermind-deluxe-edition.jpg",
-    "track": "Come As You Are",
-    "dz": 13791932
+    "cover": "/wall/the-velvet-underground-nico-45th-anniversary.jpg",
+    "track": "Femme Fatale",
+    "dz": 61292501
   },
   {
     "name": "Blonde",
@@ -448,20 +456,20 @@
     "dz": 15586234
   },
   {
+    "name": "Dummy",
+    "artist": "Portishead",
+    "genre": "Rock",
+    "cover": "/wall/dummy.jpg",
+    "track": "Strangers",
+    "dz": 982653
+  },
+  {
     "name": "Mezzanine",
     "artist": "Massive Attack",
     "genre": "Electro",
     "cover": "/wall/mezzanine-deluxe.jpg",
     "track": "Teardrop (Remastered 2019)",
     "dz": 734487892
-  },
-  {
-    "name": "The Velvet Underground & Nico",
-    "artist": "The Velvet Underground",
-    "genre": "Rock",
-    "cover": "/wall/the-velvet-underground-nico-45th-anniversary.jpg",
-    "track": "Femme Fatale",
-    "dz": 61292501
   },
   {
     "name": "My Beautiful Dark Twisted Fantasy",
@@ -472,12 +480,20 @@
     "dz": 24281961
   },
   {
-    "name": "Dummy",
-    "artist": "Portishead",
-    "genre": "Rock",
-    "cover": "/wall/dummy.jpg",
-    "track": "Strangers",
-    "dz": 982653
+    "name": "Illinois",
+    "artist": "Sufjan Stevens",
+    "genre": "Alternative",
+    "cover": "/wall/illinois.jpg",
+    "track": "Come On! Feel the Illinoise! Part I: The World's Columbian Exposition Part II: Carl Sandburg Visits Me In A Dream",
+    "dz": 62743213
+  },
+  {
+    "name": "For Emma, Forever Ago",
+    "artist": "Bon Iver",
+    "genre": "Alternative",
+    "cover": "/wall/for-emma-forever-ago.jpg",
+    "track": "Skinny Love",
+    "dz": 73916142
   },
   {
     "name": "Transa",
@@ -486,14 +502,6 @@
     "cover": "/wall/transa-3304571.jpg",
     "track": "Triste Bahia",
     "dz": 34179391
-  },
-  {
-    "name": "Illinois",
-    "artist": "Sufjan Stevens",
-    "genre": "Alternative",
-    "cover": "/wall/illinois.jpg",
-    "track": "Come On! Feel the Illinoise! Part I: The World's Columbian Exposition Part II: Carl Sandburg Visits Me In A Dream",
-    "dz": 62743213
   },
   {
     "name": "Mingus Ah Um",
@@ -520,12 +528,12 @@
     "dz": 59693491
   },
   {
-    "name": "For Emma, Forever Ago",
-    "artist": "Bon Iver",
+    "name": "Lonerism",
+    "artist": "Tame Impala",
     "genre": "Alternative",
-    "cover": "/wall/for-emma-forever-ago.jpg",
-    "track": "Skinny Love",
-    "dz": 73916142
+    "cover": "/wall/lonerism-10-year-anniversary-edition-unrelease.jpg",
+    "track": "Feels Like We Only Go Backwards",
+    "dz": 60765507
   },
   {
     "name": "The Fat of the Land",
@@ -536,6 +544,14 @@
     "dz": 620502412
   },
   {
+    "name": "Kid A",
+    "artist": "Radiohead",
+    "genre": "Alternative",
+    "cover": "/wall/kid-a-14880741.jpg",
+    "track": "The National Anthem",
+    "dz": 138547591
+  },
+  {
     "name": "Talking Timbuktu",
     "artist": "Ali Farka Touré",
     "genre": null,
@@ -544,20 +560,20 @@
     "dz": 3783361032
   },
   {
-    "name": "Lonerism",
-    "artist": "Tame Impala",
-    "genre": "Alternative",
-    "cover": "/wall/lonerism-10-year-anniversary-edition-unrelease.jpg",
-    "track": "Feels Like We Only Go Backwards",
-    "dz": 60765507
-  },
-  {
     "name": "Baduizm",
     "artist": "Erykah Badu",
     "genre": "R&B",
     "cover": "/wall/baduizm-special-edition.jpg",
     "track": "Appletree",
     "dz": 1123845
+  },
+  {
+    "name": "Blonde On Blonde",
+    "artist": "Bob Dylan",
+    "genre": "Rock",
+    "cover": "/wall/blonde-on-blonde-1400030.jpg",
+    "track": "Visions of Johanna",
+    "dz": 15190492
   },
   {
     "name": "Endtroducing.....",
@@ -576,12 +592,12 @@
     "dz": 126367539
   },
   {
-    "name": "Kid A",
-    "artist": "Radiohead",
-    "genre": "Alternative",
-    "cover": "/wall/kid-a-14880741.jpg",
-    "track": "The National Anthem",
-    "dz": 138547591
+    "name": "Grace",
+    "artist": "Jeff Buckley",
+    "genre": "Rock",
+    "cover": "/wall/grace-legacy-edition-107792722.jpg",
+    "track": "Last Goodbye",
+    "dz": 108733458
   },
   {
     "name": "Journey in Satchidananda",
@@ -592,12 +608,12 @@
     "dz": 60722178
   },
   {
-    "name": "Blonde On Blonde",
-    "artist": "Bob Dylan",
+    "name": "Aja",
+    "artist": "Steely Dan",
     "genre": "Rock",
-    "cover": "/wall/blonde-on-blonde-1400030.jpg",
-    "track": "Visions of Johanna",
-    "dz": 15190492
+    "cover": "/wall/aja-491146635.jpg",
+    "track": "Deacon Blues",
+    "dz": 2466017605
   },
   {
     "name": "Beethoven: Symphony No. 9",
@@ -632,12 +648,12 @@
     "dz": 630827242
   },
   {
-    "name": "Grace",
-    "artist": "Jeff Buckley",
+    "name": "Marquee Moon (Edit)",
+    "artist": "Television",
     "genre": "Rock",
-    "cover": "/wall/grace-legacy-edition-107792722.jpg",
-    "track": "Last Goodbye",
-    "dz": 108733458
+    "cover": "/wall/marquee-moon-edit-59642582.jpg",
+    "track": "Marquee Moon (Edit)",
+    "dz": 476842692
   },
   {
     "name": "Hounds Of Love",
@@ -648,12 +664,12 @@
     "dz": 2173954707
   },
   {
-    "name": "Aja",
-    "artist": "Steely Dan",
-    "genre": "Rock",
-    "cover": "/wall/aja-491146635.jpg",
-    "track": "Deacon Blues",
-    "dz": 2466017605
+    "name": "Doolittle",
+    "artist": "Pixies",
+    "genre": "Alternative",
+    "cover": "/wall/doolittle-106387.jpg",
+    "track": "Wave of Mutilation",
+    "dz": 945382
   },
   {
     "name": "IGOR",
@@ -672,20 +688,20 @@
     "dz": 100936412
   },
   {
-    "name": "Marquee Moon (Edit)",
-    "artist": "Television",
-    "genre": "Rock",
-    "cover": "/wall/marquee-moon-edit-59642582.jpg",
-    "track": "Marquee Moon (Edit)",
-    "dz": 476842692
-  },
-  {
     "name": "Ctrl",
     "artist": "SZA",
     "genre": "R&B",
     "cover": "/wall/ctrl-deluxe.jpg",
     "track": "Doves In The Wind (feat. Kendrick Lamar)",
     "dz": 1782697987
+  },
+  {
+    "name": "Currents",
+    "artist": "Tame Impala",
+    "genre": "Psychedelic Pop",
+    "cover": "/wall/currents.jpg",
+    "track": "Let It Happen",
+    "dz": 103052650
   },
   {
     "name": "A Love Supreme",
@@ -704,12 +720,12 @@
     "dz": 61381704
   },
   {
-    "name": "Doolittle",
-    "artist": "Pixies",
-    "genre": "Alternative",
-    "cover": "/wall/doolittle-106387.jpg",
-    "track": "Wave of Mutilation",
-    "dz": 945382
+    "name": "Meteora",
+    "artist": "Linkin Park",
+    "genre": "Rock",
+    "cover": "/wall/meteora.jpg",
+    "track": "Numb",
+    "am": 528437514
   },
   {
     "name": "Innervisions",
@@ -728,11 +744,11 @@
     "dz": 17347969
   },
   {
-    "name": "Currents",
-    "artist": "Tame Impala",
-    "genre": "Psychedelic Pop",
-    "cover": "/wall/currents.jpg",
-    "track": "Let It Happen",
-    "dz": 103052650
+    "name": "Hybrid Theory",
+    "artist": "Linkin Park",
+    "genre": "Rock",
+    "cover": "/wall/hybrid-theory.jpg",
+    "track": "In the End",
+    "am": 528437613
   }
 ]
