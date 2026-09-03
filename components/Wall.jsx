@@ -4,15 +4,18 @@ import { useEffect, useRef, useState } from 'react'
 import { usePlayer } from './audio/Player'
 import { samePreview } from '../lib/preview-source'
 
-// Not texture any more: every cover here is playable. Two rows drifting in
-// opposite directions, each duplicated so the loop is seamless. Hovering a row
-// stops it so the thing you reached for stays reachable.
+// Not texture any more: every cover here is playable. Three rows drifting in
+// alternating directions, each duplicated so the loop is seamless. Hovering a
+// row stops it so the thing you reached for stays reachable.
+const ROWS = 3
+
 export default function Wall ({ albums }) {
   const { track, playing, play } = usePlayer()
-  const half = Math.ceil(albums.length / 2)
-  const rows = [albums.slice(0, half), albums.slice(half)]
+  const per = Math.ceil(albums.length / ROWS)
+  const rows = Array.from({ length: ROWS }, (_, i) => albums.slice(i * per, (i + 1) * per))
+    .filter(r => r.length)
 
-  // Two masked rows of a hundred odd covers, translating forever, underneath a
+  // Masked rows of a hundred odd covers, translating forever, underneath a
   // full-viewport blend layer: left running off screen it repaints the whole
   // page for something nobody is looking at. It only moves while it is in view.
   const ref = useRef(null)
@@ -45,7 +48,7 @@ export default function Wall ({ albums }) {
       </div>
 
       {rows.map((row, i) => (
-        <div className="wall-row" key={i} data-dir={i === 1 ? 'rev' : undefined}>
+        <div className="wall-row" key={i} data-dir={i % 2 === 1 ? 'rev' : undefined}>
           <div className="wall-track" style={{ '--dur': `${74 + i * 18}s` }}>
             {[...row, ...row].map((a, j) => {
               const on = samePreview(track, a)

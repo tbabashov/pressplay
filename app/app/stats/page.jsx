@@ -43,7 +43,9 @@ export default async function Stats () {
         <div><dt>Albums</dt><dd className="tnum">{t.albums}</dd></div>
         <div><dt>Songs scored</dt><dd className="tnum">{t.songs}</dd></div>
         <div><dt>Album average</dt><dd className="tnum">{fmt(t.average)}</dd></div>
-        <div><dt>Elevens given</dt><dd className="tnum">{t.elevens}</dd></div>
+        {/* Named for what it is on any ladder. "Elevens given" was a figure
+            only the house scale could ever produce. */}
+        <div><dt>Top marks</dt><dd className="tnum">{t.topMarks}</dd></div>
       </dl>
 
       <section className="ts-block">

@@ -26,7 +26,10 @@ const SOCIALS = [
 
 const SocialIcon = ({ id, size = 18 }) => {
   const p = {
-    tiktok: 'M16.6 2h-3.1v13.4a2.5 2.5 0 1 1-2.1-2.47V9.75a5.9 5.9 0 1 0 5.2 5.86V8.9a7.7 7.7 0 0 0 4.4 1.4V7.2a4.6 4.6 0 0 1-4.4-4.6V2z',
+    // Redrawn on the 24 grid rather than sitting where it was pasted. The old
+    // path spanned x 5.4 to 21 and y 2 to 21.5, so its centre of mass was down
+    // and to the right of the circle it sits in and the note looked nudged.
+    tiktok: 'M15.1 2.4h-2.9v12.9a2.36 2.36 0 1 1-2-2.33V10.1a5.55 5.55 0 1 0 4.9 5.5V9.05a7.25 7.25 0 0 0 4.15 1.32V7.5a4.33 4.33 0 0 1-4.15-4.33V2.4z',
     instagram: 'M12 2.2c3.2 0 3.6 0 4.9.07 1.2.06 1.8.25 2.2.42.6.22 1 .48 1.4.9.43.43.7.83.9 1.4.18.42.37 1.05.43 2.2.06 1.3.07 1.7.07 4.9s-.01 3.6-.07 4.9c-.06 1.2-.25 1.8-.42 2.2-.22.6-.48 1-.9 1.4-.43.43-.83.7-1.4.9-.42.18-1.05.37-2.2.43-1.3.06-1.7.07-4.9.07s-3.6-.01-4.9-.07c-1.2-.06-1.8-.25-2.2-.42-.6-.22-1-.48-1.4-.9-.43-.43-.7-.83-.9-1.4-.18-.42-.37-1.05-.43-2.2C2.2 15.6 2.2 15.2 2.2 12s.01-3.6.07-4.9c.06-1.2.25-1.8.42-2.2.22-.6.48-1 .9-1.4.43-.43.83-.7 1.4-.9.42-.18 1.05-.37 2.2-.43C8.4 2.2 8.8 2.2 12 2.2zm0 3.2a6.6 6.6 0 1 0 0 13.2 6.6 6.6 0 0 0 0-13.2zm0 10.9a4.3 4.3 0 1 1 0-8.6 4.3 4.3 0 0 1 0 8.6zm8.4-11.2a1.55 1.55 0 1 1-3.1 0 1.55 1.55 0 0 1 3.1 0z',
     github: 'M12 1.8a10.2 10.2 0 0 0-3.2 19.9c.5.1.7-.22.7-.5v-1.8c-2.85.6-3.45-1.2-3.45-1.2-.45-1.2-1.15-1.5-1.15-1.5-.95-.65.07-.63.07-.63 1.05.07 1.6 1.08 1.6 1.08.93 1.6 2.45 1.14 3.05.87.1-.68.36-1.14.66-1.4-2.28-.26-4.67-1.14-4.67-5.07 0-1.12.4-2.03 1.06-2.75-.11-.26-.46-1.3.1-2.71 0 0 .86-.28 2.83 1.05a9.7 9.7 0 0 1 5.16 0c1.97-1.33 2.83-1.05 2.83-1.05.56 1.41.21 2.45.1 2.71.66.72 1.06 1.63 1.06 2.75 0 3.94-2.4 4.8-4.68 5.06.37.32.7.94.7 1.9v2.8c0 .28.18.61.7.5A10.2 10.2 0 0 0 12 1.8z'
   }[id]
@@ -379,7 +382,7 @@ export default async function Landing () {
       <footer className="foot">
         <div className="shell foot-grid">
           <div className="foot-brand">
-            <span className="wordmark"><Mark size={15} /><span>Press&nbsp;Play&nbsp;Rankings</span></span>
+            <span className="wordmark"><Mark size={21} /><span>Press&nbsp;Play&nbsp;Rankings</span></span>
             <p className="foot-line">Score it properly. Then argue about it.</p>
             <div className="foot-socials">
               {SOCIALS.filter(x => x.url).map(x => (

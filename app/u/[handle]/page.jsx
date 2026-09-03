@@ -83,7 +83,7 @@ export default async function RaterProfile ({ params }) {
             <div><dt>Albums</dt><dd className="tnum">{stats.albums}</dd></div>
             <div><dt>Songs scored</dt><dd className="tnum">{stats.songs}</dd></div>
             <div><dt>Average</dt><dd className="tnum">{fmt(stats.average) ?? 'None'}</dd></div>
-            <div><dt>Elevens given</dt><dd className="tnum">{stats.elevens}</dd></div>
+            <div><dt>Top marks</dt><dd className="tnum">{stats.topMarks}</dd></div>
           </dl>
 
           <h2 className="rp-h2 display">The leaderboard</h2>

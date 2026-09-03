@@ -230,7 +230,7 @@ export default function Social ({ rows: initial, tab, viewer }) {
             <p className="sc-facts">
               <span>{row.scored} of {row.songs} scored</span>
               {row.songAverage !== null && <span>{fmt(row.songAverage, 2)} song average</span>}
-              {row.elevens > 0 && <span className="sc-hot">{row.elevens} eleven{row.elevens > 1 ? 's' : ''}</span>}
+              {row.topMarks > 0 && <span className="sc-hot">{row.topMarks} top mark{row.topMarks > 1 ? 's' : ''}</span>}
               {row.skits > 0 && <span>{row.skits} skipped</span>}
             </p>
             {(row.bestSong || row.worstSong) && (
