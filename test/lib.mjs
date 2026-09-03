@@ -55,11 +55,35 @@ await test('achievements count off the library and never exceed their target', a
   assert.ok(list.every(a => !a.earned), 'an empty library has earned nothing')
 
   const one = achievementsFor({
-    reviews: [{ albumId: '1', year: '1999', scores: { a: 11 }, album: { tracks: [{ id: 'a' }] } }]
+    reviews: [{ albumId: '1', year: '1999', scores: { a: 11 }, scaleModel: { max: 11 },
+                album: { tracks: [{ id: 'a' }] } }]
   })
-  assert.equal(one.find(a => a.key === 'first-play').earned, true)
-  assert.equal(one.find(a => a.key === 'majestic').earned, true)
-  assert.equal(one.find(a => a.key === 'century').earned, false)
+  const get = (list, k) => list.find(a => a.key === k)
+  assert.equal(get(one, 'first-play').earned, true)
+  assert.equal(get(one, 'perfect').earned, true, 'one top mark earns Perfect')
+  assert.equal(get(one, 'majestic').have, 1, 'and counts once towards Majestic')
+  assert.equal(get(one, 'majestic').earned, false, 'which needs twenty five')
+  assert.equal(get(one, 'century').earned, false)
+
+  // The badges used to name numbers, so they only described the house ladder.
+  // Majestic asked for an eleven, and once the default became the ten point
+  // scale no new account could ever earn it. Every scoring badge is now read
+  // against the ladder its own review was rated on.
+  const tenPoint = achievementsFor({
+    reviews: [{ albumId: '2', scores: { a: 10, b: 8, c: 9, d: 9, e: 8 }, scaleModel: { max: 10 },
+                album: { tracks: ['a', 'b', 'c', 'd', 'e'].map(id => ({ id })) } }]
+  })
+  assert.equal(get(tenPoint, 'perfect').earned, true, 'a ten is the top of a ten point ladder')
+  assert.equal(get(tenPoint, 'flawless').earned, true, 'and eight is inside its top fifth')
+
+  // On a hundred point ladder an eleven is a poor score, not a perfect one, and
+  // "nine or more" would otherwise make Flawless automatic.
+  const hundred = achievementsFor({
+    reviews: [{ albumId: '3', scores: { a: 11, b: 9, c: 10, d: 9, e: 11 }, scaleModel: { max: 100 },
+                album: { tracks: ['a', 'b', 'c', 'd', 'e'].map(id => ({ id })) } }]
+  })
+  assert.equal(get(hundred, 'perfect').earned, false, 'eleven out of a hundred is not the top')
+  assert.equal(get(hundred, 'flawless').earned, false, 'nor is it the top fifth')
 })
 
 await test('a score placeholder is a dash, not a comma', async () => {

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import { PASSWORD_MIN } from '@/lib/password-rules'
+import Link from 'next/link'
 
 const GoogleMark = ({ size = 18 }) => (
   <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden="true">
@@ -108,6 +109,14 @@ export default function AuthPanel ({ next = '/app' }) {
           {busy ? 'One moment' : up ? 'Create account' : 'Sign in'}
         </button>
       </form>
+
+      {/* Only on the sign-in side. Offering a password reset to somebody in the
+          middle of creating an account is a question they cannot have. */}
+      {!up && (
+        <p className="jn-forgot">
+          <Link href="/forgot">Forgotten your password?</Link>
+        </p>
+      )}
 
       <p className="jn-swap">
         {up

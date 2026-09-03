@@ -7,6 +7,7 @@ import ProfileForm from '@/components/social/ProfileForm'
 import PasswordForm from '@/components/social/PasswordForm'
 import { accountTier, TIER_DETAIL } from '@/lib/tiers'
 import Achievements from '@/components/app/Achievements'
+import YourData from '@/components/social/YourData'
 import DangerZone from '@/components/social/DangerZone'
 import { achievementsFor } from '@/lib/achievements'
 
@@ -127,6 +128,8 @@ export default async function Settings () {
       </div>
 
       <hr className="set-rule" />
+
+      <YourData />
 
       <DangerZone handle={profile.handle} />
     </>

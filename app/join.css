@@ -134,3 +134,9 @@
   .jn-google { transition: none; }
   .jn-google:hover, .jn-google:active { transform: none; }
 }
+
+/* Quiet, and under the button rather than beside it: it is the way out of a
+   problem, not one of the two things this form is for. */
+.jn-forgot { margin-top: 14px; font-size: 13.4px; }
+.jn-forgot a { color: var(--fg-4); text-decoration: none; border-bottom: 1px solid transparent; }
+.jn-forgot a:hover { color: var(--accent); border-bottom-color: rgba(var(--accent-rgb), 0.5); }
