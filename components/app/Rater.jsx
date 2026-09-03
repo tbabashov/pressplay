@@ -405,6 +405,11 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
               profile screen. The place to say so is here, where somebody is
               looking at the ones they were handed. */}
           <Link className="verdict-model" href="/app/scoring">
+            {/* The same ladder mark the rail uses for scoring, so the button and
+                the place it goes are recognisably the same thing. */}
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 5h16v2.6H4Zm0 5.7h11.4v2.6H4Zm0 5.7h6.8v2.6H4Z" />
+            </svg>
             Change your criteria and scale
           </Link>
 

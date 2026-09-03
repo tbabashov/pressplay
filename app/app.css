@@ -1657,21 +1657,30 @@ body:has(.app) .vignette { opacity: 0.5; }
 }
 
 /* --- superlative picker --- */
-/* Quiet: it is a way out of the panel, not a thing to do in it. It reads as a
-   line of the verdict rather than a button competing with the score. */
+/* An actual control. It was a line of quiet text on the theory that it should
+   not compete with the score, and it competed with nothing instead: it did not
+   read as something you could press. */
 .verdict-model {
-  display: block;
-  margin: 2px 0 4px;
-  font-size: 11.6px;
-  color: var(--fg-4);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin: 12px 0 4px;
+  padding: 10px 14px;
+  border-radius: 11px;
+  font: inherit; font-size: 12.6px; font-weight: 600;
+  color: var(--fg-2);
   text-decoration: none;
-  border-bottom: 1px solid transparent;
-  width: fit-content;
-  transition: color 160ms var(--ease), border-color 160ms var(--ease);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.13);
+  transition: color 170ms var(--ease), background 170ms var(--ease), border-color 170ms var(--ease);
 }
-.verdict-model:hover, .verdict-model:focus-visible {
-  color: var(--accent);
-  border-bottom-color: rgba(var(--accent-rgb), 0.5);
+.verdict-model svg { width: 14px; height: 14px; fill: currentColor; opacity: 0.75; }
+.verdict-model:hover {
+  color: var(--fg);
+  background: rgba(var(--accent-rgb), 0.12);
+  border-color: rgba(var(--accent-rgb), 0.5);
+}
+.verdict-model:hover svg { opacity: 1; }
+.verdict-model:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px;
 }
 
 .picks-head {
