@@ -507,3 +507,29 @@ await test('every review field the app saves has a column to land in', async () 
       `${col} is inserted but never updated, so a second save would not change it`)
   }
 })
+
+await test('a chip keeps its gradient but not its edges', async () => {
+  // The 10 and 11 run light, dark, light along a diagonal, so on a small chip
+  // both light ends land in opposite corners and read as an outline drawn
+  // round it. The gradient is the point and stays; it just runs one way.
+  const { chipColour, ratingColor } = await import(R + 'rating-colors.js')
+
+  for (const v of [10, 11]) {
+    const chip = chipColour(v).bg
+    assert.ok(chip.startsWith('linear-gradient'), `${v} is still a gradient`)
+    assert.ok(chip.includes('180deg'), `${v} shades top to bottom, not corner to corner`)
+    // One direction only: three or more colour stops is what puts light back
+    // at the far end and draws the edge.
+    assert.equal((chip.match(/#[0-9a-f]{6}/gi) || []).length, 2, `${v} has two stops`)
+    // The slides keep the diagonal they were signed off with.
+    assert.ok(ratingColor(v).bg.includes('135deg'), `${v} is unchanged on a slide`)
+  }
+
+  // Everything below 10 was always one colour and still is.
+  assert.ok(!chipColour(9).bg.includes('gradient'))
+  assert.equal(chipColour(9).bg, ratingColor(9).bg)
+
+  // A scale someone built has its own colours and never gets the house ones.
+  const custom = { id: 'custom', max: 10, signature: false, tiers: [{ value: 10, name: 'Top', colour: '#123456' }] }
+  assert.equal(chipColour(10, custom).bg, '#123456')
+})
