@@ -40,21 +40,27 @@ export default function AlbumsOfTheYear ({ albums }) {
 
   return (
     <section className="ts-block">
-      <h2 className="ts-h2">Your albums of {active}</h2>
+      <h2 className="ts-h2">Your albums of the year</h2>
 
-      <div className="aoty-years" role="group" aria-label="Pick a year">
-        {years.map(y => (
-          <button
-            key={y}
-            type="button"
-            className={`aoty-year tnum${y === active ? ' on' : ''}`}
-            aria-pressed={y === active}
-            onClick={() => setYear(y)}
-          >
-            {y}
-            <em>{byYear.get(y).length}</em>
-          </button>
-        ))}
+      {/* A list, not a chip for every year. Forty years of rated albums made
+          three wrapped rows of buttons that pushed the ranking off the screen,
+          and no year in them was easier to find than in a list. */}
+      <div className="aoty-head">
+        <select
+          className="aoty-pick"
+          value={active}
+          onChange={e => setYear(Number(e.target.value))}
+          aria-label="Which year to rank"
+        >
+          {years.map(y => (
+            <option key={y} value={y}>
+              {y} ({byYear.get(y).length})
+            </option>
+          ))}
+        </select>
+        <span className="aoty-count">
+          {list.length} rated in {active}
+        </span>
       </div>
 
       <ol className="aoty-list glass-list">
