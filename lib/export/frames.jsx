@@ -87,7 +87,13 @@ export function Editable ({ field, value, onEdit, multiline, children, style }) 
   if (!onEdit) return children ?? value
 
   const commit = () => {
-    const next = (ref.current?.innerText ?? '').replace(/\s+/g, ' ').trim()
+    const raw = ref.current?.innerText ?? ''
+    // A multiline field keeps the breaks that were typed, because they are the
+    // shape of what was written. Everything else collapses them: a newline in
+    // an album title is a mistake, not a paragraph.
+    const next = multiline
+      ? raw.replace(/\r\n?/g, '\n').replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim()
+      : raw.replace(/\s+/g, ' ').trim()
     if (next && next !== value) onEdit(field, next)
     else if (ref.current) ref.current.innerText = value   // put back what was there
   }
@@ -1317,6 +1323,71 @@ export function CriteriaFrame ({ data, palette, theme, hiddenParts = [], onRemov
 
       {/* the score sits directly under the player; any slack falls below it */}
       <div style={{ flex: 1, minHeight: 0 }} />
+    </FrameShell>
+  )
+}
+
+// ---------- Frame: what you actually said ----------
+
+// The size falls as the writing grows, so a sentence lands like a pull quote
+// and a paragraph still fits on one slide instead of being cut off the bottom.
+// The steps are hand set rather than measured: text on a 1080 wide frame is a
+// known width, and a measuring pass would cost a layout on every keystroke of
+// the live preview for a result these four numbers already give.
+const saidSize = n =>
+  n > 420 ? 40 : n > 260 ? 48 : n > 140 ? 58 : 72
+
+export function ThoughtsFrame ({ data, palette, theme, hiddenParts = [], onRemovePart, onEdit }) {
+  const coverForBg = data.review.album.coverProxied
+  const { review } = data
+  const { album } = review
+  const said = (review.selections || {}).thoughts
+  // The slide only exists when there is something on it. Exporter checks this
+  // too, so an empty one is never in the deck to be scrolled past either.
+  if (!said || hiddenParts.includes('thoughts')) return null
+
+  const size = saidSize(said.length)
+
+  return (
+    <FrameShell palette={palette} theme={theme} cover={coverForBg}>
+      <Header
+        album={album} palette={palette} theme={theme}
+        subtitle={[album.year, album.genre].filter(Boolean).join(' \u00b7 ')}
+      />
+
+      <Removable id="thoughts" name="Your thoughts" onRemove={onRemovePart}
+        style={{ flex: 1, minHeight: 0, display: 'flex', marginTop: 8 }}>
+        <Surface theme={theme} radius={36} style={{
+          flex: 1, minHeight: 0,
+          display: 'flex', flexDirection: 'column', justifyContent: 'center',
+          padding: '54px 56px', gap: 30
+        }}>
+          <div style={{
+            fontSize: 26, fontWeight: 'var(--label-weight)',
+            letterSpacing: 'var(--label-track)', textTransform: 'var(--label-case)',
+            color: palette.accent, flexShrink: 0
+          }}>
+            In my own words
+          </div>
+
+          {/* The styling is on the wrapper, not passed to Editable: with no
+              onEdit, which is every download, Editable returns the bare string
+              and any style handed to it goes with it. */}
+          <div style={{
+            fontSize: size,
+            lineHeight: 1.34,
+            fontWeight: 500,
+            letterSpacing: -0.5,
+            color: 'rgba(var(--ink-rgb), 0.94)',
+            // The writer's own line breaks are the shape of what they wrote.
+            whiteSpace: 'pre-wrap',
+            overflowWrap: 'anywhere',
+            minHeight: 0
+          }}>
+            <Editable field="selections.thoughts" value={said} onEdit={onEdit} multiline />
+          </div>
+        </Surface>
+      </Removable>
     </FrameShell>
   )
 }

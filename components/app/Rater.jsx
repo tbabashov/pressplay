@@ -6,6 +6,7 @@ import { usePlayer } from '../audio/Player'
 import Meter from '../audio/Meter'
 import { dominant } from '../../lib/palette'
 import { ratingColor } from '../../lib/rating-colors'
+import { autoBestSong, autoWorstSong } from '../../lib/auto-picks'
 import { NA } from '../../lib/rating-scale'
 import { superlativeByKey, DEFAULT_PREFERENCES, SUPERLATIVE_MAX, TEXT_SUPERLATIVE_MAX } from '../../lib/preferences'
 import { DEFAULT_SCALE } from '../../lib/scales'
@@ -166,12 +167,13 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
   const final = Number.isFinite(manual) ? manual : computed
 
   const done = Object.keys(scores).length
-  const topScored = useMemo(() => {
-    const e = Object.entries(scores).filter(([, v]) => typeof v === 'number')
-    if (!e.length) return null
-    const [id] = e.reduce((a, b) => (b[1] > a[1] ? b : a))
-    return album.tracks.find(t => t.id === id)?.title ?? null
-  }, [scores, album.tracks])
+  // What the two automatic picks would come out as, for the empty option. The
+  // same functions the slides and the public page resolve with, so what is
+  // promised here is exactly what gets drawn.
+  const autoPick = useMemo(() => ({
+    bestSong: autoBestSong(scores, album.tracks),
+    worstSong: autoWorstSong(scores, album.tracks)
+  }), [scores, album.tracks])
 
   const pick = touch((key, value) => setSelections(s => ({ ...s, [key]: value })))
 
@@ -493,7 +495,11 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
                     <span>{p.label}</span>
                     <select value={selections[p.key] ?? ''} onChange={e => pick(p.key, e.target.value)}>
                       <option value="">
-                        {p.key === 'bestSong' && topScored ? `${topScored} (top score)` : 'Not chosen'}
+                        {p.key === 'bestSong' && autoPick.bestSong
+                          ? `${autoPick.bestSong} (top score)`
+                          : p.key === 'worstSong' && autoPick.worstSong
+                            ? `${autoPick.worstSong} (lowest score)`
+                            : 'Not chosen'}
                       </option>
                       {album.tracks.map(t => <option key={t.id} value={t.title}>{t.title}</option>)}
                     </select>

@@ -20,7 +20,7 @@ export const DISC_PER_PAGE = [[6, '6'], [9, '9'], [12, '12']]
 export const SCALE_PLACEMENTS = [['first', 'First songs slide'], ['every', 'Every songs slide'], ['off', 'Off']]
 export const SLIDES = [
   ['title', 'Title card'], ['songs', 'Songs'], ['criteria', 'Criteria'],
-  ['rank', 'Where it lands'], ['discography', 'Discography']
+  ['thoughts', 'Your thoughts'], ['rank', 'Where it lands'], ['discography', 'Discography']
 ]
 
 function Row ({ label, hint, children }) {

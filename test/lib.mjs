@@ -324,3 +324,61 @@ await test('a typed superlative is bounded before it is stored', async () => {
   // A chosen superlative is still capped, just far shorter.
   assert.equal(normaliseSelections({ bestSong: 'y'.repeat(500) }).bestSong.length, 200)
 })
+
+await test('best and worst song fill themselves in from the scores', async () => {
+  // The rating screen showed the top scored track in the empty option, so it
+  // read as decided, but the stored value stayed empty and every block that
+  // draws a superlative checks for a value first. The best song block was
+  // therefore missing from the slides of anyone who left it on automatic.
+  const { autoBestSong, autoWorstSong, resolveSelections } = await import(R + 'auto-picks.js')
+  const { NA } = await import(R + 'rating-scale.js')
+
+  const tracks = [
+    { id: 'a', title: 'Opener' },
+    { id: 'b', title: 'The Peak' },
+    { id: 'c', title: 'The Dud' },
+    { id: 'd', title: 'Skit' }
+  ]
+  const scores = { a: 7, b: 10, c: 3, d: NA }
+
+  assert.equal(autoBestSong(scores, tracks), 'The Peak')
+  assert.equal(autoWorstSong(scores, tracks), 'The Dud')
+
+  // N/A is stored as a string, so a skit is never the worst song: it is not a
+  // song. This is the case that made the typeof check worth having.
+  assert.notEqual(autoWorstSong(scores, tracks), 'Skit')
+
+  // An explicit pick always beats the automatic one.
+  const chosen = resolveSelections({ bestSong: 'Opener' }, scores, tracks)
+  assert.equal(chosen.bestSong, 'Opener')
+  assert.equal(chosen.worstSong, 'The Dud')
+
+  // Filled in when nothing was picked, which is the bug being fixed.
+  const auto = resolveSelections({}, scores, tracks)
+  assert.equal(auto.bestSong, 'The Peak')
+  assert.equal(auto.worstSong, 'The Dud')
+
+  // One scored track is its own best and its own worst, and every track on the
+  // same number has no worst. Naming one would invent an opinion.
+  const single = resolveSelections({}, { a: 9 }, tracks)
+  assert.equal(single.bestSong, 'Opener')
+  assert.equal(single.worstSong, undefined)
+  const flat = resolveSelections({}, { a: 8, b: 8, c: 8 }, tracks)
+  assert.equal(flat.worstSong, undefined, 'a flat record has no worst')
+
+  // Nothing scored at all leaves both alone rather than guessing.
+  assert.deepEqual(resolveSelections({}, {}, tracks), {})
+  assert.deepEqual(resolveSelections({}, { a: 5 }, []), {})
+
+  // A track is `name` in the saved album and `title` once the rating screen
+  // has shaped it, and both reach here: the export builds from the raw
+  // snapshot. Reading only `title` is why this worked on screen and returned
+  // nothing on the slides, which is the whole bug being fixed.
+  const raw = [
+    { id: 'a', name: 'Opener' },
+    { id: 'b', name: 'The Peak' },
+    { id: 'c', name: 'The Dud' }
+  ]
+  assert.equal(autoBestSong(scores, raw), 'The Peak', 'the saved album shape works too')
+  assert.equal(autoWorstSong(scores, raw), 'The Dud')
+})

@@ -14,7 +14,7 @@ import Looks from './Looks'
 import { canUseStyle, limitsFor, TIER_DETAIL, TIERS } from '../../lib/tiers'
 import { mayStore } from '@/lib/consent'
 import {
-  TitleFrame, TracksFrame, CriteriaFrame, ComparisonFrame, DiscographyFrame
+  TitleFrame, TracksFrame, CriteriaFrame, ThoughtsFrame, ComparisonFrame, DiscographyFrame
 } from '../../lib/export/frames.jsx'
 
 const W = 1080
@@ -27,6 +27,7 @@ const PART_NAMES = {
   nowPlaying: 'Now playing',
   bestSong: 'Best song',
   worstSong: 'Worst song',
+  thoughts: 'Your thoughts',
   albumNumber: 'The album number',
   artist: 'The credit',
   meta: 'Year and genre',
@@ -329,6 +330,15 @@ export default function Exporter ({ data, tier = 'free' }) {
       key: 'criteria',
       label: 'The criteria',
       node: <CriteriaFrame data={shown} palette={palette} theme={theme}
+              hiddenParts={hiddenParts} onRemovePart={preview ? undefined : removePart}
+              onEdit={preview ? undefined : editField} />
+    })
+    // Only when something was written. A slide reading "In my own words" over
+    // an empty box is worse than no slide.
+    if (on('thoughts') && shown.review.selections?.thoughts) out.push({
+      key: 'thoughts',
+      label: 'Your thoughts',
+      node: <ThoughtsFrame data={shown} palette={palette} theme={theme}
               hiddenParts={hiddenParts} onRemovePart={preview ? undefined : removePart}
               onEdit={preview ? undefined : editField} />
     })
