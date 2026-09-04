@@ -169,7 +169,7 @@
 
 /* ── Marquee ──────────────────────────────────────────────────────────────*/
 
-.mq { overflow: hidden; min-width: 0 }
+.mq { overflow: hidden; min-width: 0; --mq-fade: 18px }
 .mq > span { display: block; white-space: nowrap }
 /* Not running: the old behaviour, an ellipsis on a title that does not fit. */
 .mq > span:not(.mq-run) { overflow: hidden; text-overflow: ellipsis }
@@ -183,7 +183,10 @@
    trying to reach the pause button. */
 @keyframes mq {
   0%, 16%   { transform: translateX(0) }
-  54%, 70%  { transform: translateX(calc(var(--mq-d) * -1)) }
+  /* Past the overflow by the width of the fade, plus a little. Travelling
+     exactly the overflow parks the last letter under the fade, which is the
+     one letter you waited the whole cycle to read. */
+  54%, 70%  { transform: translateX(calc((var(--mq-d) + var(--mq-fade) + 4px) * -1)) }
   100%      { transform: translateX(0) }
 }
 /* Only while it scrolls, and only on the trailing edge. The title rests at its
@@ -191,8 +194,8 @@
    first letters exactly when they are being read; the right is where the text
    leaves, so that is the edge worth softening. */
 .mq:has(> .mq-run) {
-  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 18px), transparent 100%);
-  mask-image: linear-gradient(90deg, #000 calc(100% - 18px), transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - var(--mq-fade)), transparent 100%);
+  mask-image: linear-gradient(90deg, #000 calc(100% - var(--mq-fade)), transparent 100%);
 }
 
 @media (prefers-reduced-motion: reduce) { .mq-run { animation: none } }

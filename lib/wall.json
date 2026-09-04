@@ -171,7 +171,7 @@
     "name": "1989",
     "artist": "Taylor Swift",
     "genre": "Pop",
-    "cover": "/wall/1989-taylor-s-version-deluxe.jpg",
+    "cover": "/wall/1989.jpg",
     "track": "Shake It Off (Taylor's Version)",
     "dz": 2512293231
   },
@@ -211,7 +211,7 @@
     "name": "Spiderland",
     "artist": "Slint",
     "genre": "Alternative",
-    "cover": "/wall/spiderland-remastered.jpg",
+    "cover": "/wall/spiderland.jpg",
     "track": "Nosferatu Man",
     "dz": 125953471
   },
@@ -235,7 +235,7 @@
     "name": "Two Sevens Clash",
     "artist": "Culture",
     "genre": "Reggae",
-    "cover": "/wall/two-sevens-clash-the-30th-anniversary-edition.jpg",
+    "cover": "/wall/two-sevens-clash.jpg",
     "track": "I'm Not Ashamed",
     "dz": 1359575542
   },
@@ -275,7 +275,7 @@
     "name": "Fear of a Blank Planet",
     "artist": "Porcupine Tree",
     "genre": "Rock",
-    "cover": "/wall/fear-of-a-blank-planet-2024-remaster.jpg",
+    "cover": "/wall/fear-of-a-blank-planet.jpg",
     "track": "Anesthetize",
     "dz": 1082589472
   },
@@ -283,7 +283,7 @@
     "name": "Ready to Die",
     "artist": "The Notorious B.I.G.",
     "genre": "Hip-Hop/Rap",
-    "cover": "/wall/ready-to-die-the-remaster.jpg",
+    "cover": "/wall/ready-to-die.jpg",
     "dz": 2966483391,
     "track": "Everyday Struggle"
   },
@@ -347,7 +347,7 @@
     "name": "Since I Left You",
     "artist": "The Avalanches",
     "genre": "Alternative",
-    "cover": "/wall/since-i-left-you-20th-anniversary-deluxe-editi.jpg",
+    "cover": "/wall/since-i-left-you.jpg",
     "track": "Frontier Psychiatrist",
     "dz": 1280128812
   },
@@ -403,7 +403,7 @@
     "name": "Buena Vista Social Club",
     "artist": "Buena Vista Social Club",
     "genre": "Cuban",
-    "cover": "/wall/buena-vista-social-club-25th-anniversary-editi.jpg",
+    "cover": "/wall/buena-vista-social-club.jpg",
     "track": "Chan Chan",
     "dz": 3750650202
   },
@@ -411,7 +411,7 @@
     "name": "Abbey Road",
     "artist": "The Beatles",
     "genre": "Rock",
-    "cover": "/wall/abbey-road-super-deluxe-edition.jpg",
+    "cover": "/wall/abbey-road.jpg",
     "track": "Come Together",
     "dz": 1041479362
   },
@@ -419,7 +419,7 @@
     "name": "Nevermind",
     "artist": "Nirvana",
     "genre": "Rock",
-    "cover": "/wall/nevermind-deluxe-edition.jpg",
+    "cover": "/wall/nevermind.jpg",
     "track": "Come As You Are",
     "dz": 13791932
   },
@@ -475,7 +475,7 @@
     "name": "Mezzanine",
     "artist": "Massive Attack",
     "genre": "Electro",
-    "cover": "/wall/mezzanine-deluxe.jpg",
+    "cover": "/wall/mezzanine.jpg",
     "track": "Teardrop",
     "dz": 734487892
   },
@@ -507,7 +507,7 @@
     "name": "Endtroducing.....",
     "artist": "DJ Shadow",
     "genre": "Rap/Hip Hop",
-    "cover": "/wall/endtroducing-deluxe-edition-387712187.jpg",
+    "cover": "/wall/endtroducing.jpg",
     "track": "The Number Song",
     "dz": 2074913027
   },
@@ -523,7 +523,7 @@
     "name": "Mingus Ah Um",
     "artist": "Charles Mingus",
     "genre": "Jazz",
-    "cover": "/wall/mingus-ah-um-remastered-123759332.jpg",
+    "cover": "/wall/mingus-ah-um.jpg",
     "track": "Boogie Stop Shuffle",
     "dz": 66863676
   },
@@ -539,7 +539,7 @@
     "name": "Lonerism",
     "artist": "Tame Impala",
     "genre": "Alternative",
-    "cover": "/wall/lonerism-10-year-anniversary-edition-unrelease.jpg",
+    "cover": "/wall/lonerism.jpg",
     "track": "Feels Like We Only Go Backwards",
     "dz": 60765507
   },
@@ -547,7 +547,7 @@
     "name": "The Fat of the Land",
     "artist": "The Prodigy",
     "genre": "Electro",
-    "cover": "/wall/the-fat-of-the-land-25th-anniversary-remixes.jpg",
+    "cover": "/wall/the-fat-of-the-land.jpg",
     "track": "Firestarter",
     "dz": 620502412
   },
@@ -579,7 +579,7 @@
     "name": "Baduizm",
     "artist": "Erykah Badu",
     "genre": "R&B",
-    "cover": "/wall/baduizm-special-edition.jpg",
+    "cover": "/wall/baduizm.jpg",
     "track": "Appletree",
     "dz": 1123845
   },
@@ -595,7 +595,7 @@
     "name": "Pet Sounds",
     "artist": "The Beach Boys",
     "genre": "Pop",
-    "cover": "/wall/pet-sounds-50th-anniversary-edition-13308901.jpg",
+    "cover": "/wall/pet-sounds.jpg",
     "track": "That's Not Me",
     "dz": 126367539
   },
@@ -611,7 +611,7 @@
     "name": "Grace",
     "artist": "Jeff Buckley",
     "genre": "Rock",
-    "cover": "/wall/grace-legacy-edition-107792722.jpg",
+    "cover": "/wall/grace.jpg",
     "track": "Last Goodbye",
     "dz": 108733458
   },
@@ -707,7 +707,7 @@
     "name": "Ctrl",
     "artist": "SZA",
     "genre": "R&B",
-    "cover": "/wall/ctrl-deluxe.jpg",
+    "cover": "/wall/ctrl.jpg",
     "track": "Doves In The Wind (feat. Kendrick Lamar)",
     "dz": 1782697987
   },
