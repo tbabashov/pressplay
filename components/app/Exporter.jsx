@@ -174,8 +174,22 @@ export default function Exporter ({ data, tier = 'free' }) {
         album.artists = next.artist.split(',').map(a => a.trim()).filter(Boolean)
       }
       if (next.year !== undefined) { patch.year = next.year; album.year = next.year }
-      if (next.albumName !== undefined || next.artist !== undefined || next.year !== undefined) {
+      if (next.genre !== undefined) album.genre = next.genre
+      // A song's name lives only on the snapshot's track list, so a rename is
+      // a rewrite of that list rather than a column of its own.
+      if (next.track) {
+        album.tracks = album.tracks.map(t =>
+          next.track[t.id] !== undefined ? { ...t, name: next.track[t.id] } : t)
+      }
+      if (next.albumName !== undefined || next.artist !== undefined ||
+          next.year !== undefined || next.genre !== undefined || next.track) {
         patch.album = album
+      }
+      // A renamed criterion is stored on this review's own model, so it reads
+      // the way it was typed here without touching the scoring screen.
+      if (next.crit) {
+        patch.criteriaModel = (data.parts || []).filter(pt => !pt.auto)
+          .map(pt => ({ key: pt.key, label: next.crit[pt.key] ?? pt.label }))
       }
 
       fetch('/api/reviews', {
@@ -186,15 +200,20 @@ export default function Exporter ({ data, tier = 'free' }) {
 
       return next
     })
-  }, [data.review])
+  }, [data.review, data.parts])
 
   // What the frames are given: the review as stored, with anything typed over
   // it on top. One object, so nothing downstream has to know an edit happened.
   const shown = useMemo(() => {
     if (!edits) return data
-    const { albumName, artist, year, selections } = edits
+    const { albumName, artist, year, genre, selections, track, crit } = edits
     return {
       ...data,
+      // A renamed criterion has to reach the row that prints it, and the rows
+      // are built from parts rather than from the review.
+      parts: crit
+        ? (data.parts || []).map(pt => ({ ...pt, label: crit[pt.key] ?? pt.label }))
+        : data.parts,
       review: {
         ...data.review,
         selections: selections || data.review.selections,
@@ -202,7 +221,12 @@ export default function Exporter ({ data, tier = 'free' }) {
           ...data.review.album,
           name: albumName ?? data.review.album.name,
           artists: artist ? artist.split(',').map(a => a.trim()).filter(Boolean) : data.review.album.artists,
-          year: year ?? data.review.album.year
+          year: year ?? data.review.album.year,
+          genre: genre ?? data.review.album.genre,
+          tracks: track
+            ? data.review.album.tracks.map(t =>
+                track[t.id] !== undefined ? { ...t, name: track[t.id] } : t)
+            : data.review.album.tracks
         }
       }
     }
@@ -281,7 +305,7 @@ export default function Exporter ({ data, tier = 'free' }) {
 
   // A long tracklist becomes several pages rather than one unreadable one.
   const pages = useMemo(() => {
-    const t = data.review.album.tracks.filter(x => !hiddenParts.includes(`song:${x.id}`))
+    const t = shown.review.album.tracks.filter(x => !hiddenParts.includes(`song:${x.id}`))
     const auto = settings.perPage === 'auto'
     const cap = auto ? 14 : Number(settings.perPage)
     const count = Math.max(1, Math.ceil(t.length / cap))
@@ -291,7 +315,7 @@ export default function Exporter ({ data, tier = 'free' }) {
     // set it, which is not what a setting is for.
     const per = auto ? Math.ceil(t.length / count) : cap
     return Array.from({ length: count }, (_, i) => t.slice(i * per, (i + 1) * per))
-  }, [data, settings.perPage, hiddenParts])
+  }, [shown, settings.perPage, hiddenParts])
 
   // Dragging fires on every pointer move, so the picture follows the hand
   // immediately and the write waits until the hand stops. Without that a single
@@ -328,10 +352,11 @@ export default function Exporter ({ data, tier = 'free' }) {
     if (on('songs')) pages.forEach((tracks, i) => out.push({
       key: `songs-${i}`,
       label: pages.length > 1 ? `Songs ${i + 1} of ${pages.length}` : 'Every song, scored',
-      node: <TracksFrame data={data} palette={palette} theme={theme} tracks={tracks}
+      node: <TracksFrame data={shown} palette={palette} theme={theme} tracks={tracks}
               showScale={settings.scale === 'every' || (settings.scale === 'first' && i === 0)}
               dense={tracks.length > 12}
-              hiddenParts={hiddenParts} onRemovePart={preview ? undefined : removePart} />
+              hiddenParts={hiddenParts} onRemovePart={preview ? undefined : removePart}
+              onEdit={preview ? undefined : editField} />
     }))
     if (on('criteria')) out.push({
       key: 'criteria',
