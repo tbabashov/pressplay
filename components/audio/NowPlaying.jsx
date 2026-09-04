@@ -39,7 +39,7 @@ export default function NowPlaying () {
               things moving beside each other reads as a fault rather than a
               feature, and the title is the one that gets cut. */}
           <Marquee className="dock-title"><strong>{track.track}</strong></Marquee>
-          <span>{track.artist}</span>
+          <span className="dock-artist">{track.artist}</span>
         </div>
         <div
           className="dock-bar"

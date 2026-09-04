@@ -158,7 +158,11 @@
 /* The title's own clipping now belongs to the marquee that wraps it, so this
    is type only. Two elements trimming the same string fought each other. */
 .dock-meta strong { font-size: 0.925rem; font-weight: 620; letter-spacing: -0.012em; }
-.dock-meta span {
+/* Named rather than written as .dock-meta span, which also matched the span
+   the marquee wraps its title in: the title was being capped at 42% of its own
+   box and ellipsised there, so it read as cut off while the marquee measured
+   the text as fitting and never scrolled. */
+.dock-artist {
   font-size: 0.78rem; color: var(--fg-4); flex: none;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 42%;
 }
@@ -182,6 +186,15 @@
   54%, 70%  { transform: translateX(calc(var(--mq-d) * -1)) }
   100%      { transform: translateX(0) }
 }
+/* Only while it scrolls, and only on the trailing edge. The title rests at its
+   start for the first beat of every cycle, and a fade on the left would dim the
+   first letters exactly when they are being read; the right is where the text
+   leaves, so that is the edge worth softening. */
+.mq:has(> .mq-run) {
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 18px), transparent 100%);
+  mask-image: linear-gradient(90deg, #000 calc(100% - 18px), transparent 100%);
+}
+
 @media (prefers-reduced-motion: reduce) { .mq-run { animation: none } }
 
 .dock-title { flex: 1 }
