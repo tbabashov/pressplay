@@ -597,3 +597,36 @@ await test('suggestions never repeat what you have already rated', async () => {
   const out = await suggestionsFor(rated, { limit: 3, seed: 1, popular })
   assert.ok(!out.items.some(i => /aquemini/i.test(i.name)), 'Aquemini is not offered back')
 })
+
+await test('an unanswered criterion is not a zero', async () => {
+  const { criterionValue } = await import(R + 'preferences.js')
+  // Number('') and Number(null) are both 0, which published a criterion
+  // nobody filled in as the worst score on the scale.
+  assert.equal(criterionValue(''), null)
+  assert.equal(criterionValue(null), null)
+  assert.equal(criterionValue(undefined), null)
+  assert.equal(criterionValue('abc'), null)
+  // A real answer still counts, including a legitimate zero.
+  assert.equal(criterionValue(0), 0)
+  assert.equal(criterionValue('8.5'), 8.5)
+})
+
+await test('a criterion cannot push the final past the scale', async () => {
+  const { ratingParts, finalRating, scaleMax } = await import(R + 'export/build.js')
+  const review = {
+    scores: { a: 10, b: 10 },
+    criteria: { lyricism: 50, production: -3, delivery: '', albumExperience: 10, replayValue: 10 },
+    scaleModel: { max: 10 }
+  }
+  const byKey = Object.fromEntries(ratingParts(review).map(p => [p.key, p.value]))
+  assert.equal(byKey.lyricism, 10, '50 is clamped to the ceiling')
+  assert.equal(byKey.production, 0, 'a negative is clamped to the floor')
+  assert.equal(byKey.delivery, null, 'blank stays unanswered')
+  assert.ok(finalRating(review) <= 10, 'the final stays on the scale')
+
+  // A review saved before scales existed was given on the original eleven, so
+  // it must not be told its elevens are tens.
+  assert.equal(scaleMax({}), 11)
+  assert.equal(scaleMax({ scaleModel: { max: 5 } }), 5)
+  assert.equal(ratingParts({ criteria: { lyricism: 11 }, scores: {} })[1].value, 11)
+})

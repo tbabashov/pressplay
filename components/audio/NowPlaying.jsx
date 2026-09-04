@@ -2,6 +2,7 @@
 
 import { useRef } from 'react'
 import { usePlayer } from './Player'
+import Marquee from './Marquee'
 import Meter from './Meter'
 
 export default function NowPlaying () {
@@ -34,7 +35,10 @@ export default function NowPlaying () {
 
       <div className="dock-body">
         <div className="dock-meta">
-          <strong>{track.track}</strong>
+          {/* The title drifts when it is too long; the artist stays put. Two
+              things moving beside each other reads as a fault rather than a
+              feature, and the title is the one that gets cut. */}
+          <Marquee className="dock-title"><strong>{track.track}</strong></Marquee>
           <span>{track.artist}</span>
         </div>
         <div

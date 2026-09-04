@@ -1152,7 +1152,7 @@ export function TracksFrame ({ data, palette, theme, tracks, showScale, dense })
 
 // ---------- Frame 3: criteria, now playing, best/worst, final rating ----------
 
-function CriterionRow ({ part, theme, last }) {
+function CriterionRow ({ part, theme, last, max = 11 }) {
   const has = typeof part.value === 'number'
   const c = ratingColor(has ? Math.round(part.value) : null)
   return (
@@ -1169,7 +1169,7 @@ function CriterionRow ({ part, theme, last }) {
         overflow: 'hidden'
       }}>
         <div style={{
-          width: `${has ? Math.max(3, (part.value / 11) * 100) : 0}%`,
+          width: `${has ? Math.max(3, Math.min(100, (part.value / max) * 100)) : 0}%`,
           height: '100%', borderRadius: 10, background: c.bg
         }} />
       </div>
@@ -1270,7 +1270,7 @@ export function CriteriaFrame ({ data, palette, theme, hiddenParts = [], onRemov
 
       <Surface theme={theme} radius={30} style={{ padding: '10px 30px', flexShrink: 0 }}>
         {parts.map((p, i) => (
-          <CriterionRow key={p.key} part={p} theme={theme} last={i === parts.length - 1} />
+          <CriterionRow key={p.key} part={p} theme={theme} last={i === parts.length - 1} max={data.maxScore} />
         ))}
       </Surface>
 

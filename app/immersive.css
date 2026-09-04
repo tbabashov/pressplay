@@ -155,13 +155,38 @@
 
 .dock-body { flex: 1; min-width: 0; display: grid; gap: 8px }
 .dock-meta { display: flex; align-items: baseline; gap: 9px; min-width: 0 }
-.dock-meta strong {
-  font-size: 0.925rem; font-weight: 620; letter-spacing: -0.012em;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
+/* The title's own clipping now belongs to the marquee that wraps it, so this
+   is type only. Two elements trimming the same string fought each other. */
+.dock-meta strong { font-size: 0.925rem; font-weight: 620; letter-spacing: -0.012em; }
 .dock-meta span {
   font-size: 0.78rem; color: var(--fg-4); flex: none;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 42%;
+}
+
+/* ── Marquee ──────────────────────────────────────────────────────────────*/
+
+.mq { overflow: hidden; min-width: 0 }
+.mq > span { display: block; white-space: nowrap }
+/* Not running: the old behaviour, an ellipsis on a title that does not fit. */
+.mq > span:not(.mq-run) { overflow: hidden; text-overflow: ellipsis }
+.mq-run {
+  width: max-content;
+  animation: mq var(--mq-t) linear infinite;
+  will-change: transform;
+}
+/* It rests at both ends. Reading the start of a title is the common case, so
+   that pause is the longer one, and nothing ever slides under a cursor that is
+   trying to reach the pause button. */
+@keyframes mq {
+  0%, 16%   { transform: translateX(0) }
+  54%, 70%  { transform: translateX(calc(var(--mq-d) * -1)) }
+  100%      { transform: translateX(0) }
+}
+@media (prefers-reduced-motion: reduce) { .mq-run { animation: none } }
+
+.dock-title { flex: 1 }
+.dock-title strong {
+  font-size: 0.925rem; font-weight: 620; letter-spacing: -0.012em;
 }
 
 .dock-bar {
@@ -223,6 +248,10 @@
 
 @media (max-width: 780px) {
   .dock { bottom: 14px; gap: 12px; padding: 10px 12px 10px 10px }
-  .meter { display: none }
+  /* Scoped to the dock. Unscoped, this also hit the meter that replaces a
+     track's runtime while it plays, and a grid item set to display:none is not
+     placed at all — so the row fell from five items to four and the score box
+     slid left into the runtime's 46px column. */
+  .dock .meter { display: none }
   .dock-art { width: 46px; height: 46px }
 }

@@ -501,8 +501,15 @@ body:has(.app) .vignette { opacity: 0.5; }
   .rail { display: none; }
   .app-main { padding: 22px 18px calc(112px + env(safe-area-inset-bottom, 0px)); }
   .rater { grid-template-columns: 1fr; }
-  .rater-side { position: static; grid-template-columns: 120px 1fr; gap: 0 18px; }
-  .rater-art { grid-row: 1 / 4; margin-bottom: 0; }
+  .rater-side { position: static; grid-template-columns: 120px minmax(0, 1fr); gap: 0 18px; }
+  /* The art spans the three rows the title, the artist and the meta take, and
+     a grid item stretches by default — so the sleeve's rounded box grew to the
+     height of all three while the image inside stayed square, leaving an empty
+     panel hanging under every cover. It hugs its image instead. */
+  .rater-art { grid-row: 1 / 4; margin-bottom: 0; align-self: start; }
+  /* Row gap is 0 so the title and artist stack tightly; the hint is the one
+     thing that then sits directly against the row above it. */
+  .rater-hint { margin-top: 12px; }
 }
 
 .rater-hint { font-size: 11.6px; color: var(--fg-4); }

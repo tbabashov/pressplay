@@ -162,19 +162,37 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
   const songAverage = rated.length ? rated.reduce((a, b) => a + b, 0) / rated.length : null
 
   // Every criterion that has a value votes once, and the song average votes once.
+  //
+  // A criterion is typed freely rather than parsed on the keystroke, so until
+  // it is read it can be anything: 10.6 on a ten scale, 50, or -3. Songs have
+  // always been clamped on the way in and criteria never were, which is how a
+  // final could land above the ceiling the whole screen is drawn against — a
+  // 50 in one box put the album at 16.1 out of 10. Clamped here rather than
+  // while typing, so a two-digit score is still typeable a digit at a time.
   const parts = useMemo(() => {
+    const clamp = v => Math.min(MAX_SCORE, Math.max(0, v))
     const p = []
     if (songAverage !== null) p.push(songAverage)
     for (const [key] of CRITERIA) {
       const n = Number(criteria[key])
-      if (criteria[key] !== '' && criteria[key] !== undefined && Number.isFinite(n)) p.push(n)
+      if (criteria[key] !== '' && criteria[key] !== undefined && Number.isFinite(n)) p.push(clamp(n))
     }
     return p
-  }, [songAverage, criteria])
+  }, [songAverage, criteria, MAX_SCORE])
 
   const computed = parts.length ? parts.reduce((a, b) => a + b, 0) / parts.length : null
   const manual = override.trim() === '' ? null : Number(override)
-  const final = Number.isFinite(manual) ? manual : computed
+  // An override is a deliberate number, but it is still a score on this scale.
+  const final = Number.isFinite(manual) ? Math.min(MAX_SCORE, Math.max(0, manual)) : computed
+
+  // Show what is counted. Without this the box keeps saying 50 while the score
+  // is worked out from 10, which reads as the arithmetic being broken.
+  const settle = (value, apply) => {
+    const n = Number(value)
+    if (String(value).trim() === '' || !Number.isFinite(n)) return
+    const c = Math.min(MAX_SCORE, Math.max(0, n))
+    if (c !== n) apply(String(c))
+  }
 
   const done = Object.keys(scores).length
   // What the two automatic picks would come out as, for the empty option. The
@@ -408,6 +426,7 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
               <input
                 value={criteria[key] ?? ''}
                 onChange={touch(e => setCriteria(c => ({ ...c, [key]: e.target.value })))}
+                onBlur={e => settle(e.target.value, v => setCriteria(c => ({ ...c, [key]: v })))}
                 placeholder="—"
                 inputMode="decimal"
                 aria-label={label}
@@ -443,6 +462,7 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
             <input
               value={override}
               onChange={touch(e => setOverride(e.target.value))}
+              onBlur={e => settle(e.target.value, setOverride)}
               placeholder="—"
               inputMode="decimal"
               aria-label="Override the final score"
