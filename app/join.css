@@ -80,6 +80,16 @@
   text-decoration: underline; text-underline-offset: 3px;
 }
 .jn-legal { font-size: 12.2px; color: var(--fg-4); line-height: 1.55; max-width: 42ch; }
+/* Inside the panel it sits under the button rather than under the whole form,
+   so it needs its own room. The links have to be visibly links: this is the
+   sentence somebody is agreeing to. */
+.jn-panel .jn-legal { margin-top: 18px; }
+.jn-legal a {
+  color: var(--fg-3);
+  text-decoration: underline; text-underline-offset: 2px;
+  text-decoration-color: rgba(255,255,255,0.3);
+}
+.jn-legal a:hover { color: var(--accent); text-decoration-color: rgba(var(--accent-rgb), 0.6); }
 
 /* ----------------------------------------------------------------- right -- */
 .jn-right {

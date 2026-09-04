@@ -31,9 +31,6 @@ export default async function Join () {
 
         <AuthPanel />
 
-        <p className="jn-legal">
-          By continuing you agree that your published reviews are public.
-        </p>
       </div>
 
       <aside className="jn-right" aria-hidden="true">

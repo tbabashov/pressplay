@@ -118,6 +118,15 @@ export default function AuthPanel ({ next = '/app' }) {
         </p>
       )}
 
+      {/* Here rather than on the page, because only this component knows which
+          of the two you are doing, and "by signing up" is not true of somebody
+          signing in. */}
+      <p className="jn-legal">
+        By {up ? 'signing up' : 'continuing'} you agree to our{' '}
+        <Link href="/legal/terms">Terms and Conditions</Link> and{' '}
+        <Link href="/legal/privacy">Privacy Policy</Link>.
+      </p>
+
       <p className="jn-swap">
         {up
           ? <>Already have an account? <button onClick={() => swap('in')}>Sign in</button></>
