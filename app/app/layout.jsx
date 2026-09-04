@@ -26,7 +26,11 @@ export default async function AppLayout ({ children }) {
   return (
     <div className="app">
       <header className="topbar">
-        <Link href="/" className="topbar-mark">
+        {/* Into the app, not back to the landing page. Once somebody is signed
+            in the mark means home, and home is the rating screen: every app
+            that has both treats it this way. The landing page is still one URL
+            away for anyone who wants it. */}
+        <Link href="/app" className="topbar-mark">
           <Mark size={19} />
           <strong>Press Play</strong>
         </Link>

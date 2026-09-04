@@ -61,7 +61,21 @@
   }
   .nav-links { display: none; }
   .nav-end { margin-left: auto; }
-  .nav-end .btn-google { padding: 8px 14px; font-size: 13.5px; }
+  .nav-end .btn-signin { padding: 8px 14px; font-size: 13.5px; }
+  /* Four things share the bar once signed in, so the label drops to a word
+     rather than the button dropping into the burger: opening the app is the
+     likeliest thing a signed-in visitor wants and should not be two taps. */
+  .nav-end { gap: 8px; }
+  .nav-app { padding: 8px 12px; font-size: 13.2px; gap: 5px; }
+  /* Scoped to .nav-end, because the base rule that hides the short label sits
+     further down this file and would otherwise win at equal specificity and
+     leave the button with no text at all. */
+  .nav-end .nav-app-full { display: none; }
+  .nav-end .nav-app-short { display: inline; }
+  /* The chip keeps its face and its chevron and loses the word: the avatar is
+     what people aim at, and at 390px the bar was 12px over with it. */
+  .nav-end .acct-label { display: none; }
+  .nav-end .acct-btn { padding-left: 5px; padding-right: 8px; }
   .nav-end .account-name, .nav-end .account-role, .nav-end .account-out { display: none; }
   .nav-burger {
     display: flex; flex-direction: column; justify-content: center; gap: 5px;
@@ -73,6 +87,14 @@
   }
   .nav-burger[aria-expanded="true"] span:first-child { transform: translateY(3.3px) rotate(45deg); }
   .nav-burger[aria-expanded="true"] span:last-child { transform: translateY(-3.3px) rotate(-45deg); }
+}
+
+/* Below this the four things stop fitting however they are trimmed, so the app
+   button keeps only its arrow. Its aria-label carries the name, so what it is
+   stays readable to anything that is not looking at it. */
+@media (max-width: 360px) {
+  .nav-end .nav-app-short { display: none; }
+  .nav-end .nav-app { padding: 8px 10px; }
 }
 
 /* full-screen sheet, mobile only */
@@ -98,7 +120,10 @@
    duplicate at all, it is the big sign in the sheet exists to offer, so only
    the account form is hidden and the button stays. */
 .sheet-end .acct { display: none; }
-.sheet-end .btn-google { width: 100%; justify-content: center; padding: 15px; font-size: 16px; }
+.sheet-end .btn-signin { width: 100%; justify-content: center; padding: 15px; font-size: 16px; }
+.sheet-end .nav-app { width: 100%; justify-content: center; padding: 15px; font-size: 16px; }
+.sheet-end .nav-app-full { display: inline; }
+.sheet-end .nav-app-short { display: none; }
 @media (min-width: 901px) { .sheet { display: none; } }
 
 /* --------------------------------------------------------------- hero ---- */
@@ -538,14 +563,36 @@
 }
 
 /* ------------------------------------------------------- google button ---- */
-.btn-google {
+/* Named for what it does, not for a provider. It used to carry a Google mark
+   while leading to a page that also takes an address and a password, which
+   reads as "this site needs a Google account". */
+.btn-signin {
   display: inline-flex; align-items: center; gap: 9px; white-space: nowrap;
   padding: 9px 16px; border-radius: 999px; font-size: 14.5px; font-weight: 600;
   background: #fff; color: #12121a;
   transition: transform .18s var(--ease), box-shadow .18s var(--ease);
 }
-.btn-google:hover { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(0,0,0,.45); }
-.btn-google-lg { padding: 15px 26px; font-size: 16.5px; }
+.btn-signin:hover { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(0,0,0,.45); }
+
+/* Only shown when signed in, so it never sits beside Sign in pointing at the
+   same place. Quieter than the sign-in button on purpose: the account chip
+   next to it is the thing with a face on it. */
+.nav-app {
+  display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+  padding: 8px 15px; border-radius: 999px;
+  font-size: 14px; font-weight: 600; color: var(--fg);
+  background: rgba(255,255,255,0.07);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.14);
+  transition: background .18s var(--ease), box-shadow .18s var(--ease);
+}
+.nav-app:hover {
+  background: rgba(var(--accent-rgb), 0.16);
+  box-shadow: inset 0 0 0 1px rgba(var(--accent-rgb), 0.55);
+}
+.nav-app svg { flex: none; }
+.nav-app-short { display: none; }
+.nav-end { gap: 10px; }
+.btn-signin-lg { padding: 15px 26px; font-size: 16.5px; }
 
 /* ============================================ tiers, properly differentiated */
 .tiers {
