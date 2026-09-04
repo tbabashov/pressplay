@@ -1917,13 +1917,17 @@ body:has(.app) .vignette { opacity: 0.5; }
   /* The time and the score were sharing a column and colliding, and the time
      was a different size from everything beside it. Each gets its own width.
      The last column is the remove button, which only exists while editing. */
-  grid-template-columns: 22px 34px minmax(0, 1fr) 66px 54px 34px;
+  grid-template-columns: 22px 34px minmax(0, 1fr) 66px 54px 50px;
   align-items: start;
 }
+/* One width for both states. The button is pinned to the right of its column,
+   so when the cross became the word "Sure?" it grew leftwards until it touched
+   the score box beside it. Reserving the wider of the two means asking changes
+   the colour and the label, and moves nothing. */
 .trk-drop {
   justify-self: end; margin-top: 4px;
   display: inline-flex; align-items: center; justify-content: center;
-  min-width: 30px; height: 30px; padding: 0 7px; border-radius: 8px;
+  min-width: 50px; height: 30px; padding: 0 7px; border-radius: 8px;
   font-size: 11.4px; font-weight: 660; white-space: nowrap;
   color: var(--fg-4); background: transparent;
   transition: color 150ms var(--ease), background 150ms var(--ease);
