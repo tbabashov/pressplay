@@ -677,3 +677,25 @@ await test('one credit naming several artists counts for each of them', async ()
   assert.deepEqual(creditsOf({ artist: 'Solo Act' }), ['Solo Act'], 'one name stays one name')
   assert.deepEqual(creditsOf({}), [])
 })
+
+await test('a pick left on automatic reaches the feed, not just the page', async () => {
+  const { publicPost, publicReview } = await import(R + 'social-shape.js')
+  // Leaving best song alone stores nothing, so every surface has to resolve it
+  // or it silently disagrees with the one next to it.
+  const review = {
+    albumId: '1', albumName: 'A Record', artist: 'Someone',
+    scores: { a: 9, b: 4, c: 7 },
+    selections: {},
+    album: { tracks: [{ id: 'a', name: 'High' }, { id: 'b', name: 'Low' }, { id: 'c', name: 'Middle' }] }
+  }
+  const card = publicPost(review)
+  const page = publicReview(review)
+  assert.equal(card.bestSong, 'High')
+  assert.equal(card.worstSong, 'Low')
+  assert.equal(card.bestSong, page.selections.bestSong, 'the card and the page agree')
+  assert.equal(card.worstSong, page.selections.worstSong)
+
+  // An explicit choice is never overwritten by the automatic one.
+  const chosen = publicPost({ ...review, selections: { bestSong: 'Middle' } })
+  assert.equal(chosen.bestSong, 'Middle')
+})

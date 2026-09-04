@@ -14,8 +14,9 @@ export default function Verified ({ size = '1em', label = 'Verified account' }) 
       className="vf" width={size} height={size} viewBox="0 0 24 24"
       role="img" aria-label={label}
     >
-      {/* A tooltip on hover, for the people who wonder what it means. */}
-      <title>{label}</title>
+      {/* No <title>: that draws the browser's own tooltip, which appears on a
+          tap as well as a hover and cannot be styled. The label is still on the
+          element, so anything reading the page still announces it. */}
       <circle cx="12" cy="12" r="10.5" fill="currentColor" />
       <path
         d="M7.6 12.4 10.6 15.3 16.4 9.2" fill="none" stroke="var(--vf-tick, #0a0a0c)"
