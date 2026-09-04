@@ -69,15 +69,57 @@ img { display: block; max-width: 100%; }
    whatever record is playing, and a mark meaning "this account is who it says
    it is" cannot be a different colour every four minutes. Sized in em so one
    badge serves a heading, a byline and a comment. */
+/* The badge sits on the text's optical centre, not on its baseline. A circle
+   aligned to the baseline floats above the middle of the word beside it,
+   because letters have no descender to balance it; -0.1em drops it onto the
+   line. Tuned against the cap height rather than the box. */
+.vf-wrap {
+  position: relative;
+  display: inline-flex; align-items: center; flex: none;
+  vertical-align: -0.1em;
+  margin-left: 0.32em;
+  cursor: default;
+}
 .vf {
+  display: block;
   color: #e2aa4a;
-  flex: none;
   /* Sized here rather than on the element, so every badge on the site is one
      number. A full em circle stands taller than the caps it sits beside and
      starts competing with the name; a little under reads as part of the line. */
   width: 0.82em; height: 0.82em;
-  vertical-align: -0.02em;
-  margin-left: 0.32em;
+  transition: transform 140ms var(--ease), filter 140ms var(--ease);
+}
+/* It answers the pointer, so it reads as something worth hovering. */
+/* :focus as well as :focus-visible, because a tap on a phone gives focus and
+   not always focus-visible, and a tap is the only hover a phone has. The ring
+   below stays on focus-visible, so a click does not draw one. */
+.vf-wrap:hover .vf, .vf-wrap:focus .vf {
+  transform: scale(1.08);
+  filter: brightness(1.1);
+}
+.vf-wrap:focus { outline: none; }
+.vf-wrap:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 50%; }
+
+/* Fixed size rather than em: the word should read the same beside a display
+   heading and beside a 13px comment. */
+.vf-tip {
+  position: absolute; z-index: 8;
+  bottom: calc(100% + 7px); left: 50%;
+  transform: translateX(-50%) translateY(3px);
+  padding: 4px 9px; border-radius: 7px;
+  font-size: 11.5px; font-weight: 620; letter-spacing: 0.01em; line-height: 1.25;
+  white-space: nowrap; pointer-events: none;
+  color: #f4f4f6; background: #1b1b20;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.12);
+  opacity: 0;
+  transition: opacity 140ms var(--ease), transform 140ms var(--ease);
+}
+.vf-wrap:hover .vf-tip, .vf-wrap:focus .vf-tip {
+  opacity: 1; transform: translateX(-50%) translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .vf, .vf-tip { transition: none; }
+  .vf-wrap:hover .vf, .vf-wrap:focus .vf { transform: none; }
 }
 
 /* --- shared primitives --- */
