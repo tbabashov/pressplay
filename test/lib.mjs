@@ -653,3 +653,27 @@ await test('the check is decided by address, and the address never travels', asy
   assert.ok(!('email' in shape), 'the address stays behind')
   assert.equal(publicProfile({ email: 'stranger@example.com', handle: 'x' }).verified, false)
 })
+
+await test('one credit naming several artists counts for each of them', async () => {
+  const { creditsOf, creditsInclude } = await import(R + 'discography-match.js')
+  // iTunes files this album under a single string naming three acts, which
+  // compared whole matched none of them — not even the duo itself.
+  const ksg = { artist: 'KIDS SEE GHOSTS, Kanye West & Kid Cudi',
+                album: { artists: ['KIDS SEE GHOSTS, Kanye West & Kid Cudi'] } }
+  for (const who of ['Kid Cudi', 'Kanye West', 'KIDS SEE GHOSTS']) {
+    assert.equal(creditsInclude(ksg, who), true, `${who} is on this record`)
+  }
+  assert.equal(creditsInclude(ksg, 'Drake'), false, 'and nobody else is')
+
+  // A separator inside a name is not a separator. The whole string is kept
+  // alongside its parts, so these still match themselves.
+  for (const name of ['Earth, Wind & Fire', 'Tyler, The Creator', 'Danger Mouse & Black Thought']) {
+    assert.equal(creditsInclude({ artist: name, album: { artists: [name] } }, name), true, name)
+  }
+  // A fragment is only ever matched whole, so a different artist whose name
+  // merely starts with one does not collide.
+  assert.equal(creditsInclude({ artist: 'Tyler, The Creator' }, 'Tyler Childers'), false)
+
+  assert.deepEqual(creditsOf({ artist: 'Solo Act' }), ['Solo Act'], 'one name stays one name')
+  assert.deepEqual(creditsOf({}), [])
+})

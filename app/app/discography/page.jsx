@@ -1,6 +1,7 @@
 import { auth } from '@/auth'
 import { listDiscography, listReviews, getPreferences } from '@/lib/db'
 import { discographyByName } from '@/lib/music'
+import { creditsOf } from '@/lib/discography-match'
 import { normalisePreferences } from '@/lib/preferences'
 import Discography from '@/components/app/Discography'
 
@@ -29,10 +30,13 @@ export default async function DiscographyPage () {
   // One entry per credit, not one per review. Keying a rated album to its first
   // artist alone is why a record by two people showed as rated on one of their
   // discographies and unrated on the other.
-  const rated = reviews.flatMap(r => {
-    const credits = (r.album?.artists?.length ? r.album.artists : [r.artist]).filter(Boolean)
-    return credits.map(a => ({ artist: a, name: r.albumName || '' }))
-  })
+  // creditsOf rather than the raw column, because one credit value often names
+  // several artists: iTunes files KIDS SEE GHOSTS as the single string
+  // "KIDS SEE GHOSTS, Kanye West & Kid Cudi", so the album sat unrated on Kid
+  // Cudi's discography while being rated on nobody's. The same function the
+  // slides match on, so the two screens cannot disagree about what is rated.
+  const rated = reviews.flatMap(r =>
+    creditsOf(r).map(a => ({ artist: a, name: r.albumName || '' })))
 
   const catalogue = await Promise.all(
     // Everything the artist has, singles and EPs included. This screen is
