@@ -1915,10 +1915,26 @@ body:has(.app) .vignette { opacity: 0.5; }
 .rater.editing .trk {
   padding-block: 10px;
   /* The time and the score were sharing a column and colliding, and the time
-     was a different size from everything beside it. Each gets its own width. */
-  grid-template-columns: 22px 34px minmax(0, 1fr) 66px 54px;
+     was a different size from everything beside it. Each gets its own width.
+     The last column is the remove button, which only exists while editing. */
+  grid-template-columns: 22px 34px minmax(0, 1fr) 66px 54px 34px;
   align-items: start;
 }
+.trk-drop {
+  justify-self: end; margin-top: 4px;
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 30px; height: 30px; padding: 0 7px; border-radius: 8px;
+  font-size: 11.4px; font-weight: 660; white-space: nowrap;
+  color: var(--fg-4); background: transparent;
+  transition: color 150ms var(--ease), background 150ms var(--ease);
+}
+.trk-drop svg { width: 15px; height: 15px; }
+.trk-drop:hover { color: #ff8f86; background: rgba(192, 57, 47, 0.16); }
+/* Asked, not done: the second tap is the one that removes it. */
+.trk-drop.sure {
+  color: #fff; background: #c0392f;
+}
+.trk-add { margin-left: 8px; }
 .rater.editing .trk-n, .rater.editing .trk-play { margin-top: 5px; }
 .rater.editing .trk:hover { background: rgba(255,255,255,0.03); }
 

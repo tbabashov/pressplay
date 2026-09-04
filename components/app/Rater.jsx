@@ -144,6 +144,57 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
   const [override, setOverride] = useState(initial?.finalOverride ?? '')
   const [selections, setSelections] = useState(initial?.selections ?? {})
   const [nowPlaying, setNowPlaying] = useState(initial?.nowPlaying ?? '')
+  const [confirmDrop, setConfirmDrop] = useState(null)
+
+  // A song the catalogue does not have, and a song it has that this record
+  // does not. Both renumber what is left and re-total the runtime, because a
+  // list that skips 7 or a total that disagrees with its songs reads as broken.
+  const retime = tracks => ({
+    tracks: tracks.map((t, i) => ({ ...t, n: i + 1 })),
+    runtime: tracks.reduce((a, t) => a + (Number(t.duration) || 0), 0)
+  })
+
+  // Built from the previous album rather than the one this render closed over.
+  // Three quick clicks on Add a song all computed from the same starting list
+  // and the last write won, so two of the three songs never appeared.
+  const patchAlbum = fn => {
+    setAlbum(prev => fn(prev))
+    setSave(st => (st.state === 'saved' ? { state: 'idle', message: '' } : st))
+  }
+
+  const addTrack = () => patchAlbum(prev => ({
+    ...prev,
+    ...retime([...prev.tracks, {
+      // Not a catalogue id: this song exists only on this review, and the
+      // preview route has nothing to play for it. The random tail is because
+      // two quick clicks land in the same millisecond, and this id keys both
+      // the list and the scores — a collision would score two rows at once.
+      id: `extra:${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      n: prev.tracks.length + 1,
+      title: '', duration: 0, features: [], preview: false
+    }])
+  }))
+
+  const dropTrack = id => {
+    patchAlbum(prev => ({ ...prev, ...retime(prev.tracks.filter(t => t.id !== id)) }))
+    // The score goes with the song. Left behind it keeps counting towards the
+    // song average for a track that is no longer on the record.
+    setScores(sc => { const { [id]: _, ...rest } = sc; return rest })
+    // And so does anything else pointing at it.
+    const gone = album.tracks.find(t => t.id === id)
+    if (nowPlaying === id) setNowPlaying('')
+    if (gone?.title) {
+      setSelections(sel => {
+        const next = { ...sel }
+        for (const k of ['bestSong', 'worstSong']) {
+          // Back to automatic rather than naming a song that is not there.
+          if (next[k] === gone.title) next[k] = ''
+        }
+        return next
+      })
+    }
+    setConfirmDrop(null)
+  }
   const [save, setSave] = useState({ state: initial ? 'saved' : 'idle', message: '' })
 
   // Any edit puts the review back into an unsaved state.
@@ -408,10 +459,31 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
                   aria-label={`Score for ${t.title}`}
                   style={has ? tierStyle(v, scale) : undefined}
                 />
+
+                {/* Two taps, because the score goes with the song and there is
+                    no undo for that. */}
+                {editing && (
+                  <button
+                    className={`trk-drop${confirmDrop === t.id ? ' sure' : ''}`}
+                    onClick={() => (confirmDrop === t.id ? dropTrack(t.id) : setConfirmDrop(t.id))}
+                    onBlur={() => setConfirmDrop(c => (c === t.id ? null : c))}
+                    aria-label={confirmDrop === t.id
+                      ? `Confirm removing ${t.title || 'this song'}`
+                      : `Remove ${t.title || 'this song'}`}
+                  >
+                    {confirmDrop === t.id
+                      ? 'Sure?'
+                      : <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11m0-11l-11 11"
+                          fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" /></svg>}
+                  </button>
+                )}
               </li>
             )
           })}
         </ol>
+        {editing && (
+          <button className="rm-add trk-add" onClick={addTrack}>Add a song</button>
+        )}
       </div>
 
       <aside className="rater-verdict">
