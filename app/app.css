@@ -1900,6 +1900,14 @@ body:has(.app) .vignette { opacity: 0.5; }
 /* Editing is a different mode and should look like one, without turning the
    screen into a wall of identical boxes. Fields rest almost invisible and only
    the one in hand lights up. */
+/* Editing swaps the sleeve for the image editor, and the sleeve's frame is not
+   the editor's frame: the rounded clip that keeps a cover's corners neat was
+   slicing the corner off the Remove button, which sits on that exact boundary.
+   The picker inside carries its own rounded, clipped box for the picture. */
+.rater.editing .rater-art {
+  overflow: visible; border-radius: 0; box-shadow: none;
+}
+
 .rater.editing .tracks {
   border-radius: var(--r-sm);
   box-shadow: inset 0 0 0 1px rgba(var(--accent-rgb), 0.28);
