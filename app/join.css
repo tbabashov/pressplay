@@ -49,6 +49,10 @@
 .jn-or span { font-size: 12.4px; color: var(--fg-4); }
 
 .jn-form { display: grid; gap: 15px; }
+/* The sub-paragraph carries its own top margin and nothing carried a bottom
+   one, so on the screens where a form follows the text directly the first
+   label sat against the last line of it. */
+.jn-sub + .jn-form { margin-top: 24px; }
 .jn-field { display: grid; gap: 7px; }
 .jn-field span { font-size: 12.6px; font-weight: 600; color: var(--fg-3); }
 .jn-field input {

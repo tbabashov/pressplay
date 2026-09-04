@@ -72,7 +72,7 @@ export const metadata = {
   // TikTok account and stays on the link to it.
   openGraph: {
     title: 'Press Play Rankings',
-    description: 'Every song scored. Six criteria weighed. One number you can defend.',
+    description: 'Every song scored on the scale you built. One number you can defend.',
     type: 'website',
     images: ['/photos/mark.png']
   }

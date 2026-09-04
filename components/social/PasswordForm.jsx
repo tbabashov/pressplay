@@ -4,10 +4,10 @@ import { useState } from 'react'
 import { fetchJson } from '@/lib/fetch-json'
 import { PASSWORD_MIN } from '@/lib/password-rules'
 
-// Only rendered for an account that has a password. One that signs in with
-// Google has none, and offering to change a password that does not exist is
-// a form that can only ever fail.
-export default function PasswordForm () {
+// Two jobs, because a Google account has no password to change but can be
+// given one. With one, the current password is required; without one, being
+// signed in is the proof, so there is nothing to ask for.
+export default function PasswordForm ({ has = true }) {
   const [current, setCurrent] = useState('')
   const [next, setNext] = useState('')
   const [again, setAgain] = useState('')
@@ -41,17 +41,19 @@ export default function PasswordForm () {
 
   return (
     <form className="pf" onSubmit={submit}>
-      <label className="pf-field">
-        <span className="pf-label">Current password</span>
-        <input
-          type="password" value={current} autoComplete="current-password"
-          onChange={e => { setCurrent(e.target.value); setDone(false) }}
-          required
-        />
-      </label>
+      {has && (
+        <label className="pf-field">
+          <span className="pf-label">Current password</span>
+          <input
+            type="password" value={current} autoComplete="current-password"
+            onChange={e => { setCurrent(e.target.value); setDone(false) }}
+            required
+          />
+        </label>
+      )}
 
       <label className="pf-field">
-        <span className="pf-label">New password</span>
+        <span className="pf-label">{has ? 'New password' : 'Password'}</span>
         <input
           type="password" value={next} autoComplete="new-password"
           onChange={e => { setNext(e.target.value); setDone(false) }}
@@ -61,7 +63,7 @@ export default function PasswordForm () {
       </label>
 
       <label className="pf-field">
-        <span className="pf-label">New password again</span>
+        <span className="pf-label">{has ? 'New password again' : 'Password again'}</span>
         <input
           type="password" value={again} autoComplete="new-password"
           onChange={e => { setAgain(e.target.value); setDone(false) }}
@@ -71,9 +73,9 @@ export default function PasswordForm () {
 
       <div className="pf-actions">
         <button type="submit" className="btn-primary" disabled={busy}>
-          {busy ? 'Changing...' : 'Change password'}
+          {busy ? 'Saving...' : has ? 'Change password' : 'Add a password'}
         </button>
-        {done && <span className="pf-saved">Password changed.</span>}
+        {done && <span className="pf-saved">{has ? 'Password changed.' : 'Password added.'}</span>}
       </div>
 
       {error && <p className="notice notice-bad">{error}</p>}

@@ -1,6 +1,8 @@
 import { Suspense } from 'react'
 import Link from 'next/link'
 import Mark from '@/components/Mark'
+import AuthAside from '@/components/auth/AuthAside'
+import '../join.css'
 import ResetForm from '@/components/social/ResetForm'
 
 export const metadata = { title: 'Choose a new password' }
@@ -31,6 +33,8 @@ export default function ResetPage () {
           Did not ask for this? Nothing has changed, and the link expires by itself.
         </p>
       </div>
+
+      <AuthAside line="One link, one password." under="Set it and the link stops working, so nothing left in an inbox can be used again." />
     </div>
   )
 }

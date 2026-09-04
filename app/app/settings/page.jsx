@@ -78,14 +78,15 @@ export default async function Settings () {
       <div className="page-head set-head">
         <h1>Password</h1>
       </div>
-      {creds
-        ? <PasswordForm />
-        : (
-          <p className="set-intro measure">
-            You sign in with Google, so there is no password on this account.
-            Your password is managed by Google.
-          </p>
-        )}
+      {!creds && (
+        <p className="set-intro measure">
+          You sign in with Google, so there is no password on this account yet.
+          Adding one gives you a second way in without taking the Google button
+          away.
+        </p>
+      )}
+      {/* A Google account can add one, so this is never a dead end. */}
+      <PasswordForm has={Boolean(creds)} />
 
       <hr className="set-rule" />
 
