@@ -506,18 +506,26 @@ function BroadsheetTitle ({ album, data, palette, onEdit, off, onRemovePart }) {
 
       {/* The headline runs the full measure, ragged right, the way a front page
           sets a lead rather than the way a card centres a title. */}
-      <FitText size={150} min={68} lines={3} weight={800} fitKey={album.name}
-        style={{ marginTop: 40, letterSpacing: '-0.03em', lineHeight: 0.94,
-          textAlign: 'left', width: '100%' }}>
-        <Editable field="albumName" value={album.name} onEdit={onEdit} />
-      </FitText>
+      {!off('albumTitle') && (
+        <Removable id="albumTitle" name="the album title" onRemove={onRemovePart}>
+          <FitText size={150} min={68} lines={3} weight={800} fitKey={album.name}
+          style={{ marginTop: 40, letterSpacing: '-0.03em', lineHeight: 0.94,
+            textAlign: 'left', width: '100%' }}>
+          <Editable field="albumName" value={album.name} onEdit={onEdit} />
+        </FitText>
+        </Removable>
+      )}
 
       <div style={{ ...rule(1, 0.3), marginTop: 44 }} />
 
       {/* Below the fold: the plate on the left, the standfirst beside it in a
           narrow column with hairlines between its lines. */}
       <div style={{ display: 'flex', gap: 44, marginTop: 40, alignItems: 'flex-start' }}>
-        <Cover src={album.coverProxied} size={480} style={{ borderRadius: 0, flexShrink: 0 }} />
+        {!off('cover') && (
+          <Removable id="cover" name="the artwork" onRemove={onRemovePart} inline>
+            <Cover src={album.coverProxied} size={480} style={{ borderRadius: 0, flexShrink: 0 }} />
+          </Removable>
+        )}
         <div style={{ flex: 1, minWidth: 0 }}>
           {!off('artist') && (
             <Removable id="artist" name="the credit" onRemove={onRemovePart}>
@@ -584,11 +592,15 @@ function PosterTitle ({ album, data, palette, onEdit, off, onRemovePart }) {
             </div>
           </Removable>
         )}
-        <FitText size={124} min={62} lines={3} weight={800} fitKey={album.name}
-          style={{ letterSpacing: '-0.04em', lineHeight: 0.98, textAlign: 'left', width: '100%',
-            textShadow: '0 8px 40px rgba(0,0,0,0.6)' }}>
-          <Editable field="albumName" value={album.name} onEdit={onEdit} />
-        </FitText>
+        {!off('albumTitle') && (
+          <Removable id="albumTitle" name="the album title" onRemove={onRemovePart}>
+            <FitText size={124} min={62} lines={3} weight={800} fitKey={album.name}
+            style={{ letterSpacing: '-0.04em', lineHeight: 0.98, textAlign: 'left', width: '100%',
+              textShadow: '0 8px 40px rgba(0,0,0,0.6)' }}>
+            <Editable field="albumName" value={album.name} onEdit={onEdit} />
+          </FitText>
+          </Removable>
+        )}
         {!off('artist') && (
           <Removable id="artist" name="the credit" onRemove={onRemovePart}>
             <FitText size={44} min={28} weight={600} fitKey={album.artists.join(', ')}
@@ -642,10 +654,14 @@ function SplitTitle ({ album, data, palette, theme, onEdit, off, onRemovePart })
       </div>
 
       <div style={{ flex: 1, padding: '58px 84px 0', display: 'flex', flexDirection: 'column' }}>
-        <FitText size={92} min={50} lines={2} weight={800} fitKey={album.name}
-          style={{ letterSpacing: '-0.035em', lineHeight: 1.02, textAlign: 'left', width: '100%' }}>
-          <Editable field="albumName" value={album.name} onEdit={onEdit} />
-        </FitText>
+        {!off('albumTitle') && (
+          <Removable id="albumTitle" name="the album title" onRemove={onRemovePart}>
+            <FitText size={92} min={50} lines={2} weight={800} fitKey={album.name}
+            style={{ letterSpacing: '-0.035em', lineHeight: 1.02, textAlign: 'left', width: '100%' }}>
+            <Editable field="albumName" value={album.name} onEdit={onEdit} />
+          </FitText>
+          </Removable>
+        )}
         {!off('artist') && (
           <Removable id="artist" name="the credit" onRemove={onRemovePart}>
             <FitText size={42} min={28} weight={500} fitKey={album.artists.join(', ')}
@@ -690,10 +706,14 @@ function OrbitTitle ({ album, data, palette, onEdit, off, onRemovePart }) {
         </Removable>
       )}
 
-      <FitText size={86} min={44} lines={2} weight={600} fitKey={album.name}
-        style={{ letterSpacing: '-0.03em', lineHeight: 1.04, width: '100%', marginBottom: 46 }}>
-        <Editable field="albumName" value={album.name} onEdit={onEdit} />
-      </FitText>
+      {!off('albumTitle') && (
+        <Removable id="albumTitle" name="the album title" onRemove={onRemovePart}>
+          <FitText size={86} min={44} lines={2} weight={600} fitKey={album.name}
+          style={{ letterSpacing: '-0.03em', lineHeight: 1.04, width: '100%', marginBottom: 46 }}>
+          <Editable field="albumName" value={album.name} onEdit={onEdit} />
+        </FitText>
+        </Removable>
+      )}
 
       {/* The disc. The ring is drawn outside the artwork rather than as a
           border on it, so the light reads as coming off the record. */}
@@ -817,14 +837,22 @@ export function TitleFrame ({ data, palette, theme, images, onImageChange, lockC
             </div>
           </Removable>
         )}
-        <Cover src={album.coverProxied} size={640}
-          style={{ borderRadius: 36, boxShadow: '0 50px 120px rgba(0,0,0,0.65)' }} />
-        <FitText
-          size={66} min={44} lines={2} weight={800} fitKey={album.name}
-          style={{ letterSpacing: -1.5, marginTop: 22, width: 880, textAlign: 'center' }}
-        >
-          <Editable field="albumName" value={album.name} onEdit={onEdit} />
-        </FitText>
+        {!off('cover') && (
+          <Removable id="cover" name="the artwork" onRemove={onRemovePart} inline>
+            <Cover src={album.coverProxied} size={640}
+              style={{ borderRadius: 36, boxShadow: '0 50px 120px rgba(0,0,0,0.65)' }} />
+          </Removable>
+        )}
+        {!off('albumTitle') && (
+          <Removable id="albumTitle" name="the album title" onRemove={onRemovePart}>
+            <FitText
+              size={66} min={44} lines={2} weight={800} fitKey={album.name}
+              style={{ letterSpacing: -1.5, marginTop: 22, width: 880, textAlign: 'center' }}
+            >
+              <Editable field="albumName" value={album.name} onEdit={onEdit} />
+            </FitText>
+          </Removable>
+        )}
         {!off('artist') && (
           <Removable id="artist" name="the credit" onRemove={onRemovePart}>
             <FitText
@@ -854,25 +882,46 @@ export function TitleFrame ({ data, palette, theme, images, onImageChange, lockC
 // ---------- Shared header for the track / criteria frames ----------
 // No rating chip any more: the final score has its own frame now, which is what
 // frees up the width for full song titles and artist credits.
-function Header ({ album, palette, theme, subtitle }) {
+// off and onRemove are optional: a frame that does not pass them gets the same
+// header it always had, with nothing to hover. Ids are shared with the title
+// card on purpose — the credit is the credit, so taking it off takes it off
+// every slide rather than leaving one copy behind on another frame.
+function Header ({ album, palette, theme, subtitle, off = () => false, onRemove }) {
+  const line = [
+    album.year, album.genre, `${album.tracks.length} songs`,
+    // Discogs tracklists carry no durations, "0 min" is worse than nothing
+    album.runtimeMs > 0 && fmtRuntime(album.runtimeMs)
+  ].filter(Boolean).join(' · ')
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 32, marginBottom: 34 }}>
-      <Cover src={album.coverProxied} size={168} style={{ borderRadius: 'var(--cover-radius)', boxShadow: '0 20px 60px rgba(0,0,0,0.55)' }} />
+      {!off('cover') && (
+        <Removable id="cover" name="the artwork" onRemove={onRemove} inline>
+          <Cover src={album.coverProxied} size={168} style={{ borderRadius: 'var(--cover-radius)', boxShadow: '0 20px 60px rgba(0,0,0,0.55)' }} />
+        </Removable>
+      )}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <FitText size={48} min={30} weight={800} fitKey={album.name}
-          style={{ letterSpacing: 'var(--display-track)', fontWeight: 'var(--display-weight)' }}>
-          {album.name}
-        </FitText>
-        <FitText size={32} min={22} weight={600} fitKey={album.artists.join(', ')} style={{ color: 'rgba(var(--ink-rgb), 0.72)', marginTop: 8 }}>
-          {album.artists.join(', ')}
-        </FitText>
-        <div style={{ fontSize: 25, fontWeight: 600, color: palette.accent, marginTop: 7 }}>
-          {subtitle || [
-            album.year, album.genre, `${album.tracks.length} songs`,
-            // Discogs tracklists carry no durations, "0 min" is worse than nothing
-            album.runtimeMs > 0 && fmtRuntime(album.runtimeMs)
-          ].filter(Boolean).join(' · ')}
-        </div>
+        {!off('albumTitle') && (
+          <Removable id="albumTitle" name="the album title" onRemove={onRemove}>
+            <FitText size={48} min={30} weight={800} fitKey={album.name}
+              style={{ letterSpacing: 'var(--display-track)', fontWeight: 'var(--display-weight)' }}>
+              {album.name}
+            </FitText>
+          </Removable>
+        )}
+        {!off('artist') && (
+          <Removable id="artist" name="the credit" onRemove={onRemove}>
+            <FitText size={32} min={22} weight={600} fitKey={album.artists.join(', ')} style={{ color: 'rgba(var(--ink-rgb), 0.72)', marginTop: 8 }}>
+              {album.artists.join(', ')}
+            </FitText>
+          </Removable>
+        )}
+        {!off('meta') && (subtitle || line) && (
+          <Removable id="meta" name="the year and genre" onRemove={onRemove}>
+            <div style={{ fontSize: 25, fontWeight: 600, color: palette.accent, marginTop: 7 }}>
+              {subtitle || line}
+            </div>
+          </Removable>
+        )}
       </div>
     </div>
   )
@@ -938,7 +987,7 @@ const featLabel = (features, n) => n >= features.length
 // monster credit must never leave one row typeset differently from its
 // neighbours. So an overlong row has its guest list trimmed first, and only if
 // a row still won't fit does the size step down for every row at once.
-function TrackRows ({ tracks, ratings, rowH, baseSize, drop, chip, theme }) {
+function TrackRows ({ tracks, ratings, rowH, baseSize, drop, chip, theme, onRemove }) {
   const boxes = useRef([])
   const feats = useRef([])
   const [fs, setFs] = useState(baseSize)
@@ -982,7 +1031,8 @@ function TrackRows ({ tracks, ratings, rowH, baseSize, drop, chip, theme }) {
   const row = styleOf(theme).row || {}
 
   return tracks.map((t, i) => (
-    <div key={t.id} style={{
+    <Removable key={t.id} id={`song:${t.id}`} name={t.name} onRemove={onRemove}>
+    <div style={{
       display: 'flex', alignItems: 'center', gap: row.leaders ? 12 : 20, height: rowH,
       borderBottom: i < tracks.length - 1 ? rowRule(theme) : 'none'
     }}>
@@ -1021,6 +1071,7 @@ function TrackRows ({ tracks, ratings, rowH, baseSize, drop, chip, theme }) {
       )}
       <ScoreChip score={ratings[t.id] ?? null} theme={theme} size={chip.size} fontSize={chip.fontSize} />
     </div>
+    </Removable>
   ))
 }
 
@@ -1029,7 +1080,9 @@ const SURFACE_PAD = 44
 
 // `dense` is decided once for the whole album, not per page, so every song
 // image in a set is typeset identically.
-export function TracksFrame ({ data, palette, theme, tracks, showScale, dense }) {
+export function TracksFrame ({ data, palette, theme, tracks, showScale, dense,
+  hiddenParts = [], onRemovePart }) {
+  const off = id => hiddenParts.includes(id)
   const coverForBg = data.review.album.coverProxied
   const { review, tierLabels } = data
   const { album } = review
@@ -1055,7 +1108,7 @@ export function TracksFrame ({ data, palette, theme, tracks, showScale, dense })
     const splitSize = Math.max(12, Math.min(trackTextSize(theme, dense), splitRowH - 20))
     return (
       <FrameShell palette={palette} theme={theme} cover={coverForBg}>
-        <Header album={album} palette={palette} theme={theme} />
+        <Header album={album} palette={palette} theme={theme} off={off} onRemove={onRemovePart} />
         <div style={{ flex: 1, display: 'flex', gap: 34, minHeight: 0 }}>
           <div style={{ flex: '1 1 62%', minWidth: 0 }}>
             <div style={{ fontSize: 22, fontWeight: 'var(--label-weight)',
@@ -1064,7 +1117,7 @@ export function TracksFrame ({ data, palette, theme, tracks, showScale, dense })
               The songs
             </div>
             <TrackRows
-              tracks={tracks} ratings={review.ratings} theme={theme}
+              tracks={tracks} ratings={review.ratings} theme={theme} onRemove={onRemovePart}
               rowH={splitRowH} baseSize={splitSize} drop={featureDrop(theme)}
               chip={{ size: Math.max(26, splitRowH - 16), fontSize: Math.round(Math.max(26, splitRowH - 16) * 0.56) }}
             />
@@ -1131,20 +1184,24 @@ export function TracksFrame ({ data, palette, theme, tracks, showScale, dense })
 
   return (
     <FrameShell palette={palette} theme={theme} cover={coverForBg}>
-      <Header album={album} palette={palette} theme={theme} />
+      <Header album={album} palette={palette} theme={theme} off={off} onRemove={onRemovePart} />
 
       <Fill theme={theme} gap={24}>
         {tracks.length > 0 && (
           <Surface theme={theme} radius={30} style={{ padding: dense ? '18px 30px' : '22px 32px', flexShrink: 0 }}>
             <TrackRows
-              tracks={tracks} ratings={review.ratings} theme={theme}
+              tracks={tracks} ratings={review.ratings} theme={theme} onRemove={onRemovePart}
               rowH={rowH} baseSize={baseSize} drop={featureDrop(theme)}
               chip={{ size: chipSize, fontSize: Math.round(chipSize * 0.59) }}
             />
           </Surface>
         )}
 
-        {showScale && <ScaleLegend tierLabels={tierLabels} theme={theme} />}
+        {showScale && !off('scaleLegend') && (
+          <Removable id="scaleLegend" name="the scale legend" onRemove={onRemovePart}>
+            <ScaleLegend tierLabels={tierLabels} theme={theme} />
+          </Removable>
+        )}
       </Fill>
     </FrameShell>
   )
@@ -1258,6 +1315,10 @@ export function CriteriaFrame ({ data, palette, theme, hiddenParts = [], onRemov
   const { album } = review
   const sel = review.selections || {}
   const nowTrack = album.tracks.find(t => t.id === review.nowPlaying)
+  // Each row can come off on its own, so a criterion left unscored does not
+  // have to sit there as a dash. The rule under a row is drawn from what is
+  // still showing, or removing the last one would leave a line under nothing.
+  const rows = parts.filter(pt => !off(`crit:${pt.key}`))
   const c = ratingColor(typeof final === 'number' ? Math.round(final) : null)
   const tier = typeof final === 'number' ? (tierLabels[Math.round(final)] || '') : ''
 
@@ -1266,13 +1327,18 @@ export function CriteriaFrame ({ data, palette, theme, hiddenParts = [], onRemov
       <Header
         album={album} palette={palette} theme={theme}
         subtitle={[album.year, album.genre].filter(Boolean).join(' · ')}
+        off={off} onRemove={onRemovePart}
       />
 
-      <Surface theme={theme} radius={30} style={{ padding: '10px 30px', flexShrink: 0 }}>
-        {parts.map((p, i) => (
-          <CriterionRow key={p.key} part={p} theme={theme} last={i === parts.length - 1} max={data.maxScore} />
-        ))}
-      </Surface>
+      {rows.length > 0 && (
+        <Surface theme={theme} radius={30} style={{ padding: '10px 30px', flexShrink: 0 }}>
+          {rows.map((pt, i) => (
+            <Removable key={pt.key} id={`crit:${pt.key}`} name={pt.label} onRemove={onRemovePart}>
+              <CriterionRow part={pt} theme={theme} last={i === rows.length - 1} max={data.maxScore} />
+            </Removable>
+          ))}
+        </Surface>
+      )}
 
       {((sel.bestSong && !off('bestSong')) || (sel.worstSong && !off('worstSong'))) && (
         <div style={{ display: 'flex', gap: 18, marginTop: 20 }}>
@@ -1299,9 +1365,11 @@ export function CriteriaFrame ({ data, palette, theme, hiddenParts = [], onRemov
         </Removable>
       )}
 
+      {!off('finalRating') && (
+      <Removable id="finalRating" name="the final rating" onRemove={onRemovePart} style={{ marginTop: 20 }}>
       <Surface theme={theme} radius={36} style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        gap: 28, padding: '26px 38px', flexShrink: 0, marginTop: 20
+        gap: 28, padding: '26px 38px', flexShrink: 0
       }}>
         <div style={{ minWidth: 0 }}>
           <div style={{ fontSize: 26, fontWeight: 'var(--label-weight)', letterSpacing: 'var(--label-track)', textTransform: 'var(--label-case)', color: palette.accent }}>
@@ -1320,6 +1388,8 @@ export function CriteriaFrame ({ data, palette, theme, hiddenParts = [], onRemov
           {fmtScore(final)}
         </span>
       </Surface>
+      </Removable>
+      )}
 
       {/* the score sits directly under the player; any slack falls below it */}
       <div style={{ flex: 1, minHeight: 0 }} />
@@ -1353,6 +1423,7 @@ export function ThoughtsFrame ({ data, palette, theme, hiddenParts = [], onRemov
       <Header
         album={album} palette={palette} theme={theme}
         subtitle={[album.year, album.genre].filter(Boolean).join(' \u00b7 ')}
+        off={off} onRemove={onRemovePart}
       />
 
       <Removable id="thoughts" name="Your thoughts" onRemove={onRemovePart}

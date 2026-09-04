@@ -31,7 +31,11 @@ const PART_NAMES = {
   albumNumber: 'The album number',
   artist: 'The credit',
   meta: 'Year and genre',
-  dome: 'The dome'
+  dome: 'The dome',
+  cover: 'The artwork',
+  albumTitle: 'The album title',
+  finalRating: 'The final rating',
+  scaleLegend: 'The scale legend'
 }
 
 // Stored preferences cannot grant a style the account does not include.
@@ -137,8 +141,10 @@ export default function Exporter ({ data, tier = 'free' }) {
     for (const e of data.ladder || []) {
       if (!e.gap) out[`rank:${e.albumId}`] = `${e.album.name} on the ladder`
     }
+    for (const pt of data.parts || []) out[`crit:${pt.key}`] = pt.label
+    for (const t of data.review?.album?.tracks || []) out[`song:${t.id}`] = t.name
     return out
-  }, [data.ladder])
+  }, [data.ladder, data.parts, data.review])
 
   // Text typed straight onto a slide. A dotted field takes a nested path, so
   // one handler covers the review's own columns and the superlatives inside
@@ -275,7 +281,7 @@ export default function Exporter ({ data, tier = 'free' }) {
 
   // A long tracklist becomes several pages rather than one unreadable one.
   const pages = useMemo(() => {
-    const t = data.review.album.tracks
+    const t = data.review.album.tracks.filter(x => !hiddenParts.includes(`song:${x.id}`))
     const auto = settings.perPage === 'auto'
     const cap = auto ? 14 : Number(settings.perPage)
     const count = Math.max(1, Math.ceil(t.length / cap))
@@ -285,7 +291,7 @@ export default function Exporter ({ data, tier = 'free' }) {
     // set it, which is not what a setting is for.
     const per = auto ? Math.ceil(t.length / count) : cap
     return Array.from({ length: count }, (_, i) => t.slice(i * per, (i + 1) * per))
-  }, [data, settings.perPage])
+  }, [data, settings.perPage, hiddenParts])
 
   // Dragging fires on every pointer move, so the picture follows the hand
   // immediately and the write waits until the hand stops. Without that a single
@@ -324,7 +330,8 @@ export default function Exporter ({ data, tier = 'free' }) {
       label: pages.length > 1 ? `Songs ${i + 1} of ${pages.length}` : 'Every song, scored',
       node: <TracksFrame data={data} palette={palette} theme={theme} tracks={tracks}
               showScale={settings.scale === 'every' || (settings.scale === 'first' && i === 0)}
-              dense={tracks.length > 12} />
+              dense={tracks.length > 12}
+              hiddenParts={hiddenParts} onRemovePart={preview ? undefined : removePart} />
     }))
     if (on('criteria')) out.push({
       key: 'criteria',
