@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
+import Verified from '../Verified'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { chipColour } from '@/lib/rating-colors'
 import { ago } from '@/lib/when'
@@ -213,7 +214,10 @@ export default function Social ({ rows: initial, tab, viewer }) {
           <Link href={`/u/${row.by.handle}`} className="sc-who">
             <Avatar person={row.by} />
             <span>
-              <strong>{row.by.name}</strong>
+              <strong>
+                {row.by.name}
+                {row.by.verified && <Verified label={`${row.by.name} is verified`} />}
+              </strong>
               <em>@{row.by.handle}</em>
             </span>
           </Link>

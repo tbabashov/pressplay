@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Verified from '@/components/Verified'
 import { notFound } from 'next/navigation'
 import { auth } from '@/auth'
 import { getProfile, reviewId } from '@/lib/db'
@@ -7,6 +8,7 @@ import { commentsFor } from '@/lib/social-queries'
 import { publicReview } from '@/lib/social-shape'
 import { SUPERLATIVES } from '@/lib/preferences'
 import { param } from '@/lib/route-param'
+import { isVerified } from '@/lib/profile'
 import { fullDate } from '@/lib/when'
 import { chipColour, scoreText, fmtDuration } from '@/lib/rating-colors'
 import Score from '@/components/Score'
@@ -87,6 +89,7 @@ export default async function PublicReview ({ params }) {
             <Link href={`/u/${profile.handle}`} className="pr-author">
               {profile.image && <img src={profile.image} alt="" width="22" height="22" referrerPolicy="no-referrer" />}
               {profile.name || profile.handle}
+              {isVerified(profile.email) && <Verified label={`${profile.name || profile.handle} is verified`} />}
             </Link>
           </p>
           <h1 className="display">{r.albumName}</h1>

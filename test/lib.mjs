@@ -630,3 +630,26 @@ await test('a criterion cannot push the final past the scale', async () => {
   assert.equal(scaleMax({ scaleModel: { max: 5 } }), 5)
   assert.equal(ratingParts({ criteria: { lyricism: 11 }, scores: {} })[1].value, 11)
 })
+
+await test('the check is decided by address, and the address never travels', async () => {
+  // Read per call rather than at import, so configuration is a variable and
+  // not a restart, and so this can set it.
+  process.env.ADMIN_EMAIL = 'owner@example.com'
+  process.env.VERIFIED_EMAILS = 'friend@example.com, SHOUTY@Example.com'
+  const { isVerified, publicProfile } = await import(R + 'profile.js')
+
+  assert.equal(isVerified('owner@example.com'), true, 'the owner is always verified')
+  assert.equal(isVerified('friend@example.com'), true)
+  assert.equal(isVerified('  SHOUTY@example.com '), true, 'case and padding do not matter')
+  assert.equal(isVerified('stranger@example.com'), false)
+  assert.equal(isVerified(''), false)
+  assert.equal(isVerified(null), false)
+  assert.equal(isVerified(undefined), false)
+
+  // The whole point of deciding it inside publicProfile: the boolean crosses
+  // the boundary, the address it was decided by does not.
+  const shape = publicProfile({ email: 'owner@example.com', handle: 'owner', name: 'Owner' })
+  assert.equal(shape.verified, true)
+  assert.ok(!('email' in shape), 'the address stays behind')
+  assert.equal(publicProfile({ email: 'stranger@example.com', handle: 'x' }).verified, false)
+})

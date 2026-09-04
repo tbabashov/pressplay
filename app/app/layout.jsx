@@ -5,6 +5,7 @@ import { getProfile } from '@/lib/db'
 import { ensureProfile } from '@/lib/ensure-profile'
 import Rail from '@/components/app/Rail'
 import AccountMenu from '@/components/AccountMenu'
+import { isVerified } from '@/lib/profile'
 import Mark from '@/components/Mark'
 import AchievementToasts from '@/components/app/AchievementToasts'
 import '../app.css'
@@ -47,6 +48,7 @@ export default async function AppLayout ({ children }) {
             image={profile?.image || image}
             handle={profile?.handle}
             role={role}
+            verified={isVerified(session.user.email)}
           />
         </div>
       </header>

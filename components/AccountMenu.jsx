@@ -2,11 +2,12 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import Verified from './Verified'
 import { signOut } from 'next-auth/react'
 
 // One account control for both shells. Closed it is a picture and the word
 // Profile; open it is the two things anyone actually wants from it.
-export default function AccountMenu ({ name, image, handle, role }) {
+export default function AccountMenu ({ name, image, handle, role, verified = false }) {
   const [open, setOpen] = useState(false)
   const [quota, setQuota] = useState(null)
   const box = useRef(null)
@@ -58,7 +59,7 @@ export default function AccountMenu ({ name, image, handle, role }) {
       {open && (
         <div className="acct-menu" role="menu">
           <div className="acct-who">
-            <strong>{name || handle || 'You'}</strong>
+            <strong>{name || handle || 'You'}{verified && <Verified />}</strong>
             {handle && <span>/u/{handle}</span>}
             {role === 'owner' && <em className="acct-owner">Owner</em>}
           </div>

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Verified from '@/components/Verified'
 import { auth } from '@/auth'
 import { raters } from '@/lib/social-queries'
 import { ratingColor } from '@/lib/rating-colors'
@@ -40,7 +41,10 @@ export default async function Browse () {
                       {(profile.name || profile.handle)[0].toUpperCase()}
                     </span>}
                 <span className="br-names">
-                  <strong>{profile.name}</strong>
+                  <strong>
+                    {profile.name}
+                    {profile.verified && <Verified label={`${profile.name} is verified`} />}
+                  </strong>
                   <span className="br-handle">/u/{profile.handle}</span>
                 </span>
               </Link>

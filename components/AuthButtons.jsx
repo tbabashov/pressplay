@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { auth } from '@/auth'
 import { getProfile } from '@/lib/db'
+import { isVerified } from '@/lib/profile'
 import AccountMenu from '@/components/AccountMenu'
 
 // Server actions rather than a client bundle: the button is a form submit, so
@@ -56,6 +57,7 @@ async function Account ({ session }) {
       image={profile?.image || image}
       handle={profile?.handle}
       role={role}
+      verified={isVerified(email)}
     />
   )
 }

@@ -1,9 +1,11 @@
 import Link from 'next/link'
+import Verified from '@/components/Verified'
 import { notFound } from 'next/navigation'
 import { auth } from '@/auth'
 import { getProfileByHandle, isFollowing } from '@/lib/db'
 import { raterPage } from '@/lib/social-queries'
 import { param } from '@/lib/route-param'
+import { isVerified } from '@/lib/profile'
 import { monthYear } from '@/lib/when'
 import { ratingColor } from '@/lib/rating-colors'
 import FollowButton from '@/components/social/FollowButton'
@@ -49,7 +51,10 @@ export default async function RaterProfile ({ params }) {
             </span>}
 
         <div className="rp-who">
-          <h1 className="display">{profile.name || profile.handle}</h1>
+          <h1 className="display">
+            {profile.name || profile.handle}
+            {isVerified(profile.email) && <Verified label={`${profile.name || profile.handle} is verified`} />}
+          </h1>
           <p className="rp-handle">/u/{profile.handle}</p>
           {profile.bio && <p className="rp-bio measure">{profile.bio}</p>}
           <p className="rp-since">

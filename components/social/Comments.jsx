@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Verified from '../Verified'
 import { ago } from '@/lib/when'
 
 const BODY_MAX = 1000
@@ -90,7 +91,10 @@ export default function Comments ({ handle, albumId, initial = [], viewer, canMo
                 <div className="cm-body">
                   <p className="cm-meta">
                     {c.author.handle
-                      ? <Link href={`/u/${c.author.handle}`} className="cm-who">{c.author.name}</Link>
+                      ? <Link href={`/u/${c.author.handle}`} className="cm-who">
+                          {c.author.name}
+                          {c.author.verified && <Verified label={`${c.author.name} is verified`} />}
+                        </Link>
                       : <span className="cm-who">{c.author.name}</span>}
                     <span className="cm-dot" aria-hidden="true">·</span>
                     <When iso={c.createdAt} />

@@ -64,6 +64,22 @@ a { color: inherit; text-decoration: none; }
 button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
 img { display: block; max-width: 100%; }
 
+/* The verified check, beside a name.
+   Static gold rather than var(--accent): the accent drifts to the colour of
+   whatever record is playing, and a mark meaning "this account is who it says
+   it is" cannot be a different colour every four minutes. Sized in em so one
+   badge serves a heading, a byline and a comment. */
+.vf {
+  color: #e2aa4a;
+  flex: none;
+  /* Sized here rather than on the element, so every badge on the site is one
+     number. A full em circle stands taller than the caps it sits beside and
+     starts competing with the name; a little under reads as part of the line. */
+  width: 0.82em; height: 0.82em;
+  vertical-align: -0.02em;
+  margin-left: 0.32em;
+}
+
 /* --- shared primitives --- */
 .shell { width: 100%; max-width: var(--shell); margin: 0 auto; padding: 0 28px; }
 @media (max-width: 640px) { .shell { padding: 0 20px; } }
