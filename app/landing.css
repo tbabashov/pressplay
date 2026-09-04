@@ -577,17 +577,28 @@
 /* Only shown when signed in, so it never sits beside Sign in pointing at the
    same place. Quieter than the sign-in button on purpose: the account chip
    next to it is the thing with a face on it. */
+/* Tinted with the accent rather than filled with it. The hero's button is the
+   page's one call to action and stays solid; this is a persistent utility that
+   has to sit inside a frosted bar over every section without becoming the
+   loudest thing on screen. Tinting also separates it from the account chip
+   beside it, which is the same white pill and previously only differed on
+   hover — that is to say, never, on a phone.
+
+   Mixed from var(--accent) rather than the static --accent-rgb so it cross-
+   fades with the record playing on the wall, exactly as the hero button does.
+   Two amber buttons that drift apart as the colour shifts would look like a
+   bug rather than a pair. */
 .nav-app {
   display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
   padding: 8px 15px; border-radius: 999px;
   font-size: 14px; font-weight: 600; color: var(--fg);
-  background: rgba(255,255,255,0.07);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.14);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 42%, transparent);
   transition: background .18s var(--ease), box-shadow .18s var(--ease);
 }
 .nav-app:hover {
-  background: rgba(var(--accent-rgb), 0.16);
-  box-shadow: inset 0 0 0 1px rgba(var(--accent-rgb), 0.55);
+  background: color-mix(in srgb, var(--accent) 24%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 70%, transparent);
 }
 .nav-app svg { flex: none; }
 .nav-app-short { display: none; }
