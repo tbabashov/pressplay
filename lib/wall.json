@@ -200,6 +200,14 @@
     "dz": 676011672
   },
   {
+    "name": "People's Instinctive Travels and the Paths of Rhythm",
+    "artist": "A Tribe Called Quest",
+    "genre": "Rap",
+    "cover": "/wall/people-s-instinctive-travels-and-the-paths-of-.jpg",
+    "track": "Can I Kick It?",
+    "dz": 3311319751
+  },
+  {
     "name": "Spiderland",
     "artist": "Slint",
     "genre": "Alternative",
@@ -214,14 +222,6 @@
     "cover": "/wall/music-has-the-right-to-children.jpg",
     "track": "Roygbiv",
     "dz": 29373661
-  },
-  {
-    "name": "People's Instinctive Travels and the Paths of Rhythm",
-    "artist": "A Tribe Called Quest",
-    "genre": "Rap",
-    "cover": "/wall/people-s-instinctive-travels-and-the-paths-of-.jpg",
-    "track": "Can I Kick It?",
-    "dz": 3311319751
   },
   {
     "name": "Unknown Pleasures",
@@ -256,14 +256,6 @@
     "dz": 831196
   },
   {
-    "name": "Remain In Light",
-    "artist": "Talking Heads",
-    "genre": "Alternative",
-    "cover": "/wall/remain-in-light.jpg",
-    "dz": 108717048,
-    "track": "Once In A Lifetime (Live)"
-  },
-  {
     "name": "Paid In Full",
     "artist": "Eric B. & Rakim",
     "genre": "Hip-Hop/Rap",
@@ -272,12 +264,28 @@
     "dz": 25858131
   },
   {
+    "name": "Remain In Light",
+    "artist": "Talking Heads",
+    "genre": "Alternative",
+    "cover": "/wall/remain-in-light.jpg",
+    "dz": 108717048,
+    "track": "Once In A Lifetime (Live)"
+  },
+  {
     "name": "Fear of a Blank Planet",
     "artist": "Porcupine Tree",
     "genre": "Rock",
     "cover": "/wall/fear-of-a-blank-planet-2024-remaster.jpg",
     "track": "Anesthetize",
     "dz": 1082589472
+  },
+  {
+    "name": "Ready to Die",
+    "artist": "The Notorious B.I.G.",
+    "genre": "Hip-Hop/Rap",
+    "cover": "/wall/ready-to-die-the-remaster.jpg",
+    "dz": 2966483391,
+    "track": "Everyday Struggle"
   },
   {
     "name": "Rooty",
@@ -294,14 +302,6 @@
     "cover": "/wall/ege-bamyasi-remastered.jpg",
     "track": "Vitamin C",
     "dz": 70880322
-  },
-  {
-    "name": "Ready to Die",
-    "artist": "The Notorious B.I.G.",
-    "genre": "Hip-Hop/Rap",
-    "cover": "/wall/ready-to-die-the-remaster.jpg",
-    "dz": 2966483391,
-    "track": "Everyday Struggle"
   },
   {
     "name": "Random Access Memories",
@@ -336,20 +336,20 @@
     "dz": 1012602
   },
   {
-    "name": "Since I Left You",
-    "artist": "The Avalanches",
-    "genre": "Alternative",
-    "cover": "/wall/since-i-left-you-20th-anniversary-deluxe-editi.jpg",
-    "track": "Frontier Psychiatrist",
-    "dz": 1280128812
-  },
-  {
     "name": "To Pimp a Butterfly",
     "artist": "Kendrick Lamar",
     "genre": "Hip-Hop/Rap",
     "cover": "/wall/to-pimp-a-butterfly.jpg",
     "track": "Alright",
     "dz": 97206068
+  },
+  {
+    "name": "Since I Left You",
+    "artist": "The Avalanches",
+    "genre": "Alternative",
+    "cover": "/wall/since-i-left-you-20th-anniversary-deluxe-editi.jpg",
+    "track": "Frontier Psychiatrist",
+    "dz": 1280128812
   },
   {
     "name": "The Dark Side of the Moon",
@@ -392,6 +392,14 @@
     "dz": 669486722
   },
   {
+    "name": "The Chronic",
+    "artist": "Dr. Dre",
+    "genre": "Rap/Hip Hop",
+    "cover": "/wall/the-chronic.jpg",
+    "track": "Let Me Ride",
+    "dz": 2132918987
+  },
+  {
     "name": "Buena Vista Social Club",
     "artist": "Buena Vista Social Club",
     "genre": "Cuban",
@@ -408,20 +416,20 @@
     "dz": 1041479362
   },
   {
-    "name": "The Chronic",
-    "artist": "Dr. Dre",
-    "genre": "Rap/Hip Hop",
-    "cover": "/wall/the-chronic.jpg",
-    "track": "Let Me Ride",
-    "dz": 2132918987
-  },
-  {
     "name": "Nevermind",
     "artist": "Nirvana",
     "genre": "Rock",
     "cover": "/wall/nevermind-deluxe-edition.jpg",
     "track": "Come As You Are",
     "dz": 13791932
+  },
+  {
+    "name": "My Beautiful Dark Twisted Fantasy",
+    "artist": "Kanye West",
+    "genre": "Rap/Hip Hop",
+    "cover": "/wall/my-beautiful-dark-twisted-fantasy.jpg",
+    "track": "POWER",
+    "dz": 24281961
   },
   {
     "name": "The Köln Concert",
@@ -456,14 +464,6 @@
     "dz": 15586234
   },
   {
-    "name": "My Beautiful Dark Twisted Fantasy",
-    "artist": "Kanye West",
-    "genre": "Rap/Hip Hop",
-    "cover": "/wall/my-beautiful-dark-twisted-fantasy.jpg",
-    "track": "POWER",
-    "dz": 24281961
-  },
-  {
     "name": "Dummy",
     "artist": "Portishead",
     "genre": "Rock",
@@ -480,14 +480,6 @@
     "dz": 734487892
   },
   {
-    "name": "Illinois",
-    "artist": "Sufjan Stevens",
-    "genre": "Alternative",
-    "cover": "/wall/illinois.jpg",
-    "track": "Come On! Feel the Illinoise! Part I: The World's Columbian Exposition Part II: Carl Sandburg Visits Me In A Dream",
-    "dz": 62743213
-  },
-  {
     "name": "Voodoo",
     "artist": "D'Angelo",
     "genre": "Rap/Hip Hop",
@@ -496,12 +488,28 @@
     "dz": 139102907
   },
   {
+    "name": "Illinois",
+    "artist": "Sufjan Stevens",
+    "genre": "Alternative",
+    "cover": "/wall/illinois.jpg",
+    "track": "Come On! Feel the Illinoise! Part I: The World's Columbian Exposition Part II: Carl Sandburg Visits Me In A Dream",
+    "dz": 62743213
+  },
+  {
     "name": "For Emma, Forever Ago",
     "artist": "Bon Iver",
     "genre": "Alternative",
     "cover": "/wall/for-emma-forever-ago.jpg",
     "track": "Skinny Love",
     "dz": 73916142
+  },
+  {
+    "name": "Endtroducing.....",
+    "artist": "DJ Shadow",
+    "genre": "Rap/Hip Hop",
+    "cover": "/wall/endtroducing-deluxe-edition-387712187.jpg",
+    "track": "The Number Song",
+    "dz": 2074913027
   },
   {
     "name": "Transa",
@@ -536,14 +544,6 @@
     "dz": 60765507
   },
   {
-    "name": "Endtroducing.....",
-    "artist": "DJ Shadow",
-    "genre": "Rap/Hip Hop",
-    "cover": "/wall/endtroducing-deluxe-edition-387712187.jpg",
-    "track": "The Number Song",
-    "dz": 2074913027
-  },
-  {
     "name": "The Fat of the Land",
     "artist": "The Prodigy",
     "genre": "Electro",
@@ -558,6 +558,14 @@
     "cover": "/wall/kid-a-14880741.jpg",
     "track": "The National Anthem",
     "dz": 138547591
+  },
+  {
+    "name": "Graduation",
+    "artist": "Kanye West",
+    "genre": "Hip-Hop/Rap",
+    "cover": "/wall/graduation.jpg",
+    "track": "Stronger",
+    "dz": 630827242
   },
   {
     "name": "Talking Timbuktu",
@@ -592,12 +600,12 @@
     "dz": 126367539
   },
   {
-    "name": "Graduation",
-    "artist": "Kanye West",
+    "name": "IGOR",
+    "artist": "Tyler, The Creator",
     "genre": "Hip-Hop/Rap",
-    "cover": "/wall/graduation.jpg",
-    "track": "Stronger",
-    "dz": 630827242
+    "cover": "/wall/igor.jpg",
+    "track": "EARFQUAKE",
+    "dz": 681009652
   },
   {
     "name": "Grace",
@@ -648,12 +656,12 @@
     "dz": 101009306
   },
   {
-    "name": "IGOR",
-    "artist": "Tyler, The Creator",
+    "name": "Take Care",
+    "artist": "Drake",
     "genre": "Hip-Hop/Rap",
-    "cover": "/wall/igor.jpg",
-    "track": "EARFQUAKE",
-    "dz": 681009652
+    "cover": "/wall/take-care.jpg",
+    "track": "Marvins Room",
+    "dz": 17347969
   },
   {
     "name": "Marquee Moon (Edit)",
@@ -688,12 +696,12 @@
     "dz": 100936412
   },
   {
-    "name": "Take Care",
-    "artist": "Drake",
+    "name": "Donuts",
+    "artist": "J Dilla",
     "genre": "Hip-Hop/Rap",
-    "cover": "/wall/take-care.jpg",
-    "track": "Marvins Room",
-    "dz": 17347969
+    "cover": "/wall/donuts.jpg",
+    "track": "Don't Cry",
+    "dz": 445960982
   },
   {
     "name": "Ctrl",
@@ -744,12 +752,12 @@
     "dz": 2319295
   },
   {
-    "name": "Donuts",
-    "artist": "J Dilla",
+    "name": "Madvillainy",
+    "artist": "Madvillain",
     "genre": "Hip-Hop/Rap",
-    "cover": "/wall/donuts.jpg",
-    "track": "Don't Cry",
-    "dz": 445960982
+    "cover": "/wall/madvillainy.jpg",
+    "track": "All Caps",
+    "dz": 446028422
   },
   {
     "name": "Hybrid Theory",
