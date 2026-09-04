@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { usePlayer } from './audio/Player'
-import { ratingColor } from '../lib/rating-colors'
+import { chipColour, ratingColor } from '../lib/rating-colors'
 import wall from '../lib/wall.json'
 
 // A published review with the argument attached. Written by nobody: this is a
@@ -17,7 +17,10 @@ const REVIEW = {
     'The playing is immaculate and the drums sound better than anything else released that year. ' +
     'It is also twenty minutes too long and it knows it. Docking it for the stretch between Touch and ' +
     'Motherboard, which I have skipped every single time.',
-  criteria: [['Song average', 8.1], ['Production', 11], ['Delivery', 8], ['Album experience', 7], ['Replay value', 8]],
+  // Lyricism was missing, which left the example showing five parts where the
+  // rater asks for six. The six average to the 8.4 on the card — a worked
+  // example that does not add up is the thing it is meant to be teaching.
+  criteria: [['Song average', 8.4], ['Lyricism', 8], ['Production', 11], ['Delivery', 8], ['Album experience', 7], ['Replay value', 8]],
   best: 'Giorgio by Moroder',
   worst: 'Motherboard'
 }
@@ -91,12 +94,17 @@ export default function ReviewDemo () {
         <p className="rev-verdict">{REVIEW.verdict}</p>
 
         <dl className="rev-crit">
-          {REVIEW.criteria.map(([label, v]) => (
-            <div key={label}>
-              <dt>{label}</dt>
-              <dd className="tnum" style={{ color: ratingColor(v).bg.startsWith('#') ? ratingColor(v).bg : 'var(--accent)' }}>{v}</dd>
-            </div>
-          ))}
+          {REVIEW.criteria.map(([label, v]) => {
+            const col = chipColour(v)
+            return (
+              <div key={label}>
+                <dt>{label}</dt>
+                <dd>
+                  <span className="rev-crit-chip tnum" style={{ background: col.bg, color: col.fg }}>{v}</span>
+                </dd>
+              </div>
+            )
+          })}
         </dl>
 
         <p className="rev-picks">
