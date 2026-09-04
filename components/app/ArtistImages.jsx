@@ -5,8 +5,13 @@ import { useRef, useState } from 'react'
 const MAX = 3
 const MAX_EDGE = 1000          // plenty at 1080-wide export, far smaller to store
 
-// Transparent cut-outs must stay PNG: re-encoding to JPEG would fill the alpha
-// with black and put a box round the artist.
+// Anything the browser can decode is allowed in; what comes out is always PNG.
+// The canvas keeps whatever alpha the source had, and gives a format that has
+// none — a JPEG, say — a fully opaque one. So a photograph is accepted and
+// simply looks like a photograph, rather than being refused by the file picker
+// over a transparency it was never going to have. Re-encoding to JPEG is the
+// thing that must not happen: that fills the alpha with black and puts a box
+// round the artist.
 function shrink (file) {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file)
@@ -18,10 +23,28 @@ function shrink (file) {
       const h = Math.round(img.height * scale)
       const c = document.createElement('canvas')
       c.width = w; c.height = h
-      c.getContext('2d').drawImage(img, 0, 0, w, h)
-      resolve(c.toDataURL('image/png'))
+      const ctx = c.getContext('2d')
+      ctx.drawImage(img, 0, 0, w, h)
+
+      // PNG only when there is alpha worth keeping. A photograph has none, and
+      // a photograph stored as PNG is several times the size of the same
+      // picture as JPEG — three of these live on the review row and travel with
+      // every export. Reading one byte in four is a few milliseconds at this
+      // size, which is cheaper than carrying the difference around forever.
+      let transparent = false
+      try {
+        const { data } = ctx.getImageData(0, 0, w, h)
+        for (let i = 3; i < data.length; i += 4) {
+          if (data[i] < 255) { transparent = true; break }
+        }
+      } catch {
+        // A tainted canvas cannot be read. Nothing here is cross-origin, but if
+        // that ever changes, keeping the alpha is the safe way to be wrong.
+        transparent = true
+      }
+      resolve(transparent ? c.toDataURL('image/png') : c.toDataURL('image/jpeg', 0.86))
     }
-    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('That file could not be read as an image.')) }
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error(`${file.name} is not an image this browser can open. JPEG, PNG, WebP and GIF all work.`)) }
     img.src = url
   })
 }
@@ -93,12 +116,14 @@ export default function ArtistImages ({ images, onChange }) {
       {images.length < MAX && (
         <>
           <button className="cut-add" onClick={() => input.current?.click()}>
-            Add a transparent PNG
+            Add an artist image
           </button>
-          <input ref={input} type="file" accept="image/png,image/webp" multiple hidden
+          <input ref={input} type="file" accept="image/*" multiple hidden
             onChange={e => add(e.target.files)} />
           <p className="cut-hint">
-            Cut-outs stand in the dome on the title card. Up to three, background already removed. Click one on the title card to pick it up, then drag to move it, drag a corner to resize it from the opposite corner, or scroll on it. Arrow keys nudge it a few pixels at a time, shift with them moves further, and + and − resize. Reset position puts it back. Lock one once it is right and it stops responding, so placing the next will not knock it out of position.</p>
+            Cut-outs stand in the dome on the title card. Up to three. A PNG with the background
+            already taken out sits in the scene properly; any other image works, it just arrives
+            as a rectangle. Click one on the title card to pick it up, then drag to move it, drag a corner to resize it from the opposite corner, or scroll on it. Arrow keys nudge it a few pixels at a time, shift with them moves further, and + and − resize. Reset position puts it back. Lock one once it is right and it stops responding, so placing the next will not knock it out of position.</p>
         </>
       )}
       {error && <p className="cut-error">{error}</p>}
