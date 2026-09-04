@@ -10,7 +10,7 @@ export default function Achievements ({ list, bare }) {
   return (
     <section className="ts-block ac">
       {bare
-        ? <p className="ac-tally">{done} of {list.length} earned</p>
+        ? <p className="ac-tally"><b className="tnum">{done}</b> of {list.length} earned</p>
         : (
           <h2 className="ts-h2">
             Achievements

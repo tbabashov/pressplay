@@ -91,20 +91,6 @@ export default async function Settings () {
       <hr className="set-rule" />
 
       <div className="page-head set-head">
-        <h1>Your rating model</h1>
-      </div>
-      {/* The form itself moved to its own screen. Two copies of it would be two
-          places editing one thing, and whichever was left open would save over
-          the other. A pointer, so anyone who learned it was here still finds
-          it. */}
-      <p className="set-intro measure">
-        Your scale, your criteria and your superlatives now have their own
-        screen. <Link href="/app/scoring">Open scoring</Link> to change them.
-      </p>
-
-      <hr className="set-rule" />
-
-      <div className="page-head set-head">
         <h1>Achievements</h1>
       </div>
       <Achievements list={achievements} bare />

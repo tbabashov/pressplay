@@ -2142,7 +2142,10 @@ body:has(.app) .vignette { opacity: 0.5; }
 }
 .exp-off li button:hover { color: var(--fg); background: rgba(255,255,255,0.1); }
 .ac-tally { font-size: 13px; color: var(--fg-3); margin-bottom: 18px; }
-.ac-tally::first-letter { font-weight: 700; color: var(--accent); }
+/* The count, not the first character. ::first-letter picked out exactly one
+   glyph, which was the whole number while it was single digit and half of it
+   from ten onwards: an accented 1 followed by a grey 1. */
+.ac-tally b { font-weight: 700; color: var(--accent); }
 
 /* ================================================================ social ==
    A feed of ratings you can actually read, not a list of album names. Open one
@@ -2543,6 +2546,9 @@ body:has(.app) .vignette { opacity: 0.5; }
 .yd {
   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
   gap: 16px 24px;
+  /* The same width as the danger zone directly below it. These two read as a
+     pair and one ran to the full column while the other stopped at 860. */
+  max-width: 860px;
   margin-top: 40px; padding: 18px 20px;
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 14px;
