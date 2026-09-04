@@ -3,7 +3,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
-export default function Search () {
+// The suggestions come in as children rather than as a sibling, so this can
+// decide whether they belong on screen. They are still built on the server —
+// children arrive already rendered — so nothing about that moves to the client.
+export default function Search ({ children }) {
   // A suggestion for a record the wall knows by name rather than by catalogue
   // id links here with the name in the query string. Reading it means those
   // cards land on results instead of an empty box, and it makes any search
@@ -116,6 +119,21 @@ export default function Search () {
              preview of every song.</p>
         </div>
       )}
+
+      {/* A single letter is not a search yet and the suggestions have already
+          stood down, so say what the page is waiting for rather than leaving it
+          blank between the box and the bottom. */}
+      {state === 'idle' && q.trim().length === 1 && (
+        <p className="notice">One more letter and the search starts.</p>
+      )}
+
+      {/* Only with nothing typed. Two grids of covers, one answering the query
+          and one ignoring it, look identical and read as more results — so the
+          suggestions stand down the moment there is something to search for,
+          and come back the moment the box is empty again. Keyed on the box
+          rather than on results arriving, or they would linger under a query
+          for the length of the debounce and then vanish. */}
+      {q.trim().length === 0 && children}
     </div>
   )
 }

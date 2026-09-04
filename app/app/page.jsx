@@ -39,9 +39,10 @@ export default async function RatePage () {
           inside a boundary: without one the whole route opts out of static
           rendering and the build says so. */}
       <Suspense fallback={<div className="search" />}>
-        <Search />
+        <Search>
+          <Suggestions kind={suggested.kind} items={suggested.items} />
+        </Search>
       </Suspense>
-      <Suggestions kind={suggested.kind} items={suggested.items} />
     </>
   )
 }
