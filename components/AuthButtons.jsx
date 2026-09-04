@@ -14,9 +14,15 @@ export async function SignIn ({ large, label = 'Sign in' }) {
   //
   // Signed out there is deliberately no second button: it would point at /join,
   // which is where Sign in already goes.
+  //
+  // The chip sits first and the app button last, so the bar ends on the thing
+  // it wants you to press and the arrow points out of it rather than back into
+  // the row. Swapped here in the markup rather than with CSS order, so tabbing
+  // through the bar follows what is on the screen.
   if (session?.user) {
     return (
       <>
+        <Account session={session} />
         <Link href="/app" className="nav-app" aria-label="Open the app">
           <span className="nav-app-full">Open the app</span>
           <span className="nav-app-short">Open</span>
@@ -25,7 +31,6 @@ export async function SignIn ({ large, label = 'Sign in' }) {
               strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </Link>
-        <Account session={session} />
       </>
     )
   }
