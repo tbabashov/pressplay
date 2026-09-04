@@ -954,6 +954,14 @@
 
 @media (max-width: 900px) {
   .tiktok-grid, .board-split { grid-template-columns: 1fr; gap: 38px; }
+  /* Stacked, the heading has to come first: it is what the list underneath is
+     an illustration of, and read the other way round the reader meets six
+     unexplained bars and then finds out what they were. The other split band
+     on this page already has its text first in the markup; this one puts the
+     list in the narrower left column on a wide screen, so the order is swapped
+     here rather than in the markup. The list is aria-hidden, so nothing that
+     reads the page in document order is affected either way. */
+  .board-split > div { order: -1; }
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
