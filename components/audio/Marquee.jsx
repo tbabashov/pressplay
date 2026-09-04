@@ -13,6 +13,24 @@ import { useEffect, useRef, useState } from 'react'
 // Reduced motion is answered by not running at all rather than by a shorter
 // animation, and the ellipsis comes back in that case, so the fallback is the
 // behaviour this replaced rather than a silently clipped word.
+
+// The width the text actually wants, measured off a Range rather than off the
+// element. scrollWidth is rounded to an integer, and on a title overflowing by
+// a pixel or two that rounding decides the question the wrong way; worse, an
+// element wearing text-overflow: ellipsis reports scrollWidth === clientWidth
+// in some engines, so the overflow it is currently hiding is invisible to the
+// measurement that decides whether to reveal it. A Range measures the content,
+// not the box, and is not clipped by either.
+const contentWidth = el => {
+  try {
+    const r = document.createRange()
+    r.selectNodeContents(el)
+    const w = r.getBoundingClientRect().width
+    if (w > 0) return w
+  } catch { /* fall through */ }
+  return el.scrollWidth
+}
+
 export default function Marquee ({ children, className = '' }) {
   const box = useRef(null)
   const text = useRef(null)
@@ -25,17 +43,29 @@ export default function Marquee ({ children, className = '' }) {
 
     const still = window.matchMedia('(prefers-reduced-motion: reduce)')
     const measure = () => {
-      // Sub-pixel widths round against us: a title that fits can measure a
-      // fraction over and scroll by half a pixel forever. Two pixels of slack.
-      const over = Math.ceil(t.scrollWidth - b.clientWidth)
+      // Two pixels of slack: a title that fits can measure a hair over and
+      // scroll by nothing, forever.
+      const over = Math.ceil(contentWidth(t) - b.clientWidth)
       setDistance(still.matches || over <= 2 ? 0 : over)
     }
 
     measure()
+
+    // The display face loads after the first paint, and it is wider than the
+    // fallback it replaces. Without this a title that fitted in the fallback
+    // keeps the verdict it was given before the real font arrived: ellipsised,
+    // with nothing left to trigger a second look.
+    let dead = false
+    document.fonts?.ready.then(() => { if (!dead) measure() }).catch(() => {})
+
     const ro = new ResizeObserver(measure)
     ro.observe(b)
     still.addEventListener('change', measure)
-    return () => { ro.disconnect(); still.removeEventListener('change', measure) }
+    return () => {
+      dead = true
+      ro.disconnect()
+      still.removeEventListener('change', measure)
+    }
   }, [children])
 
   const running = distance > 0
