@@ -250,7 +250,10 @@ img { display: block; max-width: 100%; }
   border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 .acct-who strong { font-size: 14px; font-weight: 650; }
-.acct-who span { font-size: 12.2px; color: var(--accent); }
+/* Direct child, for the same reason: this is the handle under the name, not
+   every span that ever lands inside — the check's tooltip was being recoloured
+   and resized by it. */
+.acct-who > span { font-size: 12.2px; color: var(--accent); }
 .acct-owner {
   justify-self: start; margin-top: 4px;
   font-style: normal; font-size: 10px; font-weight: 700;
