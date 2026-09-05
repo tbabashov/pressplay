@@ -6,6 +6,7 @@ import NowPlaying from '../components/audio/NowPlaying'
 import Atmosphere from '../components/Atmosphere'
 import ToTop from '../components/ToTop'
 import CookieBanner from '@/components/CookieBanner'
+import { Analytics } from '@vercel/analytics/next'
 import { SITE_URL } from '@/lib/site-url'
 
 // One family, self-hosted at build time. The width axis carries the display voice,
@@ -93,6 +94,10 @@ export default function RootLayout ({ children }) {
           <NowPlaying />
           <ToTop />
           <CookieBanner />
+          {/* Page counts, from Vercel. It reports only from a deployment, so
+              this is inert in development. No cookie and no stored id, which is
+              why it sits outside the banner's optional-storage gate. */}
+          <Analytics />
         </PlayerProvider>
       </body>
     </html>
