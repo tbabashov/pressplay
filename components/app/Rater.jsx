@@ -335,9 +335,26 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
             <label><span>Album</span>
               <input value={album.name || ''} onChange={e => editAlbum({ ...album, name: e.target.value })} />
             </label>
-            <label><span>Artist</span>
-              <input value={album.artist || ''} onChange={e => editAlbum({ ...album, artist: e.target.value })} />
-            </label>
+            {/* One name at a time, the same box the features use. A single
+                text field split on commas cannot hold a name that contains one:
+                typing Tyler, The Creator into it produced two artists called
+                Tyler and The Creator. Pasting a whole credit line still splits,
+                because that is what pasting one means.
+
+                artist and artists are kept in step here: the columns and the
+                slides read one, the discography matcher reads the other, and
+                letting them drift is how a record ends up credited to somebody
+                on one screen and somebody else on the next. */}
+            <div className="rater-edit-credit">
+              <span>Artist</span>
+              <FeatureInput
+                value={album.artists || []}
+                onChange={artists => editAlbum({
+                  ...album, artists, artist: artists.join(', ')
+                })}
+                label="Add an artist"
+              />
+            </div>
             <div className="rater-edits-pair">
               <label><span>Released</span>
                 <input value={album.year || ''} inputMode="numeric"

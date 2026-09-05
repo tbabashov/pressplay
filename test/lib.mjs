@@ -448,10 +448,26 @@ await test('an edited album survives a save and a reload', async () => {
   assert.equal(reloaded.tracks[0].preview, true, 'previews come back')
   assert.equal(reloaded.artistId, '99')
 
-  // Editing the artist wins over the stored list rather than being ignored.
-  const renamed = toSnapshot({ ...edited, artist: 'Freddie Gibbs & Madlib' })
-  assert.equal(renamed.artists[0], 'Freddie Gibbs & Madlib')
-  assert.ok(renamed.artists.includes('Madlib'))
+  // The credit is the list; the string is how the list reads. It used to be the
+  // other way round, with the string winning, and that cannot carry a name with
+  // a comma in it: Tyler, The Creator went in as one artist and came back as
+  // two. Editing the list is what counts now, and the box that edits it adds
+  // one name at a time.
+  const renamed = toSnapshot({
+    ...edited,
+    artists: ['Freddie Gibbs', 'Madlib', 'Tyler, The Creator'],
+    artist: 'Freddie Gibbs, Madlib, Tyler, The Creator'
+  })
+  assert.deepEqual(renamed.artists, ['Freddie Gibbs', 'Madlib', 'Tyler, The Creator'])
+  assert.deepEqual(
+    fromSnapshot(renamed).artists,
+    ['Freddie Gibbs', 'Madlib', 'Tyler, The Creator'],
+    'a name with a comma in it survives the round trip'
+  )
+  assert.equal(fromSnapshot(renamed).artist, 'Freddie Gibbs, Madlib, Tyler, The Creator')
+
+  // An album that only ever had the single string still has a credit.
+  assert.deepEqual(toSnapshot({ id: '9', name: 'B', artist: 'Solo', tracks: [] }).artists, ['Solo'])
 
   // An import has no catalogue entry at all and must still open.
   const imported = preferSaved(fromSnapshot(toSnapshot(edited)), null)

@@ -1939,6 +1939,26 @@ body:has(.app) .vignette { opacity: 0.5; }
   color: #fff; background: #c0392f;
 }
 .trk-add { margin-left: 8px; }
+
+/* Six columns do not fit across a phone. The title column collapsed to 50px
+   while the input inside it kept its own width, so the title ran straight
+   across the length box and the two sat on top of each other. The title takes
+   the room instead, and the length and the score move underneath it. */
+@media (max-width: 620px) {
+  .rater.editing .trk {
+    grid-template-columns: 22px 34px minmax(0, 1fr) 54px;
+    column-gap: 10px;
+    row-gap: 8px;
+  }
+  .rater.editing .trk-n    { grid-column: 1; grid-row: 1; }
+  .rater.editing .trk-play { grid-column: 2; grid-row: 1; }
+  .rater.editing .trk-name { grid-column: 3; grid-row: 1; }
+  .rater.editing .trk-drop { grid-column: 4; grid-row: 1; }
+  .rater.editing .trk-len {
+    grid-column: 3; grid-row: 2; justify-self: start; width: 88px;
+  }
+  .rater.editing .trk-score { grid-column: 4; grid-row: 2; }
+}
 .rater.editing .trk-n, .rater.editing .trk-play { margin-top: 5px; }
 .rater.editing .trk:hover { background: rgba(255,255,255,0.03); }
 
@@ -1962,16 +1982,21 @@ body:has(.app) .vignette { opacity: 0.5; }
 .trk-edit .trk-ft:placeholder-shown { box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05); }
 
 .rater-edits { display: grid; gap: 10px; margin-bottom: 14px; }
-.rater-edits label, .rater-edits-pair label { display: grid; gap: 4px; }
+.rater-edits label, .rater-edits-pair label, .rater-edit-credit { display: grid; gap: 4px; }
 .rater-edits span { font-size: 11.4px; font-weight: 600; color: var(--fg-4); }
 .rater-edits-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.rater-edits input {
+/* Inside a label only. The credit is a chips box now, and it brings its own
+   field with its own shape — dressing that one as a full-width text input put
+   a bordered box inside a bordered box and pushed the chips onto their own
+   line. Its label is not a <label> for the same reason: it points at a widget
+   rather than at a single control. */
+.rater-edits label > input {
   width: 100%; padding: 8px 11px; border-radius: 9px;
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(255,255,255,0.13);
   color: var(--fg); font: inherit; font-size: 13.6px;
 }
-.rater-edits input:focus { outline: none; border-color: rgba(var(--accent-rgb), 0.6); }
+.rater-edits label > input:focus { outline: none; border-color: rgba(var(--accent-rgb), 0.6); }
 
 .trk-edit { display: grid; gap: 4px; }
 .trk-edit input, .trk-len {
