@@ -1,6 +1,6 @@
 export const metadata = { title: 'Privacy' }
 
-const UPDATED = '2 September 2026'
+const UPDATED = '5 September 2026'
 
 export default function PrivacyPage () {
   return (
@@ -10,8 +10,8 @@ export default function PrivacyPage () {
 
       <p className="lg-lede">
         What this site knows about you, why, and what happens to it. Short, because there is not
-        much of it: there is no advertising, no analytics, and nothing is sold or shared for
-        marketing.
+        much of it: there is no advertising, nothing is sold or shared for marketing, and the
+        only measurement is a count of page views that does not identify anybody.
       </p>
 
       <h2>What is collected</h2>
@@ -49,9 +49,22 @@ export default function PrivacyPage () {
         </li>
       </ul>
 
+      <h3>When you visit a page</h3>
+      <ul>
+        <li>
+          A count of the page view, through Vercel Web Analytics, which is run by the company
+          that hosts this site. It records which page was opened, roughly where the request came
+          from and what kind of device asked, and it counts a visit without setting a cookie,
+          without storing an identifier in your browser and without any way to recognise you on
+          another site or on a later day. The numbers are aggregate: they say a page was opened
+          two hundred times, never who opened it. Vercel&rsquo;s own privacy notice covers what
+          they do with it.
+        </li>
+      </ul>
+
       <h2>What is not collected</h2>
       <ul>
-        <li>No analytics. No page-view counter, no session recorder, no heat maps.</li>
+        <li>No session recorder, no heat maps, no scroll tracking, nothing that watches what you do on a page.</li>
         <li>No advertising identifiers, and no cookies that follow you to another site.</li>
         <li>No location beyond whatever a server log holds about an IP address.</li>
         <li>Payment details. Nothing takes a payment yet, and no card is ever typed into this site.</li>

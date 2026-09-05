@@ -1,5 +1,5 @@
 import { createHash, randomBytes } from 'node:crypto'
-import { getCredentials, createReset, takeReset, clearResets, setPassword } from '@/lib/db'
+import { getCredentials, createReset, takeReset, clearResets, setPassword, getProfile } from '@/lib/db'
 import { hashPassword, passwordError } from '@/lib/password'
 import { sendMail } from '@/lib/email'
 import { SITE_URL } from '@/lib/site-url'
@@ -33,9 +33,35 @@ export async function POST (req) {
   if (!email) return same
 
   const creds = await getCredentials(email)
-  // No credentials means either no account, or a Google one, which has no
-  // password here to reset. Both answer the same way.
-  if (!creds) return same
+  if (!creds) {
+    // No password on this address: either there is no account, or it signs in
+    // with Google and has nothing here to reset. The reply to the browser is
+    // the same either way, so nothing leaks — but a real account holder who
+    // asked for a link and then waits for a mail that was never coming has no
+    // way to find that out. So they get one saying which door is theirs.
+    const account = await getProfile(email).catch(() => null)
+    if (account) {
+      await sendMail({
+        to: email,
+        subject: 'Signing in to Press Play',
+        text: [
+          'Somebody asked to reset a password on this address.',
+          '',
+          'There is no password on it: this account signs in with Google. Use',
+          'the Google button and you are in.',
+          '',
+          `${SITE_URL}/join`,
+          '',
+          'If this was not you, nothing has changed and you can ignore this.'
+        ].join('\n'),
+        html: `<p>Somebody asked to reset a password on this address.</p>
+<p>There is no password on it: this account signs in with Google.
+<a href="${SITE_URL}/join">Use the Google button</a> and you are in.</p>
+<p>If this was not you, nothing has changed and you can ignore this.</p>`
+      })
+    }
+    return same
+  }
 
   // Asking again retires the links already sent.
   await clearResets(email)

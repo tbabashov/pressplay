@@ -1,6 +1,6 @@
 export const metadata = { title: 'Cookies' }
 
-const UPDATED = '2 September 2026'
+const UPDATED = '5 September 2026'
 
 // Every row here was read off the browser rather than copied from a template.
 // Three cookies, all set by the sign-in library, none of them present until
@@ -18,8 +18,9 @@ export default function CookiesPage () {
       <p className="lg-updated">Last updated {UPDATED}</p>
 
       <p className="lg-lede">
-        Three cookies, all of them for signing in. No advertising, no analytics, nothing that
-        follows you to another site. If you never sign in, this site sets no cookies at all.
+        Three cookies, all of them for signing in. No advertising, and nothing that follows you
+        to another site. Page views are counted, but that is done without a cookie, so if you
+        never sign in this site still sets no cookies at all.
       </p>
 
       <h2>The cookies</h2>

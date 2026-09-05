@@ -4,11 +4,12 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { readConsent, writeConsent } from '@/lib/consent'
 
-// The familiar three-button notice. One line of the usual wording is
-// deliberately not here: this site runs no analytics and personalises nothing,
-// so claiming it does in a consent notice would be a false statement in the
-// one document that has to be true. The moment either exists, the sentence
-// goes in and this becomes a real category to reject.
+// The familiar three-button notice, with one line of the usual wording
+// deliberately missing. There is no analytics category to reject because the
+// page counter this site runs sets no cookie and stores no identifier: there is
+// nothing in your browser for a switch to turn off. Offering the switch anyway
+// would be theatre in the one document that has to be true. The moment
+// something is stored, the category goes in and becomes real.
 export default function CookieBanner () {
   const [show, setShow] = useState(false)
   const [manage, setManage] = useState(false)
@@ -87,8 +88,9 @@ export default function CookieBanner () {
             </div>
 
             <p className="ck-none">
-              There is no analytics category and no advertising category, because this site has
-              neither. <Link href="/legal/cookies">Everything that is stored</Link>.
+              There is no advertising category, because this site has none, and no analytics
+              category, because the page counter it uses stores nothing in your browser to
+              switch off. <Link href="/legal/cookies">Everything that is stored</Link>.
             </p>
 
             <div className="ck-do">

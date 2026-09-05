@@ -16,7 +16,10 @@ export async function GET () {
     serverless: Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME),
     env: Object.fromEntries(
       ['DATABASE_URL', 'AUTH_SECRET', 'AUTH_GOOGLE_ID', 'AUTH_GOOGLE_SECRET',
-       'ADMIN_EMAIL', 'SUPABASE_SERVICE_ROLE_KEY']
+       'ADMIN_EMAIL', 'SUPABASE_SERVICE_ROLE_KEY',
+       // Without these the password reset answers "a link is on its way" and
+       // sends nothing, which is indistinguishable from a lost mail.
+       'RESEND_API_KEY', 'MAIL_FROM']
         .map(k => [k, process.env[k] ? 'set' : 'MISSING'])
     ),
     // Which half of billing is configured. Selling needs the key, the store and
