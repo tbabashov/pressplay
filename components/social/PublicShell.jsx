@@ -10,10 +10,16 @@ export default async function PublicShell ({ children }) {
   const session = await auth()
   const me = session?.user ? await getProfile(session.user.email) : null
 
+  // The mark means home, and home depends on whether you have one. Signed in it
+  // goes where the app's own mark goes; signed out the front page is the only
+  // home there is. Without this, opening your own profile and pressing the mark
+  // put you back on the sales page you had already bought.
+  const home = session?.user ? '/app' : '/'
+
   return (
     <div className="pub-shell">
       <header className="pub-top">
-        <Link href="/" className="pub-mark">
+        <Link href={home} className="pub-mark">
           <Mark size={19} />
           <strong>Press Play</strong>
         </Link>
