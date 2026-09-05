@@ -699,3 +699,21 @@ await test('a pick left on automatic reaches the feed, not just the page', async
   const chosen = publicPost({ ...review, selections: { bestSong: 'Middle' } })
   assert.equal(chosen.bestSong, 'Middle')
 })
+
+await test('a comma is a decimal point', async () => {
+  const { normaliseDecimal } = await import(R + 'rating-scale.js')
+  const { criterionValue } = await import(R + 'preferences.js')
+  // Most of the world types 8,5, and a phone keypad in those locales offers no
+  // full stop at all. Number('8,5') is NaN, so this used to read as no answer.
+  assert.equal(normaliseDecimal('8,5'), '8.5')
+  assert.equal(normaliseDecimal('8.5'), '8.5')
+  assert.equal(normaliseDecimal(''), '')
+  assert.equal(normaliseDecimal(null), '')
+
+  assert.equal(criterionValue('8,5'), 8.5)
+  assert.equal(criterionValue('8.5'), 8.5)
+  assert.equal(criterionValue('11,0'), 11)
+  // Still not a number, and still not a zero.
+  assert.equal(criterionValue('abc'), null)
+  assert.equal(criterionValue(''), null)
+})

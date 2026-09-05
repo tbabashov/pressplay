@@ -8,7 +8,7 @@ import Meter from '../audio/Meter'
 import { dominant } from '../../lib/palette'
 import { chipColour } from '../../lib/rating-colors'
 import { autoBestSong, autoWorstSong } from '../../lib/auto-picks'
-import { NA } from '../../lib/rating-scale'
+import { NA, normaliseDecimal } from '../../lib/rating-scale'
 import { superlativeByKey, DEFAULT_PREFERENCES, SUPERLATIVE_MAX, TEXT_SUPERLATIVE_MAX } from '../../lib/preferences'
 import { DEFAULT_SCALE } from '../../lib/scales'
 import ImageInput from './ImageInput'
@@ -32,7 +32,7 @@ function clockToSecs (text, fallback) {
 }
 
 function parseScore (raw, max, allowNA = true) {
-  const s = String(raw).trim()
+  const s = normaliseDecimal(raw).trim()
   if (s === '') return null
   if (s === '-' || s === '–' || s.toLowerCase() === 'n' || s.toLowerCase() === 'na') {
     return allowNA ? NA : undefined
@@ -145,6 +145,8 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
   const [selections, setSelections] = useState(initial?.selections ?? {})
   const [nowPlaying, setNowPlaying] = useState(initial?.nowPlaying ?? '')
   const [confirmDrop, setConfirmDrop] = useState(null)
+  // What is in a score box that is not a number yet, keyed by track.
+  const [draft, setDraft] = useState({})
 
   // A song the catalogue does not have, and a song it has that this record
   // does not. Both renumber what is left and re-total the runtime, because a
@@ -225,24 +227,26 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
     const p = []
     if (songAverage !== null) p.push(songAverage)
     for (const [key] of CRITERIA) {
-      const n = Number(criteria[key])
+      const n = Number(normaliseDecimal(criteria[key]))
       if (criteria[key] !== '' && criteria[key] !== undefined && Number.isFinite(n)) p.push(clamp(n))
     }
     return p
   }, [songAverage, criteria, MAX_SCORE])
 
   const computed = parts.length ? parts.reduce((a, b) => a + b, 0) / parts.length : null
-  const manual = override.trim() === '' ? null : Number(override)
+  const manual = override.trim() === '' ? null : Number(normaliseDecimal(override))
   // An override is a deliberate number, but it is still a score on this scale.
   const final = Number.isFinite(manual) ? Math.min(MAX_SCORE, Math.max(0, manual)) : computed
 
   // Show what is counted. Without this the box keeps saying 50 while the score
   // is worked out from 10, which reads as the arithmetic being broken.
   const settle = (value, apply) => {
-    const n = Number(value)
+    const n = Number(normaliseDecimal(value))
     if (String(value).trim() === '' || !Number.isFinite(n)) return
     const c = Math.min(MAX_SCORE, Math.max(0, n))
-    if (c !== n) apply(String(c))
+    // Rewrites a comma to a dot as well as clamping, so what gets saved is a
+    // number every other screen can read back.
+    if (c !== n || String(value) !== String(n)) apply(String(c))
   }
 
   const done = Object.keys(scores).length
@@ -451,10 +455,23 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
 
                 <input
                   className={`trk-score${has ? ' is-scored' : ''}`}
-                  value={v === NA ? '–' : v ?? ''}
-                  onChange={e => setScore(t.id, e.target.value)}
+                  // While this box has something half-typed in it, it shows
+                  // exactly that. Reading the value back off the parsed number
+                  // meant a keystroke that is not yet a number vanished as it
+                  // was typed: the comma in 8,5 never reached the box, so the 5
+                  // landed against the 8 and the score became 85, clamped to
+                  // the top of the scale. The same was true of the dot.
+                  value={draft[t.id] ?? (v === NA ? '–' : v ?? '')}
+                  onChange={e => {
+                    setDraft(d => ({ ...d, [t.id]: e.target.value }))
+                    setScore(t.id, e.target.value)
+                  }}
+                  // Letting go hands the box back to the stored score, which is
+                  // what turns 8,5 into 8.5 rather than leaving the comma to be
+                  // saved and read as nothing later.
+                  onBlur={() => setDraft(({ [t.id]: _, ...rest }) => rest)}
                   placeholder=""
-                  title="0 to 11, or a dash for N/A"
+                  title={`0 to ${MAX_SCORE}${scale.na ? ', or a dash for N/A' : ''}`}
                   inputMode="decimal"
                   aria-label={`Score for ${t.title}`}
                   style={has ? tierStyle(v, scale) : undefined}
