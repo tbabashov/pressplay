@@ -19,7 +19,10 @@ export async function GET () {
        'ADMIN_EMAIL', 'SUPABASE_SERVICE_ROLE_KEY',
        // Without these the password reset answers "a link is on its way" and
        // sends nothing, which is indistinguishable from a lost mail.
-       'RESEND_API_KEY', 'MAIL_FROM']
+       'RESEND_API_KEY', 'MAIL_FROM',
+       // Optional. Discogs answers without one; a token raises the rate limit
+       // from about twenty five requests a minute to sixty.
+       'DISCOGS_TOKEN']
         .map(k => [k, process.env[k] ? 'set' : 'MISSING'])
     ),
     // Which half of billing is configured. Selling needs the key, the store and

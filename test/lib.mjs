@@ -733,3 +733,32 @@ await test('a comma is a decimal point', async () => {
   assert.equal(criterionValue('abc'), null)
   assert.equal(criterionValue(''), null)
 })
+
+await test('a Discogs track credits its guests and not its own artists', async () => {
+  const { guestsOn } = await import(R + 'discogs-credits.js')
+
+  // The ordinary shape: a role on a named artist, nothing to parse.
+  assert.deepEqual(
+    guestsOn({ title: 'Sicko Mode', extraartists: [{ role: 'Featuring', name: 'Drake' }] }, ['Travis Scott']),
+    ['Drake'])
+
+  // Two artists of one name are told apart by a number that is not a name.
+  assert.deepEqual(
+    guestsOn({ title: 'X', extraartists: [{ role: 'Featuring', name: 'Travis Scott (2)' }] }, []),
+    ['Travis Scott'])
+
+  // Some submissions credit a guest as an artist of the track instead, and
+  // some put it in the title after all, the way Apple does.
+  assert.deepEqual(guestsOn({ title: 'X', artists: [{ name: 'Frank Ocean' }] }, ['Travis Scott']), ['Frank Ocean'])
+  assert.deepEqual(guestsOn({ title: 'X (feat. Swae Lee)' }, ['Travis Scott']), ['Swae Lee'])
+
+  // The record's own artists are never guests on it, whichever field they
+  // arrive in and whatever case they are written in.
+  assert.deepEqual(guestsOn({ title: 'X', artists: [{ name: 'travis scott' }] }, ['Travis Scott']), [])
+  assert.deepEqual(
+    guestsOn({ title: 'X', extraartists: [{ role: 'Featuring', name: 'Drake' }, { role: 'Producer', name: 'Mike Dean' }] }, []),
+    ['Drake'],
+    'a producer is not a feature')
+
+  assert.deepEqual(guestsOn({ title: 'Stargazing' }, ['Travis Scott']), [])
+})
