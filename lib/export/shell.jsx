@@ -15,6 +15,11 @@ export const FRAME_H = 1920
 // right, and the username + caption + sound ticker along the bottom. Content
 // lives strictly inside these insets, with margin to spare.
 export const SAFE = { top: 300, right: 190, bottom: 270, left: 105 }
+
+// The site's own account, as it appears on a slide. Still written out in the
+// exporters as the default for somebody's own handle, which is a different
+// thing that happens to start life with the same value.
+export const SITE_HANDLE = '@the.press.play'
 export const CONTENT_W = FRAME_W - SAFE.left - SAFE.right // 785
 export const CONTENT_H = FRAME_H - SAFE.top - SAFE.bottom // 1350
 
@@ -123,7 +128,7 @@ export const rowRule = theme => styleOf(theme).rule(theme)
 // said it did; at bottom 196 it did not, because the band is 270 deep and the
 // handle was sitting 74px inside it. Written against SAFE now, so the claim and
 // the number cannot drift apart again.
-export function Watermark ({ handle = '@the.press.play' }) {
+export function Watermark ({ handle = SITE_HANDLE }) {
   return (
     <div style={{
       position: 'absolute',
@@ -165,13 +170,21 @@ export function PressPlayMark () {
       display: 'flex', alignItems: 'center', gap: 12,
       pointerEvents: 'none', opacity: 0.6
     }}>
-      <svg width="34" height="34" viewBox="0 0 18 18" aria-hidden="true">
+      <svg width="30" height="30" viewBox="0 0 18 18" aria-hidden="true">
         <circle cx="9" cy="9" r="8" fill="none" stroke="var(--ink)" strokeWidth="1.7" />
         <path d="M6.9 5.6v5.8l4.5-2.9z" fill="var(--ink)" />
       </svg>
+      {/* Two weights, not one. "Press Play" alone was a word in the corner that
+          told nobody where to find it; the whole line set in one bold shouts a
+          sentence at the slide. The lead-in stays quiet and the account carries
+          the weight, so what is left to read is the part worth acting on. */}
       <span style={{
-        fontSize: 34, fontWeight: 750, letterSpacing: 0.6, color: 'var(--ink)'
-      }}>Press Play</span>
+        fontSize: 30, letterSpacing: 0.4, color: 'var(--ink)',
+        display: 'flex', alignItems: 'baseline', gap: 8, whiteSpace: 'nowrap'
+      }}>
+        <span style={{ fontWeight: 500, opacity: 0.78 }}>slides made by</span>
+        <span style={{ fontWeight: 750 }}>{SITE_HANDLE}</span>
+      </span>
     </div>
   )
 }
