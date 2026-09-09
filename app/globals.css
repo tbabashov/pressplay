@@ -267,6 +267,13 @@ img { display: block; max-width: 100%; }
   transition: background 160ms var(--ease), color 160ms var(--ease);
 }
 .acct-menu a:hover, .acct-menu button:hover { background: rgba(255,255,255,0.08); color: var(--fg); }
+/* Scoped by two classes rather than shouted with !important, which is how the
+   rest of this file beats the shared .acct-menu a rule. Static gold for the
+   same reason the rail's row is: var(--accent) is the current album's colour
+   on half the screens this menu opens over. */
+.acct-menu .acct-upgrade { color: #e2aa4a; font-weight: 640; }
+.acct-menu .acct-upgrade:hover { background: rgba(226, 170, 74, 0.13); color: #edc074; }
+
 .acct-out { color: #ef9ea0 !important; }
 .acct-out:hover { background: rgba(239, 158, 160, 0.11) !important; color: #ef9ea0 !important; }
 

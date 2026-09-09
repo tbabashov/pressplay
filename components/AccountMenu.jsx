@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import Verified from './Verified'
 import { signOut } from 'next-auth/react'
@@ -8,6 +9,9 @@ import { signOut } from 'next-auth/react'
 // One account control for both shells. Closed it is a picture and the word
 // Profile; open it is the two things anyone actually wants from it.
 export default function AccountMenu ({ name, image, handle, role, verified = false }) {
+  // This menu is in the app bar and in the marketing nav, so where closing
+  // the tiers screen should return to depends on which one you opened it from.
+  const path = usePathname()
   const [open, setOpen] = useState(false)
   const [quota, setQuota] = useState(null)
   const box = useRef(null)
@@ -69,20 +73,19 @@ export default function AccountMenu ({ name, image, handle, role, verified = fal
           {/* Two separate statements: which tier the account is on, and what
               is left of today. Boxed together they read as one label with a
               number stuck to it. */}
-          <Link className="acct-plan" href="/tiers" onClick={() => setOpen(false)} role="menuitem">
+          {/* Says which tier this is and stops there. It used to be a second
+              link to the tiers screen, which in a menu this size meant two rows
+              going to one place; the gold row below is the way there now. */}
+          <div className="acct-plan">
             <span className="acct-plan-left">
               <span className={`acct-tier acct-tier-${quota?.tier || 'free'}`}>
                 {quota ? quota.tierName : 'Your tier'}
               </span>
               <span className="acct-plan-sub">
-                {quota?.unlimited ? 'Everything unlocked' : 'See the tiers'}
+                {quota?.unlimited ? 'Everything unlocked' : 'What this account is on'}
               </span>
             </span>
-            <svg className="acct-plan-go" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M9.5 5.5 16 12l-6.5 6.5" fill="none"
-                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </Link>
+          </div>
 
           <div className="acct-quota">
             <span>
@@ -99,14 +102,24 @@ export default function AccountMenu ({ name, image, handle, role, verified = fal
             )}
           </div>
 
-          <Link role="menuitem" href="/app/settings" onClick={() => setOpen(false)}>
-            Account
-          </Link>
           {handle && (
             <Link role="menuitem" href={`/u/${handle}`} onClick={() => setOpen(false)}>
               Your public page
             </Link>
           )}
+
+          {/* The one paid thing in the menu, and the one row that is not grey.
+              It carries where it was pressed, so closing the tiers screen comes
+              back to the screen this menu was open over. */}
+          <Link role="menuitem" className="acct-upgrade"
+            href={`/tiers?from=${encodeURIComponent(path || '/app')}`}
+            onClick={() => setOpen(false)}>
+            Upgrade
+          </Link>
+
+          <Link role="menuitem" href="/app/settings" onClick={() => setOpen(false)}>
+            Account
+          </Link>
           <button role="menuitem" className="acct-out" onClick={() => signOut({ callbackUrl: '/' })}>
             Log out
           </button>

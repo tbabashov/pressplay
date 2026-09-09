@@ -6,6 +6,7 @@ import { published } from '@/lib/social-queries'
 import ProfileForm from '@/components/social/ProfileForm'
 import PasswordForm from '@/components/social/PasswordForm'
 import { accountTier, TIER_DETAIL } from '@/lib/tiers'
+import CancelSubscription from '@/components/social/CancelSubscription'
 import Achievements from '@/components/app/Achievements'
 import YourData from '@/components/social/YourData'
 import DangerZone from '@/components/social/DangerZone'
@@ -104,6 +105,18 @@ export default async function Settings () {
         You are on <strong>{TIER_DETAIL[tier].name}</strong>. {TIER_DETAIL[tier].blurb}{' '}
         <Link href="/tiers">See what each tier includes</Link>.
       </p>
+
+      {/* Only where there is something to cancel. The owner is on max without
+          paying for it, and a free account has no subscription at all, so
+          neither is offered a button that would have nothing to act on. */}
+      {profile?.subscriptionId && (
+        <CancelSubscription
+          tierName={TIER_DETAIL[tier].name}
+          status={profile.subscriptionStatus}
+          endsAt={profile.subscriptionEndsAt}
+          renewsAt={profile.subscriptionRenewsAt}
+        />
+      )}
 
       <div className="set-counts">
         <p>

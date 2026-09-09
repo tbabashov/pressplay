@@ -15,7 +15,8 @@ const ICONS = {
   // A ladder of rungs getting shorter: the scale, which is what this one is
   // mostly about. Not the vertical bars of the leaderboard or the line of the
   // taste chart, so the three do not read as each other at rail size.
-  scoring: <path d="M4 5h16v2.6H4Zm0 5.7h11.4v2.6H4Zm0 5.7h6.8v2.6H4Z" />
+  scoring: <path d="M4 5h16v2.6H4Zm0 5.7h11.4v2.6H4Zm0 5.7h6.8v2.6H4Z" />,
+  upgrade: <path d="M12 3.4 14.6 9l6.1.6-4.6 4.1 1.3 6L12 16.6 6.6 19.7l1.3-6L3.3 9.6 9.4 9Z" />
 }
 
 const LINKS = [
@@ -25,9 +26,14 @@ const LINKS = [
   ['/app/discography', 'Discographies', 'disc'],
   ['/app/stats', 'Taste', 'stats'],
   ['/app/feed', 'Social', 'feed'],
-  ['/app/scoring', 'Scoring', 'scoring'],
-  ['/app/settings', 'Profile', 'profile']
+  ['/app/scoring', 'Scoring', 'scoring']
 ]
+
+// Not in the list above: these two sit at the foot of the rail, under the
+// space, because neither is a place you are working — one is the account and
+// the other is what the account costs.
+const PROFILE = ['/app/settings', 'Profile', 'profile']
+const UPGRADE = '/tiers'
 
 // On a phone the sidebar became a strip that scrolled sideways, which put four
 // of the seven destinations off the edge where nobody would ever find them. A
@@ -56,19 +62,35 @@ export default function Rail ({ image, name }) {
   return (
     <>
     <nav className="rail" aria-label="Sections">
-      {LINKS.map(([href, label, icon]) => {
-        const on = href === '/app' ? path === '/app' : path.startsWith(href)
-        return (
-          <Link key={href} href={href} className={`rail-item${on ? ' on' : ''}`} aria-current={on ? 'page' : undefined}>
-            {icon === 'profile' && (image || name)
-              ? (image
-                  ? <img className="rail-pfp" src={image} alt="" width="20" height="20" referrerPolicy="no-referrer" />
-                  : <span className="rail-pfp rail-pfp-blank" aria-hidden="true">{initial}</span>)
-              : <svg viewBox="0 0 24 24" aria-hidden="true">{ICONS[icon]}</svg>}
-            <span>{label}</span>
-          </Link>
-        )
-      })}
+      {LINKS.map(([href, label, icon]) => (
+        <Link key={href} href={href} className={`rail-item${on(href) ? ' on' : ''}`}
+          aria-current={on(href) ? 'page' : undefined}>
+          <svg viewBox="0 0 24 24" aria-hidden="true">{ICONS[icon]}</svg>
+          <span>{label}</span>
+        </Link>
+      ))}
+
+      {/* Pushed to the bottom of the rail by the foot's own margin rather than
+          by a spacer element, so there is nothing in the tab order between the
+          last section and these two. */}
+      <div className="rail-foot">
+        {/* No active state: /tiers renders outside the app shell, so the rail
+            is never on screen when this is the current page. */}
+        <Link href={`${UPGRADE}?from=${encodeURIComponent(path)}`} className="rail-item rail-upgrade">
+          <svg viewBox="0 0 24 24" aria-hidden="true">{ICONS.upgrade}</svg>
+          <span>Upgrade</span>
+        </Link>
+
+        <Link href={PROFILE[0]} className={`rail-item${on(PROFILE[0]) ? ' on' : ''}`}
+          aria-current={on(PROFILE[0]) ? 'page' : undefined}>
+          {(image || name)
+            ? (image
+                ? <img className="rail-pfp" src={image} alt="" width="20" height="20" referrerPolicy="no-referrer" />
+                : <span className="rail-pfp rail-pfp-blank" aria-hidden="true">{initial}</span>)
+            : <svg viewBox="0 0 24 24" aria-hidden="true">{ICONS[PROFILE[2]]}</svg>}
+          <span>{PROFILE[1]}</span>
+        </Link>
+      </div>
     </nav>
       {/* The phone navigation. Rendered next to the rail rather than instead
           of it, so which one is showing is a question of width and not of a

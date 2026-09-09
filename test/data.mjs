@@ -59,7 +59,11 @@ await test('a class used in the app has a rule somewhere', async () => {
     .join('\n')
   const mustExist = [
     'ach-toast', 'pp-ed', 'pp-rm', 'disc-off', 'lk-add', 'exp-off', 'tabbar', 'sheet-row',
-    'sc-post', 'tw-card', 'cs-col', 'ck-body', 'dz', 'errpage', 'lg-body'
+    'sc-post', 'tw-card', 'cs-col', 'ck-body', 'dz', 'errpage', 'lg-body',
+    // The foot of the rail and the two upgrade rows. Nothing else positions
+    // them, so losing these rules puts Profile back in the middle of the list
+    // and turns the one paid row grey.
+    'rail-foot', 'rail-upgrade', 'acct-upgrade'
   ]
   const missing = mustExist.filter(c => !css.includes('.' + c))
   assert.equal(missing.length, 0, 'no CSS for: ' + missing.join(', '))

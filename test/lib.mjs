@@ -762,3 +762,56 @@ await test('a Discogs track credits its guests and not its own artists', async (
 
   assert.deepEqual(guestsOn({ title: 'Stargazing' }, ['Travis Scott']), [])
 })
+
+await test('a come-back-here address may not leave the site', async () => {
+  const { samePath } = await import(R + 'route-param.js')
+
+  assert.equal(samePath('/app/library', '/app'), '/app/library')
+  assert.equal(samePath('/', '/app'), '/')
+
+  // Two slashes is a protocol-relative URL wearing a path's clothes, and a
+  // close button that lands on another site is an open redirect.
+  assert.equal(samePath('//evil.example', '/app'), '/app')
+  assert.equal(samePath('https://evil.example', '/app'), '/app')
+  assert.equal(samePath('javascript:alert(1)', '/app'), '/app')
+
+  // Nothing, or something that is not a string at all.
+  assert.equal(samePath('', '/app'), '/app')
+  assert.equal(samePath(undefined, '/app'), '/app')
+  assert.equal(samePath(['/app/x'], '/app'), '/app')
+})
+
+await test('cancelling keeps what was paid for until it expires', async () => {
+  const { entitled } = await import(R + 'billing.js')
+
+  // The whole promise of the cancel button: it stops the renewal, it does not
+  // take the tier away. Lemon Squeezy holds a subscription at `cancelled`
+  // until the paid period runs out and only then sends `expired`.
+  assert.equal(entitled('cancelled'), true, 'cancelled still entitles')
+  assert.equal(entitled('active'), true)
+  assert.equal(entitled('on_trial'), true)
+  // Past due is still entitled: a card that failed on Tuesday is a payment
+  // problem, not a decision to leave.
+  assert.equal(entitled('past_due'), true)
+
+  // And the states that do end it.
+  assert.equal(entitled('expired'), false)
+  assert.equal(entitled('unpaid'), false)
+  assert.equal(entitled(''), false)
+  assert.equal(entitled(undefined), false)
+
+  // Case is whatever the provider felt like sending.
+  assert.equal(entitled('CANCELLED'), true)
+})
+
+await test('the cancel route never writes a tier', async () => {
+  // The route is the one place that could quietly downgrade somebody, so this
+  // asserts the shape of the file rather than its behaviour: it must reach for
+  // markSubscriptionCancelled, which cannot touch the tier, and never for
+  // setSubscription, which takes one as an argument.
+  const fs = await import('node:fs')
+  const src = fs.readFileSync(new URL('../app/api/subscription/cancel/route.js', import.meta.url), 'utf8')
+  assert.ok(src.includes('markSubscriptionCancelled'), 'uses the narrow mutation')
+  assert.ok(!src.includes('setSubscription'), 'never the one that takes a tier')
+  assert.ok(!/tier:\s*'free'/.test(src), 'never writes free')
+})

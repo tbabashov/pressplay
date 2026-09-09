@@ -75,6 +75,20 @@ body:has(.app) .vignette { opacity: 0.5; }
 }
 .rail-item.on svg { color: var(--accent); opacity: 1; }
 
+/* The account and what it costs, at the foot. The rail is a full-height flex
+   column, so the margin is what puts them there — no spacer element, and so
+   nothing sits between the last section and these two in the tab order. */
+.rail-foot { margin-top: auto; display: flex; flex-direction: column; gap: 3px; }
+/* The site's own gold, written out rather than taken from var(--accent): the
+   accent is rewritten on the root element by the album tint, the rater and the
+   player, so on the very screens this rail is visible on it is whatever colour
+   the current cover is — and one of those colours is the wash .rail-item.on
+   uses, which would make the upgrade row look like the page you are on. The
+   verified check learned this the same way. */
+.rail-upgrade { color: #e2aa4a; font-weight: 620; }
+.rail-upgrade svg { opacity: 1; }
+.rail-upgrade:hover { color: #edc074; background: rgba(226, 170, 74, 0.12); }
+
 .app-main { padding: 34px 30px 140px; min-width: 0; position: relative; }
 /* A measure, not the whole monitor. */
 .app-main > * { max-width: 1080px; }
@@ -2207,6 +2221,31 @@ body:has(.app) .vignette { opacity: 0.5; }
    glyph, which was the whole number while it was single digit and half of it
    from ten onwards: an accented 1 followed by a grey 1. */
 .ac-tally b { font-weight: 700; color: var(--accent); }
+
+/* Cancelling a subscription. Not in the danger zone: it is reversible, the
+   thing bought is kept to the end of the period, and putting it next to
+   "delete my account" would price it as the same decision. */
+.sub-cancel { margin-top: 4px; }
+.sub-cancel-open { font-size: 13.2px; padding: 9px 15px; }
+.sub-cancel-ask {
+  max-width: 62ch; padding: 15px 17px; border-radius: 13px;
+  background: rgba(192, 57, 47, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(255, 143, 134, 0.24);
+}
+.sub-cancel-ask p { font-size: 13.6px; line-height: 1.6; color: var(--fg-3); }
+.sub-cancel-ask strong { color: var(--fg); font-weight: 640; }
+.sub-cancel-do { display: flex; gap: 9px; margin-top: 13px; }
+.sub-cancel-yes {
+  min-height: 40px; padding: 9px 16px; border-radius: 10px; cursor: pointer;
+  font: inherit; font-size: 13px; font-weight: 640; white-space: nowrap;
+  color: #ff8f86; background: rgba(192, 57, 47, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(255, 143, 134, 0.42);
+  transition: color 160ms var(--ease), background 160ms var(--ease);
+}
+.sub-cancel-yes:hover { color: #fff; background: #c0392f; box-shadow: inset 0 0 0 1px #c0392f; }
+.sub-cancel-yes:disabled { opacity: 0.6; cursor: progress; }
+/* The state after, and the state you arrive in if it was cancelled earlier. */
+.sub-cancelled { margin-top: 4px; color: var(--fg-3); }
 
 /* ================================================================ social ==
    A feed of ratings you can actually read, not a list of album names. Open one
