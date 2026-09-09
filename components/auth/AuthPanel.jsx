@@ -45,6 +45,13 @@ export default function AuthPanel ({ next = '/app' }) {
       }
 
       const result = await signIn('credentials', { email, password, redirect: false })
+      // Sign-in is throttled per address, so a run of wrong guesses eventually
+      // stops being answered. Saying that plainly matters: someone who has hit
+      // the limit is otherwise told their password is wrong forever, and the
+      // one thing they can do about it is wait, which they have to be told.
+      if (result?.status === 429) {
+        throw new Error('Too many attempts. Wait a few minutes and try again.')
+      }
       // A wrong password and an unknown address give the same message on
       // purpose: the form is not a way to find out who has an account.
       if (!result || result.error) throw new Error('That email and password do not match.')
