@@ -5,8 +5,9 @@ import { ensureProfile } from '@/lib/ensure-profile'
 import { published } from '@/lib/social-queries'
 import ProfileForm from '@/components/social/ProfileForm'
 import PasswordForm from '@/components/social/PasswordForm'
-import { accountTier, TIER_DETAIL } from '@/lib/tiers'
-import CancelSubscription from '@/components/social/CancelSubscription'
+import { accountTier } from '@/lib/tiers'
+import TierPanel from '@/components/social/TierPanel'
+import { tierForVariant } from '@/lib/billing'
 import Achievements from '@/components/app/Achievements'
 import YourData from '@/components/social/YourData'
 import DangerZone from '@/components/social/DangerZone'
@@ -101,22 +102,15 @@ export default async function Settings () {
       <div className="page-head set-head">
         <h1>Your tier</h1>
       </div>
-      <p className="set-intro measure">
-        You are on <strong>{TIER_DETAIL[tier].name}</strong>. {TIER_DETAIL[tier].blurb}{' '}
-        <Link href="/tiers">See what each tier includes</Link>.
-      </p>
-
-      {/* Only where there is something to cancel. The owner is on max without
-          paying for it, and a free account has no subscription at all, so
-          neither is offered a button that would have nothing to act on. */}
-      {profile?.subscriptionId && (
-        <CancelSubscription
-          tierName={TIER_DETAIL[tier].name}
-          status={profile.subscriptionStatus}
-          endsAt={profile.subscriptionEndsAt}
-          renewsAt={profile.subscriptionRenewsAt}
-        />
-      )}
+      {/* Which period was bought, resolved here because it needs the configured
+          variant ids and those are server side. Null when the stored variant is
+          not one this build sells, and then the panel says nothing about price
+          rather than picking one. */}
+      <TierPanel
+        tier={tier}
+        profile={profile}
+        period={tierForVariant(profile?.subscriptionVariant)?.period ?? null}
+      />
 
       <div className="set-counts">
         <p>

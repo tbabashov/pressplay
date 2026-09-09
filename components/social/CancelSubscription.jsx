@@ -25,12 +25,18 @@ export default function CancelSubscription ({ tierName, status, endsAt, renewsAt
   const already = ['cancelled', 'expired'].includes(String(status || '').toLowerCase())
   const until = done?.endsAt || endsAt || renewsAt
 
-  // Already cancelled before this screen was opened, or just now: the same
-  // sentence either way, because it is the same state.
-  if (done || already) {
+  // Already cancelled when the screen was opened: the panel around this says so
+  // in its own status line, and saying it twice in one box reads as a bug.
+  if (already && !done) return null
+
+  // Cancelled just now, by this button. The panel is re-rendering behind this
+  // — router.refresh() below — and will say the same thing from the server in a
+  // moment; this is what stands there until it does, because a button that goes
+  // quiet after being pressed reads as having failed.
+  if (done) {
     return (
-      <p className="set-intro measure sub-cancelled">
-        This subscription will not renew.{' '}
+      <p className="sub-cancelled">
+        Cancelled.{' '}
         {until
           ? <>You keep <strong>{tierName}</strong> until <strong>{fullDate(until)}</strong>.</>
           : <>You keep <strong>{tierName}</strong> until the period you have paid for runs out.</>}

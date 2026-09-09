@@ -2222,6 +2222,59 @@ body:has(.app) .vignette { opacity: 0.5; }
    from ten onwards: an accented 1 followed by a grey 1. */
 .ac-tally b { font-weight: 700; color: var(--accent); }
 
+/* What this account is on, in full: the tier, what it costs, when it goes
+   again, what it includes, and the way out. One block, because those are one
+   question asked five ways. */
+.tp {
+  max-width: 62ch; margin-top: 4px;
+  padding: 20px 22px; border-radius: 16px;
+  background: rgba(255,255,255,0.028);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.09);
+}
+.tp-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 14px; flex-wrap: wrap;
+}
+.tp-name {
+  font-size: 11.5px; font-weight: 750; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--fg-3);
+}
+/* The same two colours the account menu gives these names, so a tier is one
+   colour wherever it is written. */
+.tp-name-plus { color: #e2aa4a; }
+.tp-name-max { color: #c4a0ff; }
+.tp-price { font-size: 13.4px; color: var(--fg-4); }
+.tp-price strong { font-size: 16px; font-weight: 700; color: var(--fg); }
+.tp-price-unknown { font-size: 12.6px; }
+
+.tp-state {
+  margin-top: 10px; font-size: 13.8px; line-height: 1.6; color: var(--fg-3);
+}
+.tp-state strong { color: var(--fg); font-weight: 640; }
+
+.tp-perks { list-style: none; display: grid; gap: 7px; margin-top: 16px; }
+.tp-perks li {
+  display: flex; align-items: flex-start; gap: 9px;
+  font-size: 13.2px; line-height: 1.5; color: var(--fg-3);
+}
+.tp-perks svg { width: 14px; height: 14px; flex: none; margin-top: 3px; color: var(--fg-4); }
+
+.tp-do {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 14px;
+  margin-top: 18px; padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.tp-see {
+  font-size: 13px; color: var(--fg-3);
+  text-decoration: underline; text-underline-offset: 3px;
+  text-decoration-color: rgba(255,255,255,0.24);
+}
+.tp-see:hover { color: var(--fg); text-decoration-color: rgba(255,255,255,0.5); }
+/* The cancel control sits inside the panel's own row, so it drops its margin. */
+.tp-do .sub-cancel { margin-top: 0; }
+.tp-do .sub-cancelled { margin-top: 0; font-size: 13.2px; }
+.tp-do .sub-cancel-ask { max-width: none; }
+
 /* Cancelling a subscription. Not in the danger zone: it is reversible, the
    thing bought is kept to the end of the period, and putting it next to
    "delete my account" would price it as the same decision. */
