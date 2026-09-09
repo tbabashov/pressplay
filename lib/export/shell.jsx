@@ -119,12 +119,18 @@ export const rowRule = theme => styleOf(theme).rule(theme)
 
 // ---------- Watermark ----------
 // Sits just above TikTok's bottom safe band, so it is never hidden by the
-// caption rail and never collides with frame content.
+// caption rail and never collides with frame content. That is what this always
+// said it did; at bottom 196 it did not, because the band is 270 deep and the
+// handle was sitting 74px inside it. Written against SAFE now, so the claim and
+// the number cannot drift apart again.
 export function Watermark ({ handle = '@the.press.play' }) {
   return (
     <div style={{
       position: 'absolute',
-      left: 0, right: 0, bottom: 196,
+      // A line above the credit, not level with it. Both sit at the foot of the
+      // safe box, and this one spans the full width to centre itself, so level
+      // with the credit a long handle would run into it from the left.
+      left: 0, right: 0, bottom: SAFE.bottom + 56,
       display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
       pointerEvents: 'none', opacity: 0.55
     }}>
@@ -140,21 +146,31 @@ export function Watermark ({ handle = '@the.press.play' }) {
 }
 
 // The site's own credit. A free export carries it because the frames are the
-// product being given away; a subscription takes it off. It is deliberately
-// small and in the corner: it is a credit, not a brand stamp across the work.
+// product being given away; a subscription takes it off.
+//
+// It sits in the bottom right corner of the safe box, not the frame. Pinned to
+// the frame at 54 and 62 it landed at 1026 by 1858 on a 1080 by 1920 slide,
+// which is 136px past the right safe edge and 208px past the bottom one —
+// underneath TikTok's like, comment and share rail and its caption. A credit
+// nobody can see is not a credit, and it was the only mark on a free export.
+//
+// It was 19px at 0.42 opacity too. On a frame 1080 wide that is under two
+// percent of the width, which reads as a smudge rather than a name. Still a
+// credit rather than a stamp across the work — it just has to survive being
+// looked at on a phone.
 export function PressPlayMark () {
   return (
     <div style={{
-      position: 'absolute', right: 54, bottom: 62,
-      display: 'flex', alignItems: 'center', gap: 8,
-      pointerEvents: 'none', opacity: 0.42
+      position: 'absolute', right: SAFE.right, bottom: SAFE.bottom,
+      display: 'flex', alignItems: 'center', gap: 12,
+      pointerEvents: 'none', opacity: 0.6
     }}>
-      <svg width="20" height="20" viewBox="0 0 18 18" aria-hidden="true">
+      <svg width="34" height="34" viewBox="0 0 18 18" aria-hidden="true">
         <circle cx="9" cy="9" r="8" fill="none" stroke="var(--ink)" strokeWidth="1.7" />
         <path d="M6.9 5.6v5.8l4.5-2.9z" fill="var(--ink)" />
       </svg>
       <span style={{
-        fontSize: 19, fontWeight: 750, letterSpacing: 0.4, color: 'var(--ink)'
+        fontSize: 34, fontWeight: 750, letterSpacing: 0.6, color: 'var(--ink)'
       }}>Press Play</span>
     </div>
   )
