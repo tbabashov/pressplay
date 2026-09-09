@@ -108,6 +108,10 @@ export default function AccountMenu ({ name, image, handle, role, verified = fal
             </Link>
           )}
 
+          <Link role="menuitem" href="/app/settings" onClick={() => setOpen(false)}>
+            Account
+          </Link>
+
           {/* The one paid thing in the menu, and the one row that is not grey.
               It carries where it was pressed, so closing the tiers screen comes
               back to the screen this menu was open over. */}
@@ -115,10 +119,6 @@ export default function AccountMenu ({ name, image, handle, role, verified = fal
             href={`/tiers?from=${encodeURIComponent(path || '/app')}`}
             onClick={() => setOpen(false)}>
             Upgrade
-          </Link>
-
-          <Link role="menuitem" href="/app/settings" onClick={() => setOpen(false)}>
-            Account
           </Link>
           <button role="menuitem" className="acct-out" onClick={() => signOut({ callbackUrl: '/' })}>
             Log out
