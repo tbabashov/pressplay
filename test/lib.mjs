@@ -815,3 +815,52 @@ await test('the cancel route never writes a tier', async () => {
   assert.ok(!src.includes('setSubscription'), 'never the one that takes a tier')
   assert.ok(!/tier:\s*'free'/.test(src), 'never writes free')
 })
+
+await test('songLanding keeps each rating system on its own ladder', async () => {
+  const { songLanding } = await import(R + 'taste.js')
+  const { SCALE_PRESETS } = await import(R + 'scales.js')
+  const ten = SCALE_PRESETS.find(s => s.id === 'ten')
+  const five = SCALE_PRESETS.find(s => s.id === 'five')
+
+  const groups = songLanding([
+    { scaleModel: ten, scores: { a: 6, b: 6, c: 10 } },
+    { scaleModel: ten, scores: { d: 6 } },
+    { scaleModel: five, scores: { e: 5, f: 'skit' } }
+  ])
+
+  // Two systems, the busier one first so it is the one that opens.
+  assert.equal(groups.length, 2)
+  assert.equal(groups[0].scale.id, 'ten')
+  assert.equal(groups[0].songs, 4)
+  assert.equal(groups[0].albums, 2)
+
+  // The whole point: a six out of ten is not counted with a five out of five.
+  assert.equal(groups[0].buckets[6].count, 3)
+  assert.equal(groups[1].buckets[5].count, 1)
+  // A ladder is only ever as tall as its own scale.
+  assert.equal(groups[1].buckets.length, 6)
+  // N/A is counted apart and stays out of the average, per scale.
+  assert.equal(groups[1].skits, 1)
+  assert.equal(groups[1].songs, 1)
+  assert.equal(groups[0].average, 7)
+})
+
+await test('songLanding files a review with no scale under the house eleven', async () => {
+  const { songLanding } = await import(R + 'taste.js')
+  // Everywhere else a missing model means the signature ladder, so it must here.
+  const [g] = songLanding([{ scores: { a: 11 } }])
+  assert.equal(g.scale.max, 11)
+  assert.equal(g.buckets[11].name, 'Majestic')
+  assert.equal(g.buckets[11].count, 1)
+})
+
+await test('songLanding grows a ladder to fit scores taller than its scale', async () => {
+  const { songLanding } = await import(R + 'taste.js')
+  const { SCALE_PRESETS } = await import(R + 'scales.js')
+  const five = SCALE_PRESETS.find(s => s.id === 'five')
+  // A library carried down from a taller ladder must not lose the scores that
+  // sit above the new ceiling: a song off the chart is worse than an odd chart.
+  const [g] = songLanding([{ scaleModel: five, scores: { a: 9 } }])
+  assert.equal(g.buckets.length, 10)
+  assert.equal(g.buckets[9].count, 1)
+})

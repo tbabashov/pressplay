@@ -1,17 +1,16 @@
 import Link from 'next/link'
 import { auth } from '@/auth'
 import { listReviews } from '@/lib/db'
-import { taste } from '@/lib/taste'
+import { taste, songLanding } from '@/lib/taste'
 import { projectReview } from '@/lib/library-shape'
 import { chipColour, scoreText } from '@/lib/rating-colors'
-import { TIERS } from '@/lib/rating-scale'
 import AlbumTint from '@/components/app/AlbumTint'
 import AlbumsOfTheYear from '@/components/app/AlbumsOfTheYear'
+import SongLanding from '@/components/app/SongLanding'
 
 export const metadata = { title: 'Taste' }
 export const dynamic = 'force-dynamic'
 
-const TIER_NAME = Object.fromEntries(TIERS)
 const fmt = (n, d = 2) => (typeof n === 'number' ? n.toFixed(d) : '—')
 
 export default async function Stats () {
@@ -21,6 +20,7 @@ export default async function Stats () {
   const reviews = await listReviews(session.user.email)
   const t = taste(reviews)
   const rated = reviews.map(projectReview)
+  const landing = songLanding(reviews)
 
   if (t.albums === 0) {
     return (
@@ -48,30 +48,7 @@ export default async function Stats () {
         <div><dt>Top marks</dt><dd className="tnum">{t.topMarks}</dd></div>
       </dl>
 
-      <section className="ts-block">
-        <h2 className="ts-h2">Where your songs land</h2>
-        <p className="ts-note">
-          {t.songs} songs on the ladder, and {t.skits} marked N/A and kept out of every average.
-          Your song average is {fmt(t.songAverage)}.
-        </p>
-        <ol className="ts-ladder">
-          {[...t.buckets].reverse().map(b => {
-            const c = chipColour(b.score)
-            return (
-              <li key={b.score}>
-                <span className="ts-tier tnum" style={{ color: c.bg.startsWith('#') ? c.bg : undefined }}>
-                  {b.score}
-                </span>
-                <span className="ts-tier-name">{TIER_NAME[b.score]}</span>
-                <span className="ts-bar">
-                  <i style={{ width: `${(b.count / t.peak) * 100}%`, background: c.bg }} />
-                </span>
-                <span className="ts-count tnum">{b.count || ''}</span>
-              </li>
-            )
-          })}
-        </ol>
-      </section>
+      <SongLanding groups={landing} />
 
       <div className="ts-split">
         <section className="ts-block">
