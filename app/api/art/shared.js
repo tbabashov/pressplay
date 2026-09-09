@@ -10,6 +10,13 @@ const ALLOWED = [
   /(^|\.)discogs\.com$/
 ]
 
+// What an artwork host is allowed to answer with. Covers are jpeg or png in
+// practice; the rest are here because a CDN may re-encode and it would be
+// wrong to break a cover over a format that is plainly still an image.
+const IMAGE_TYPES = new Set([
+  'image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'
+])
+
 // base64url, so the whole target survives a single path segment: no slashes to
 // be read as more segments, no padding to be stripped, no percent-encoding for
 // a proxy or a CDN to normalise on the way through.
@@ -38,9 +45,22 @@ export async function fetchArt (raw) {
   const r = await fetch(target, { next: { revalidate: 86400 } })
   if (!r.ok) return new Response('fetch failed', { status: 502 })
 
+  // The type is clamped rather than passed through. This route answers on this
+  // origin, so whatever it returns is same-origin: a host on the list above
+  // that answered 200 with an HTML error page would otherwise have that page
+  // served as a document from here, which is the one way an image proxy turns
+  // into a scripting hole. Anything that is not an image is refused outright,
+  // and the header is rebuilt from the allowlist rather than echoed, so no
+  // parameter travels with it.
+  const type = (r.headers.get('content-type') || '').split(';')[0].trim().toLowerCase()
+  if (!IMAGE_TYPES.has(type)) return new Response('not an image', { status: 502 })
+
   return new Response(r.body, {
     headers: {
-      'content-type': r.headers.get('content-type') || 'image/jpeg',
+      'content-type': type,
+      // Belt and braces: the global nosniff header says this too, and it costs
+      // nothing to say it on the one response that carries foreign bytes.
+      'x-content-type-options': 'nosniff',
       'cache-control': 'public, max-age=86400, immutable'
     }
   })
