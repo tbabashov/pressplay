@@ -37,16 +37,24 @@ const UPGRADE = '/tiers'
 
 // On a phone the sidebar became a strip that scrolled sideways, which put four
 // of the seven destinations off the edge where nobody would ever find them. A
-// phone gets a tab bar instead: four fixed tabs and a More sheet holding the
-// rest, so nothing is hidden and nothing has to be scrolled to.
-const TABS = ['/app', '/app/library', '/app/board', '/app/feed']
+// phone gets a tab bar instead: three fixed tabs, then Upgrade, then a More
+// sheet holding the rest, so nothing is hidden and nothing has to be scrolled
+// to.
+//
+// Social used to hold the fourth slot and is now in the sheet. It is somewhere
+// you go to read rather than somewhere you work, and the bar is the three
+// screens that rating an album actually moves between — plus the one row that
+// pays for the thing, which cannot be found at all if it is behind a menu.
+const TABS = ['/app', '/app/library', '/app/board']
 // A tab label has about nine characters before it starts crowding its
 // neighbour, so the long ones get a short name here rather than being
 // truncated or wrapped.
 const TAB_LABEL = { '/app/board': 'Ranks' }
 // Profile is not here: the account chip in the top bar is on every screen and
 // opens straight onto it, so a row for it was the same destination twice.
-const MORE = ['/app/discography', '/app/stats', '/app/scoring']
+// Social leads, because it is the one that moved out of the bar and this is
+// where somebody who used to tap for it will be looking.
+const MORE = ['/app/feed', '/app/discography', '/app/stats', '/app/scoring']
 
 export default function Rail ({ image, name }) {
   const path = usePathname()
@@ -106,6 +114,15 @@ export default function Rail ({ image, name }) {
             </Link>
           )
         })}
+        {/* No active state, for the same reason as the rail's: /tiers renders
+            outside the app shell, so this bar is never on screen while it is
+            the current page. It carries where it was tapped, so closing the
+            tiers screen comes back to the screen the tap came from. */}
+        <Link href={`${UPGRADE}?from=${encodeURIComponent(path)}`} className="tab tab-upgrade">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">{ICONS.upgrade}</svg>
+          <span>Upgrade</span>
+        </Link>
+
         <button
           className={`tab${moreActive || more ? ' on' : ''}`}
           onClick={() => setMore(v => !v)}
@@ -132,15 +149,6 @@ export default function Rail ({ image, name }) {
                 </Link>
               )
             })}
-            {/* Named for what it is here rather than for the page it opens.
-                In a list of places to go, next to Taste and Scoring, "Tiers"
-                reads like another part of the rating model. */}
-            <Link href="/tiers" className="sheet-row">
-              <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
-                <path d="M12 3.4 14.6 9l6.1.6-4.6 4.1 1.3 6L12 16.6 6.6 19.7l1.3-6L3.3 9.6 9.4 9Z" />
-              </svg>
-              Subscriptions
-            </Link>
           </div>
         </>
       )}
