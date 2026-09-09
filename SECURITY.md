@@ -90,17 +90,30 @@ feature this app does not use, and `Cross-Origin-Opener-Policy: same-origin`.
 Google sign-in is a full-page redirect rather than a popup, so COOP does not
 affect it.
 
-### The CSP is report-only, on purpose
+### The CSP is enforced, after a report-only pass
 
-`Content-Security-Policy-Report-Only` is served, not `Content-Security-Policy`.
-A wrong CSP does not degrade a page, it white-screens it, and the honest way to
-find out whether this one is right is to watch real sessions against real data.
+It shipped as `Content-Security-Policy-Report-Only` first and was only switched
+after a browser had loaded every public page and every screen of the `/dev`
+harness with the console collecting violations.
 
-**To finish the job:** browse the app — the rating flow, the slide renderer at
-`/render`, a public profile, checkout — with the console open. When no CSP
-violations are reported, rename the header key in `next.config.mjs` from
-`Content-Security-Policy-Report-Only` to `Content-Security-Policy`. That single
-rename is the whole change.
+That pass paid for itself. It found `@vercel/analytics` loading its collector
+from `https://va.vercel-scripts.com`, which reading the code did not show —
+on Vercel the script is proxied same-origin as `/_vercel/insights/script.js`,
+so `'self'` covers it there and the external host only appears on some paths.
+Enforcing without that pass would have silently stopped analytics reporting.
+The host is now named in `script-src` and `connect-src`.
+
+After the fix, both passes reported zero violations, and the pages were
+screenshotted to confirm they render rather than white-screen.
+
+**To go back to report-only,** put `-Report-Only` back on the header key in
+`next.config.mjs`. That is the whole switch, in either direction.
+
+One gap worth naming: the signed-in app under `/app` was checked through the
+`/dev` harness, which renders those screens without a session, rather than
+through a real signed-in session. The harness covers the same components, but
+if something in the authenticated shell ever gets blocked, this is the corner
+it will have come from.
 
 Two directives are looser than they look and both are reasoned:
 

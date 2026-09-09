@@ -5,13 +5,17 @@ const here = path.dirname(fileURLToPath(import.meta.url))
 
 const dev = process.env.NODE_ENV !== 'production'
 
-// The policy this app intends to enforce, sent in report-only mode for now.
+// Enforced, after a report-only pass rather than instead of one.
 //
-// Report-only means the browser checks every load against this and complains in
-// the console, but blocks nothing. That is deliberate: a wrong CSP does not
-// degrade a page, it white-screens it, and the only honest way to find out
-// whether this one is right is to watch a real session against real data.
-// Once the console is quiet, the header name below loses its -Report-Only.
+// It went out as Content-Security-Policy-Report-Only first and every public
+// page plus every screen in the /dev harness was loaded with the console
+// collecting violations. That pass earned its keep: it caught @vercel/analytics
+// reaching for its own host, which reading the code had not shown and which
+// would have silently stopped analytics the moment this was enforced. Nothing
+// else violated it, so it is enforced now.
+//
+// To take it back to report-only, put -Report-Only back on the header key
+// below. That is the whole switch, in either direction.
 //
 // Why each line is the way it is:
 const csp = [
@@ -22,7 +26,13 @@ const csp = [
   // needs per-request nonces, which needs middleware; that is a change worth
   // making on its own, not smuggled into a header commit. Dev additionally
   // compiles with eval, which production never does.
-  `script-src 'self' 'unsafe-inline'${dev ? " 'unsafe-eval'" : ''}`,
+  // va.vercel-scripts.com is where @vercel/analytics loads its collector from.
+  // On Vercel the script is proxied same-origin as /_vercel/insights/script.js
+  // and 'self' would have covered it, which is exactly why this was missed by
+  // reading the code: only running the app with the policy on showed the
+  // library reaching for its own host as well. Named here so analytics does
+  // not silently stop reporting the day that path is the one taken.
+  `script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com${dev ? " 'unsafe-eval'" : ''}`,
 
   // styled-jsx and every style={{...}} prop in the tree are inline styles.
   "style-src 'self' 'unsafe-inline'",
@@ -42,7 +52,7 @@ const csp = [
   // Apple, Discogs, Deezer and Lemon Squeezy are all called from the server,
   // never the browser, so they do not belong here. Vercel Analytics is proxied
   // same-origin but falls back to its own host on some deployments.
-  "connect-src 'self' https://vitals.vercel-insights.com",
+  "connect-src 'self' https://vitals.vercel-insights.com https://va.vercel-scripts.com",
 
   // Nothing here is meant to be embedded, and clickjacking a rating form into
   // an invisible iframe is the attack this closes. X-Frame-Options below says
@@ -62,9 +72,9 @@ const csp = [
 ].join('; ')
 
 const securityHeaders = [
-  // Enforced, all of them. Unlike CSP these cannot break a working page: each
-  // one forbids something this app does not do.
-  { key: 'Content-Security-Policy-Report-Only', value: csp },
+  // All enforced. The six below CSP cannot break a working page: each one
+  // forbids something this app does not do.
+  { key: 'Content-Security-Policy', value: csp },
 
   // Two years, subdomains included, so a stripped-to-http link is refused by
   // the browser before a request leaves the machine. Vercel serves https and
