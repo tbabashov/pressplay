@@ -1,3 +1,4 @@
+import { auth } from '@/auth'
 import { driver } from '@/lib/db'
 import { billingReport } from '@/lib/billing'
 
@@ -8,8 +9,25 @@ export const runtime = 'nodejs'
 // else, so the actual cause is invisible from outside. This says which store is
 // in use, whether it answers, and which configuration is present. It reports
 // names and presence only: no value of any secret is returned.
+//
+// The full report is for the owner. It never leaked a secret value, but naming
+// which integrations exist, which are unconfigured, how many accounts there are
+// and what the database says when it fails is a map of the stack, and drawing
+// that map for anyone who asks is a favour to the wrong person. Everyone else
+// gets liveness and the status code, which is all an uptime monitor reads.
 export async function GET () {
   const started = Date.now()
+
+  // Deliberately tolerant. The failure this endpoint exists to diagnose is a
+  // misconfigured deploy, and a missing AUTH_SECRET is one of those, so an
+  // auth layer that throws must not take the health check down with it. It
+  // fails closed: an unreadable session is not the owner.
+  let owner = false
+  try {
+    const session = await auth()
+    owner = session?.user?.role === 'owner'
+  } catch { owner = false }
+
   const report = {
     ok: true,
     store: driver(),
@@ -52,5 +70,16 @@ export async function GET () {
   }
 
   report.ms = Date.now() - started
-  return Response.json(report, { status: report.ok ? 200 : 503 })
+  const status = report.ok ? 200 : 503
+
+  // The status code is the same either way, so a monitor watching this URL sees
+  // an unhealthy deploy without being told anything about why.
+  if (!owner) {
+    return Response.json({ ok: report.ok }, {
+      status,
+      headers: { 'cache-control': 'no-store' }
+    })
+  }
+
+  return Response.json(report, { status, headers: { 'cache-control': 'no-store' } })
 }
