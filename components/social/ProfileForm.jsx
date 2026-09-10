@@ -105,8 +105,8 @@ export default function ProfileForm ({ profile }) {
           />
         </span>
         <span className="pf-help" id="handle-help">
-          This is your address on the site. Lowercase letters, numbers and underscores.
-          Changing it breaks any link you have already shared.
+          Lowercase letters, numbers and underscores. Changing it breaks any link you
+          have already shared.
         </span>
       </label>
 

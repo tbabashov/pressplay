@@ -82,17 +82,17 @@ export default function ExportSettings ({ open, onClose, settings, set, onReset,
                 by Press Play alone and glass only where the style offers it, so
                 the other looks were showing switches that did nothing. */}
             {has('gradient') && (
-              <Row label="Gradient background" hint="Pools of colour pulled from the cover">
+              <Row label="Gradient background">
                 <Toggle on={settings.gradient} onChange={v => set('gradient', v)} label="Gradient background" />
               </Row>
             )}
             {has('glass') && (
-              <Row label="Crystal glass" hint="Frosted panels behind each block">
+              <Row label="Crystal glass">
                 <Toggle on={settings.glass} onChange={v => set('glass', v)} label="Crystal glass" />
               </Row>
             )}
             {has('dome') && (
-              <Row label="Crystal dome" hint="The lit arch the cut-outs stand in">
+              <Row label="Crystal dome">
                 <Toggle on={settings.dome !== false} onChange={v => set('dome', v)} label="Crystal dome" />
               </Row>
             )}
@@ -101,7 +101,7 @@ export default function ExportSettings ({ open, onClose, settings, set, onReset,
                 {active.name} is set the way it is. Its colour is yours to change below.
               </p>
             )}
-            <Row label="Background" hint="Overrides the colour taken off the cover">
+            <Row label="Background">
               <div className="bgpick">
                 <input
                   type="color"
@@ -169,7 +169,7 @@ export default function ExportSettings ({ open, onClose, settings, set, onReset,
 
           <section>
             <h3>Layout</h3>
-            <Row label="Content sits" hint="Which end of the frame a block settles against">
+            <Row label="Content sits">
               <Segments name="Alignment" options={ALIGNMENTS} value={settings.align} onChange={v => set('align', v)} />
             </Row>
             <Row label="Songs per image">
@@ -184,17 +184,17 @@ export default function ExportSettings ({ open, onClose, settings, set, onReset,
               <Segments name="Albums per discography image" options={DISC_PER_PAGE}
                 value={settings.discPerPage} onChange={v => set('discPerPage', v)} />
             </Row>
-            <Row label="Dome on the title card" hint="The glass semicircle the cut-outs stand in">
+            <Row label="Dome on the title card">
               <Toggle on={settings.dome !== false} onChange={v => set('dome', v)} label="Dome" />
             </Row>
           </section>
 
           <section>
             <h3>Type</h3>
-            <Row label="Song text size" hint="Every row always shares one size">
+            <Row label="Song text size">
               <Segments name="Song text size" options={TEXT_SIZES} value={settings.textSize} onChange={v => set('textSize', v)} />
             </Row>
-            <Row label="Feature size" hint="How much smaller the ft. credit is">
+            <Row label="Feature size">
               <Segments name="Feature size" options={FEATURE_DROPS} value={settings.featureDrop} onChange={v => set('featureDrop', v)} />
             </Row>
           </section>
@@ -235,7 +235,7 @@ export default function ExportSettings ({ open, onClose, settings, set, onReset,
                 label="Press Play credit"
               />
             </Row>
-            <Row label="Your handle" hint="Your own credit across the slide. Optional, and yours either way.">
+            <Row label="Your handle">
               <Toggle
                 on={settings.showHandle !== false}
                 onChange={v => set('showHandle', v)}

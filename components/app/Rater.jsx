@@ -309,11 +309,6 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
             : <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3Z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" /></svg>}
           {editing ? 'Done' : 'Edit'}
         </button>
-        {editing && (
-          <span className="rater-mode-note">
-            Everything on this screen is yours to correct. Save when you are done.
-          </span>
-        )}
       </div>
       <div className="rater-bg" aria-hidden="true">
         <img src={album.cover} alt="" />
@@ -407,8 +402,7 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
         </header>
         <div className="set-body">
           <p className="ad-note">
-            The picks you hand out on this and every album. Turning one off takes it off the
-            rating screen and off the exported slides.
+            Turning one off takes it off the rating screen and off the exported slides.
           </p>
           <SuperlativePicker chosen={supers} onToggle={toggleSuper} />
         </div>

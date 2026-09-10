@@ -74,11 +74,6 @@ export default function RatingModel ({ initial, can = { scales: true, criteria: 
     <form className="rm" onSubmit={submit}>
       <section className="rm-block">
         <h2 className="rm-h2">Scale</h2>
-        <p className="rm-note">
-          What a song can be given, and what each rung is called. The eleven with a Majestic on
-          top is the ladder this site was built on, not a rule: pick another, rename the rungs,
-          or colour them yourself.
-        </p>
         {!can.scales && (
           <p className="rm-locked">
             Your own scale is a Plus feature. The eleven point ladder is yours either way, and
@@ -92,9 +87,8 @@ export default function RatingModel ({ initial, can = { scales: true, criteria: 
       <section className="rm-block">
         <h2 className="rm-h2">Criteria</h2>
         <p className="rm-note">
-          The song average always counts and is never typed. Everything beside it is yours:
-          rename them, drop the ones you do not believe in, add the ones you do. Your score is
-          the mean of whatever you keep plus the song average.
+          The song average always counts and is never typed. Your score is the mean of
+          whatever you keep plus the song average.
         </p>
 
         <div className="rm-presets">
@@ -133,10 +127,7 @@ export default function RatingModel ({ initial, can = { scales: true, criteria: 
 
       <section className="rm-block">
         <h2 className="rm-h2">Superlatives</h2>
-        <p className="rm-note">
-          The picks you hand out on every album. Turn on the ones you want and the rating screen
-          shows those and nothing else. Up to {SUPERLATIVE_MAX}.
-        </p>
+        <p className="rm-note">Up to {SUPERLATIVE_MAX}.</p>
 
         <SuperlativePicker chosen={supers} onToggle={toggle} />
       </section>

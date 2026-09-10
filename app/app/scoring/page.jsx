@@ -30,11 +30,8 @@ export default async function Scoring () {
       </div>
 
       <p className="set-intro measure">
-        The scale a song is given, what the album is judged on beside the song average,
-        and the picks you hand out on every record. Change these and every album you rate
-        from here on uses them. Albums you have already rated keep the model they were
-        rated with. You can see it all working on{' '}
-        <Link href="/app">the rating screen</Link>.
+        Change these and every album you rate from here on uses them. Albums you have
+        already rated keep the model they were rated with.
       </p>
 
       <RatingModel

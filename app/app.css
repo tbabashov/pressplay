@@ -1945,7 +1945,6 @@ body:has(.app) .vignette { opacity: 0.5; }
   color: #0a0a0c; background: var(--accent); box-shadow: none;
 }
 .rater-mode svg { width: 15px; height: 15px; }
-.rater-mode-note { font-size: 12.4px; color: var(--fg-4); }
 
 /* Editing is a different mode and should look like one, without turning the
    screen into a wall of identical boxes. Fields rest almost invisible and only
@@ -2537,7 +2536,6 @@ body:has(.app) .vignette { opacity: 0.5; }
   font-size: 12.4px; font-weight: 650; color: #17140c; background: var(--accent);
 }
 .lk-ok:disabled { opacity: 0.5; cursor: not-allowed; }
-.lk-note { margin-top: 7px; font-size: 11.8px; color: var(--fg-4); }
 .bgpick-col { flex-direction: column; align-items: stretch; gap: 10px; }
 .bgchoice { display: flex; flex-wrap: wrap; gap: 7px; }
 .bgchoice .chip { padding: 7px 12px; font-size: 12.4px; }

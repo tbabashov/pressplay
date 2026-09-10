@@ -121,9 +121,10 @@ export default function ArtistImages ({ images, onChange }) {
           <input ref={input} type="file" accept="image/*" multiple hidden
             onChange={e => add(e.target.files)} />
           <p className="cut-hint">
-            Cut-outs stand in the dome on the title card. Up to three. A PNG with the background
-            already taken out sits in the scene properly; any other image works, it just arrives
-            as a rectangle. Click one on the title card to pick it up, then drag to move it, drag a corner to resize it from the opposite corner, or scroll on it. Arrow keys nudge it a few pixels at a time, shift with them moves further, and + and − resize. Reset position puts it back. Lock one once it is right and it stops responding, so placing the next will not knock it out of position.</p>
+            Up to three. A PNG with the background already taken out sits in the scene; any
+            other image arrives as a rectangle. Arrow keys nudge a selected cut-out, shift
+            with them moves further, and + and − resize.
+          </p>
         </>
       )}
       {error && <p className="cut-error">{error}</p>}

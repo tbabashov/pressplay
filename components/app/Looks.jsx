@@ -48,7 +48,6 @@ export default function Looks ({ settings, apply, tier, limit, initial = [], onL
         <button className="lk-add" onClick={() => onLocked?.('Saved looks come with Plus.')}>
           Save this look
         </button>
-        <p className="lk-note">Keep a treatment and put it on the next record in one press.</p>
       </div>
     )
   }
