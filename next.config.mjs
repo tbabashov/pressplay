@@ -49,10 +49,27 @@ const csp = [
   // this origin, so no font host is needed here.
   "font-src 'self' data:",
 
-  // Apple, Discogs, Deezer and Lemon Squeezy are all called from the server,
-  // never the browser, so they do not belong here. Vercel Analytics is proxied
-  // same-origin but falls back to its own host on some deployments.
-  "connect-src 'self' https://vitals.vercel-insights.com https://va.vercel-scripts.com",
+  // Any https host, and that is not laziness.
+  //
+  // The catalogue APIs really are server-side and do not need to be here. What
+  // does is the exporter: html-to-image inlines every picture on a slide by
+  // fetching it, so a fetch has to be allowed anywhere a picture can come from.
+  // Pictures come from a cover somebody pasted, an artist cut-out they linked,
+  // or an upload on the storage host — arbitrary https by design, because the
+  // rater chooses them. Locked to 'self' this returned "Could not render the
+  // slides" for any slide carrying a picture this origin does not serve.
+  //
+  // The narrower options were tried on paper and both are wrong: an allowlist
+  // cannot enumerate hosts the rater has not picked yet, and routing them
+  // through /api/art would need that proxy to fetch arbitrary URLs, which is
+  // the open proxy its host allowlist exists to prevent.
+  //
+  // What this gives up is a channel for exfiltrating what is already on the
+  // page, and that costs an attacker script to use. script-src still refuses
+  // one from anywhere but this origin, and the tree has no innerHTML sink and
+  // no eval to plant one with. data: and blob: are listed because the exporter
+  // re-reads its own output through them, and neither can reach a network.
+  "connect-src 'self' https: data: blob:",
 
   // Nothing here is meant to be embedded, and clickjacking a rating form into
   // an invisible iframe is the attack this closes. X-Frame-Options below says
