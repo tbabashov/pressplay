@@ -106,6 +106,13 @@ The host is now named in `script-src` and `connect-src`.
 After the fix, both passes reported zero violations, and the pages were
 screenshotted to confirm they render rather than white-screen.
 
+That pass was still not enough, and it is worth writing down why. It loaded
+pages and watched for violations, and loading pages was all it did. The
+exporter does not fetch anything until somebody presses Download, so the one
+code path that needed arbitrary hosts was the one path never exercised, and
+enforcing broke it in production. A CSP pass has to run the actions, not just
+the routes.
+
 **To go back to report-only,** put `-Report-Only` back on the header key in
 `next.config.mjs`. That is the whole switch, in either direction.
 
@@ -115,7 +122,19 @@ through a real signed-in session. The harness covers the same components, but
 if something in the authenticated shell ever gets blocked, this is the corner
 it will have come from.
 
-Two directives are looser than they look and both are reasoned:
+Three directives are looser than they look and all three are reasoned:
+
+- `connect-src` allows any `https:`. The exporter builds a slide by fetching
+  every picture on it and inlining the bytes, and those pictures are a cover
+  somebody pasted, an artist cut-out they linked, or an upload on the storage
+  host — arbitrary https by design, because the rater chooses them. Locked to
+  `'self'` this broke downloading slides outright, with "Could not render the
+  slides" for any slide carrying a picture this origin does not serve. An
+  allowlist cannot name hosts nobody has chosen yet, and routing them through
+  `/api/art` would need that proxy to fetch any URL it is given, which is the
+  open proxy its host allowlist exists to prevent. What it gives up is a
+  channel for exfiltrating what is already on the page, which costs an attacker
+  a script, and `script-src` still refuses one from anywhere but this origin.
 
 - `img-src` allows any `https:`. Covers cannot be an allowlist: a review carries
   whatever cover URL it was rated with, people paste their own image URLs when
