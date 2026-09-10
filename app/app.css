@@ -669,6 +669,22 @@ body:has(.app) .vignette { opacity: 0.5; }
 
 /* ── Export ───────────────────────────────────────────────────────────────*/
 
+/* What stands where Build the slides was when the day is spent. Deliberately
+   not a disabled button: a greyed control with no reason attached reads as a
+   fault in the page, and the one thing worth saying here is when it comes
+   back. */
+.verdict-spent {
+  margin-top: 10px; padding: 12px 14px; border-radius: 12px;
+  background: rgba(255,255,255,0.04);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
+}
+.verdict-spent p { font-size: 12.8px; line-height: 1.55; color: var(--fg-3); }
+.verdict-spent a {
+  display: inline-block; margin-top: 8px;
+  font-size: 12.8px; font-weight: 640; color: #e2aa4a;
+}
+.verdict-spent a:hover { color: #edc074; }
+
 .verdict-export {
   margin-top: 10px; width: 100%;
   display: flex; align-items: center; justify-content: center; gap: 9px;

@@ -864,3 +864,16 @@ await test('songLanding grows a ladder to fit scores taller than its scale', asy
   assert.equal(g.buckets.length, 10)
   assert.equal(g.buckets[9].count, 1)
 })
+
+await test('canBuildSlides still lets you rebuild a record you built today', async () => {
+  const { canBuildSlides } = await import(R + 'tiers.js')
+  // The free tier's two a day, spent.
+  assert.equal(canBuildSlides({ cap: 2, used: 2, builtToday: false }), false)
+  assert.equal(canBuildSlides({ cap: 2, used: 1, builtToday: false }), true)
+  // Already built today, so building it again costs nothing — the half of the
+  // rule the export screen promises out loud.
+  assert.equal(canBuildSlides({ cap: 2, used: 2, builtToday: true }), true)
+  assert.equal(canBuildSlides({ cap: 2, used: 9, builtToday: true }), true)
+  // An unlimited tier is never asked to count.
+  assert.equal(canBuildSlides({ cap: Infinity, used: 500, builtToday: false }), true)
+})

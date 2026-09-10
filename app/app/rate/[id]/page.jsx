@@ -1,12 +1,13 @@
 import Link from 'next/link'
 import { auth } from '@/auth'
 import { getAlbum } from '@/lib/music'
-import { getReview, getProfile, getPreferences } from '@/lib/db'
+import { getReview, getProfile, getPreferences, countGenerationsToday, generatedToday } from '@/lib/db'
 import { fromSnapshot, preferSaved } from '@/lib/album-shape'
 import { param } from '@/lib/route-param'
 import Rater from '@/components/app/Rater'
 import PublishToggle from '@/components/social/PublishToggle'
 import { normalisePreferences, DEFAULT_PREFERENCES } from '@/lib/preferences'
+import { accountTier, limitsFor, canBuildSlides } from '@/lib/tiers'
 
 export const dynamic = 'force-dynamic'
 
@@ -29,6 +30,28 @@ export default async function RateAlbum ({ params }) {
       ])
     : [null, null, null]
   const preferences = storedPrefs ? normalisePreferences(storedPrefs) : DEFAULT_PREFERENCES
+
+  // Whether Build the slides has anywhere to go today. The export route decides
+  // this for itself and refuses on its own — that is the check that counts, and
+  // it stays — but until now the button said nothing, so the answer arrived as
+  // a wall after a page load. Working it out here costs two queries the page is
+  // already waiting on others for.
+  //
+  // An album already built today is still free to build again, which is why
+  // this cannot be "used < limit" on its own: that would take the button away
+  // from someone re-exporting a record they had already spent the day's
+  // allowance on, and the export screen explicitly promises they can.
+  let slides = null
+  if (session?.user) {
+    const cap = limitsFor(accountTier(session, profile)).generationsPerDay
+    if (cap !== Infinity) {
+      const [used, builtToday] = await Promise.all([
+        countGenerationsToday(session.user.email),
+        generatedToday(session.user.email, id)
+      ])
+      slides = { can: canBuildSlides({ cap, used, builtToday }), used, limit: cap }
+    }
+  }
 
   // What the rater saved wins. Reading the catalogue first and only falling
   // back to the snapshot meant every correction, a fixed track title, an added
@@ -55,7 +78,8 @@ export default async function RateAlbum ({ params }) {
   }
   return (
     <>
-      <Rater album={album} initial={initial} canSave={!!session?.user} preferences={preferences} />
+      <Rater album={album} initial={initial} canSave={!!session?.user}
+        preferences={preferences} slides={slides} />
       {initial && profile?.handle && (
         <PublishToggle
           albumId={id}

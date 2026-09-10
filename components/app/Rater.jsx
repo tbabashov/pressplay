@@ -71,7 +71,7 @@ const finalStyle = (v, scale) => {
 // The target rides in the path; see app/api/art/[key]/route.js for why.
 const proxied = url => (url ? artUrl(url) : null)
 
-export default function Rater ({ album: source, initial = null, canSave = true, preferences = DEFAULT_PREFERENCES }) {
+export default function Rater ({ album: source, initial = null, canSave = true, preferences = DEFAULT_PREFERENCES, slides = null }) {
   // The album is editable, so it is state rather than a prop read straight
   // through. Corrections are saved on the review's own snapshot with everything
   // else, which is why they survive the catalogue changing underneath.
@@ -663,13 +663,31 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
             {label}
           </button>
           {save.state === 'saved' && (
-            <a className="verdict-export" href={`/app/rate/${encodeURIComponent(album.id)}/export`}>
-              Build the slides
-              <svg viewBox="0 0 15 15" fill="none" aria-hidden="true">
-                <path d="M3 7.5h9m0 0L8.5 4M12 7.5 8.5 11" stroke="currentColor"
-                  strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </a>
+            // The day's allowance, said here rather than after the tap. The
+            // export route still refuses on its own, and that is the check that
+            // matters; this only stops the button promising something it cannot
+            // do. `slides` is null on an unlimited tier, which reads as yes.
+            slides && !slides.can
+              ? (
+                <div className="verdict-spent">
+                  <p>
+                    That is {slides.used} of {slides.limit} record{slides.limit === 1 ? '' : 's'} turned
+                    into slides today. It resets at midnight, and this rating is saved either way.
+                  </p>
+                  <a href={`/tiers?from=${encodeURIComponent(`/app/rate/${album.id}`)}`}>
+                    See the tiers
+                  </a>
+                </div>
+                )
+              : (
+                <a className="verdict-export" href={`/app/rate/${encodeURIComponent(album.id)}/export`}>
+                  Build the slides
+                  <svg viewBox="0 0 15 15" fill="none" aria-hidden="true">
+                    <path d="M3 7.5h9m0 0L8.5 4M12 7.5 8.5 11" stroke="currentColor"
+                      strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </a>
+                )
           )}
           {save.state === 'error' && <p className="verdict-error">{save.message}</p>}
           {!canSave && <p className="verdict-error">Sign in to save this.</p>}
