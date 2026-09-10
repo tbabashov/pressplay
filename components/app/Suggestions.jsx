@@ -17,11 +17,6 @@ export default function Suggestions ({ kind, items }) {
           <h2>{kind === 'popular' ? 'Somewhere to start' : 'Rate next'}</h2>
           <Shuffle />
         </div>
-        <p>
-          {kind === 'popular'
-            ? 'Records most people already have an opinion about.'
-            : 'Built from what you have rated and who sits next to them.'}
-        </p>
       </div>
 
       <ul className="sg-list">

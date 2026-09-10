@@ -29,10 +29,6 @@ export default async function Feed ({ searchParams }) {
     <>
       <div className="page-head">
         <h1>Social</h1>
-        <p className="page-sub">
-          What everyone has been rating. Vote a rating up or down, and open the replies to argue
-          with the number.
-        </p>
       </div>
       <Suspense fallback={null}>
         <Social

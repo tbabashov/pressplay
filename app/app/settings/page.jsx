@@ -66,8 +66,7 @@ export default async function Settings () {
       </div>
 
       <p className="set-intro measure">
-        This is what other people see. Your ratings stay private until you publish
-        them one by one.
+        Your ratings stay private until you publish them one by one.
       </p>
 
       <ProfileForm profile={{

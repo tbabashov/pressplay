@@ -82,7 +82,6 @@ export default function ProfileForm ({ profile }) {
           {image && (
             <button type="button" className="pf-clear" onClick={() => setImage(null)}>Remove</button>
           )}
-          <span className="pf-help">Square, and shrunk to {AVATAR}px before it is saved.</span>
         </div>
       </div>
 

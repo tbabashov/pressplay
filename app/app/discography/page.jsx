@@ -50,11 +50,6 @@ export default async function DiscographyPage () {
     <>
       <div className="page-head">
         <h1>Discographies</h1>
-        <p className="page-sub">
-          Everything the catalogue has for each of your artists, singles and EPs included. Use the
-          eye to keep something off your discography slides, it stays here, and you can put it
-          back. Add one by hand when the catalogue is missing it.
-        </p>
       </div>
       <Discography
         initial={entries}
