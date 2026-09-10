@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { TIER_LIST, yearlySaving } from '@/lib/tiers'
 import CheckoutButton from '@/components/CheckoutButton'
+import { BILLING_PAUSED } from '@/lib/billing-paused'
 import CoverStream from '@/components/CoverStream'
 import Mark from '@/components/Mark'
 
@@ -132,11 +133,17 @@ export default function TiersScreen ({ mine, heading, reason, onClose, closeHref
           })}
         </div>
 
-        <p className="tw-note">
-          Payments are not switched on. The tiers decide what an account may do and the limits are
-          enforced on the server, but there is nothing to take your money with yet, so nobody is
-          being charged and no card details are collected anywhere in this app.
-        </p>
+        {/* Hidden while subscriptions are paused. Every disabled button above
+            already says nothing is being charged, and two different reasons for
+            the same locked screen — not switched on, and under maintenance —
+            read as a page that does not know its own state. */}
+        {!BILLING_PAUSED && (
+          <p className="tw-note">
+            Payments are not switched on. The tiers decide what an account may do and the limits are
+            enforced on the server, but there is nothing to take your money with yet, so nobody is
+            being charged and no card details are collected anywhere in this app.
+          </p>
+        )}
       </div>
     </div>
   )

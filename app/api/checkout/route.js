@@ -3,11 +3,20 @@ import { TIERS, TIER_DETAIL } from '@/lib/tiers'
 import { billing, canSell, LEMON_API } from '@/lib/billing'
 import { SITE_URL } from '@/lib/site-url'
 import { limit, callerKey } from '@/lib/rate-limit'
+import { BILLING_PAUSED, PAUSED_NOTE } from '@/lib/billing-paused'
 
 // The one place a payment provider is wired in. Everything upstream, the
 // buttons on the landing page and the buttons in the subscription screen,
 // already posts here and already handles being told there is nowhere to go yet.
 export async function POST (req) {
+  // Checked before anything else, including the throttle: a paused route has
+  // no work to do and no reason to spend a caller's allowance saying so. The
+  // buttons are disabled too, but a disabled button is only a suggestion and
+  // this is the refusal that holds.
+  if (BILLING_PAUSED) {
+    return Response.json({ ready: false, paused: true, message: PAUSED_NOTE }, { status: 503 })
+  }
+
   const stop = limit(callerKey(req, 'checkout'), { max: 20, windowMs: 10 * 60 * 1000 })
   if (stop) return stop
 

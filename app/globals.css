@@ -172,8 +172,19 @@ img { display: block; max-width: 100%; }
   color: #0a0a0c;
   background: var(--accent);
 }
-.btn-primary:hover { background: color-mix(in srgb, var(--accent) 88%, white); }
-.btn-primary:active { background: color-mix(in srgb, var(--accent) 88%, black); }
+.btn-primary:hover:not(:disabled) { background: color-mix(in srgb, var(--accent) 88%, white); }
+
+/* A button that cannot be pressed has to look like one. There was no disabled
+   state on these at all, so a disabled control kept the full accent fill and
+   the hover, and read as working right up until nothing happened. */
+.btn-primary:disabled, .btn-ghost:disabled {
+  background: rgba(255,255,255,0.07);
+  color: var(--fg-4);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
+  cursor: not-allowed;
+}
+.btn-primary:disabled svg, .btn-ghost:disabled svg { transform: none; }
+.btn-primary:active:not(:disabled) { background: color-mix(in srgb, var(--accent) 88%, black); }
 
 /* A hairline and nothing else. */
 .btn-ghost {
@@ -190,7 +201,7 @@ img { display: block; max-width: 100%; }
 
 /* The arrow leans toward where it is taking you. */
 .btn-primary svg, .btn-ghost svg { width: 16px; height: 16px; transition: transform 320ms var(--ease); }
-.btn-primary:hover svg, .btn-ghost:hover svg { transform: translateX(3px); }
+.btn-primary:hover:not(:disabled) svg, .btn-ghost:hover:not(:disabled) svg { transform: translateX(3px); }
 
 .btn-primary:focus-visible, .btn-ghost:focus-visible {
   outline: 2.5px solid var(--accent); outline-offset: 3px;
