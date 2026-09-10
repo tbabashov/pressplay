@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { toPng } from 'html-to-image'
+import { toPng, toBlob } from 'html-to-image'
 import { extractPalette, fallbackPalette, paletteFromColor } from '../../lib/rating-colors'
 import { SafeZoneOverlay } from '../../lib/export/shell.jsx'
 import ExportSettings, { SWATCHES } from './ExportSettings'
@@ -467,15 +467,40 @@ export default function Exporter ({ data, tier = 'free' }) {
       filter: n => !n?.dataset || n.dataset.noExport === undefined
     }
     // Two passes: the first warms fonts and images so the second is complete.
+    // The warm pass can stay a data URL; only the one that gets saved needs to
+    // be a blob.
     await toPng(node, opts)
-    return toPng(node, opts)
+    const blob = await toBlob(node, opts)
+    if (!blob) throw new Error('The slide came back empty. Try again.')
+    return blob
   }
 
-  const save = (url, name) => {
+  // Saving a blob through a link that is actually in the document.
+  //
+  // This used to hand the anchor a data: URL and click it while it was still
+  // detached. Both work in Chrome and neither is safe on iOS: Safari will not
+  // act on the download attribute of an element that is not in the document,
+  // and it does not save a data: URL at all — it opens it, or on a big one
+  // does nothing. A slide at the free tier is around a two megabyte data URL
+  // and at Max, which renders at twice the linear size, roughly four times
+  // that, so this was most likely to fail on exactly the phone the slides are
+  // made for.
+  //
+  // A blob URL is same-origin and has no length to exceed, and the anchor is
+  // put in the document before it is clicked and taken out after.
+  const save = (blob, name) => {
+    const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
     a.download = name
+    a.rel = 'noopener'
+    document.body.appendChild(a)
     a.click()
+    a.remove()
+    // Not revoked on the next line: the download reads from the URL after the
+    // click returns, and revoking it immediately cancels the save on some
+    // browsers. A minute is long past the point anything is still reading it.
+    setTimeout(() => URL.revokeObjectURL(url), 60_000)
   }
 
   const slug = `${data.review.album.artist || data.review.album.artists?.[0] || 'album'}-${data.review.album.name}`
@@ -490,6 +515,14 @@ export default function Exporter ({ data, tier = 'free' }) {
   }
 
   const all = async () => {
+    // Every slide at once is sold as part of Plus and was never checked, so the
+    // free tier has been getting a paid feature. The button stays where it is
+    // and says why, rather than disappearing: a control that vanishes teaches
+    // nobody what it was for.
+    if (!limits.downloadAll) {
+      setWall({ tier, reason: 'Downloading every slide at once comes with Plus.' })
+      return
+    }
     setError('')
     setBusy('all')
     try {
