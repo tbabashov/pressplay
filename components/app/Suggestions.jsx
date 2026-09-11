@@ -35,7 +35,7 @@ export default function Suggestions ({ kind, items }) {
               <em>{a.artist}</em>
               {/* Only when it says something this card does not share with the
                   eleven beside it. On the popular strip the reason is the same
-                  for all of them and the heading has already given it. */}
+                  for all of them, so it would be the same line twelve times. */}
               {kind !== 'popular' && a.reason && <span className="sg-why">{a.reason}</span>}
             </Link>
           </li>

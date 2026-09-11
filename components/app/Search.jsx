@@ -13,6 +13,7 @@ export default function Search ({ children }) {
   // shareable as a link.
   const params = useSearchParams()
   const [q, setQ] = useState(() => params.get('q') || '')
+  const urlQ = params.get('q') || ''
   const [results, setResults] = useState([])
   const [state, setState] = useState('idle')   // idle | loading | done | error
   const [error, setError] = useState('')
@@ -23,6 +24,22 @@ export default function Search ({ children }) {
   // having the page jump to a focused box hides the results behind a keyboard
   // on a phone.
   useEffect(() => { if (!params.get('q')) box.current?.focus() }, [params])
+
+  // The query string has to be read again on every navigation, not only on
+  // mount. A suggestion for a record the wall knows by name links to this same
+  // route, so pressing one is a client side navigation that never unmounts
+  // this component, and the initialiser above runs once and never again.
+  //
+  // That is what made a suggestion look broken. The URL gained the name, the
+  // server sent a fresh set of suggestions because it reseeds on every render,
+  // and the box stayed empty, so the only thing anybody saw happen was the
+  // cards reshuffling. It only ever hit a new account: once there are ratings
+  // the suggestions carry catalogue ids and link to /app/rate/<id>, which is a
+  // different route and does unmount this.
+  //
+  // Only ever sets from a query that exists. Typing never writes to the URL, so
+  // clearing on an empty one would wipe what somebody is in the middle of.
+  useEffect(() => { if (urlQ) setQ(urlQ) }, [urlQ])
 
   // Debounced so a fast typist makes one request, not eight.
   useEffect(() => {
