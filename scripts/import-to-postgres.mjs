@@ -1,13 +1,19 @@
 // Moves the local JSON store into Postgres, once.
 //
-//   DATABASE_URL='postgres://…' node scripts/import-to-postgres.mjs           (dry run)
-//   DATABASE_URL='postgres://…' node scripts/import-to-postgres.mjs --write   (for real)
+//   node scripts/import-to-postgres.mjs           (dry run)
+//   node scripts/import-to-postgres.mjs --write   (for real)
+//
+// Takes DATABASE_URL from .env.local, or from the environment if it is set
+// there instead.
 //
 // Safe to run twice: every write is an upsert keyed the same way the app keys
 // them, so a second run updates rather than duplicating. It never deletes.
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { loadEnv } from './env.mjs'
+
+loadEnv()
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const WRITE = process.argv.includes('--write')
@@ -15,7 +21,8 @@ const WRITE = process.argv.includes('--write')
 const URL_IN = process.env.DATABASE_URL || ''
 
 if (!URL_IN) {
-  console.error('Set DATABASE_URL first. Nothing was read or written.')
+  console.error('No DATABASE_URL, in the environment or in .env.local.')
+  console.error('Nothing was read or written.')
   process.exit(1)
 }
 
