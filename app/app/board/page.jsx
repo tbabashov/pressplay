@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { auth } from '@/auth'
-import { listReviews, getSnapshot } from '@/lib/db'
+import { listReviewsLite, getSnapshot } from '@/lib/db'
 import { rank, withDeltas } from '@/lib/standings'
 import { projectReview } from '@/lib/library-shape'
 import Board from '@/components/app/Board'
@@ -14,7 +14,7 @@ export default async function BoardPage () {
   if (!session?.user) return null
 
   const [reviews, snapshot] = await Promise.all([
-    listReviews(session.user.email),
+    listReviewsLite(session.user.email),
     getSnapshot(session.user.email)
   ])
   const rows = withDeltas(rank(reviews.map(projectReview)), snapshot)

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { auth } from '@/auth'
-import { listReviews } from '@/lib/db'
+import { listReviewsLite } from '@/lib/db'
 import { taste, songLanding } from '@/lib/taste'
 import { projectReview } from '@/lib/library-shape'
 import { chipColour, scoreText } from '@/lib/rating-colors'
@@ -17,7 +17,7 @@ export default async function Stats () {
   const session = await auth()
   if (!session?.user) return null
 
-  const reviews = await listReviews(session.user.email)
+  const reviews = await listReviewsLite(session.user.email)
   const t = taste(reviews)
   const rated = reviews.map(projectReview)
   const landing = songLanding(reviews)
@@ -65,7 +65,7 @@ export default async function Stats () {
                 <li key={c.key}>
                   <span>{c.label}</span>
                   <span className="ts-crit-bar">
-                    <i style={{ width: `${(c.avg / 11) * 100}%`, background: col.bg }} />
+                    <i style={{ width: `${Math.min(100, (c.avg / t.ceiling) * 100)}%`, background: col.bg }} />
                   </span>
                   <span className="ts-chip tnum" style={{ background: col.bg, color: col.fg }}>
                     {fmt(c.avg, 1)}

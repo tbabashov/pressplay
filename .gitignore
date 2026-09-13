@@ -19,3 +19,5 @@ node_modules.nosync
 
 # a build run with BUILD_DIR set, so it cannot disturb a running dev server
 .next-check/
+.neon
+.next-dev/

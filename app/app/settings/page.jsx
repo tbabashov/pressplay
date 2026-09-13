@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { auth } from '@/auth'
-import { getProfile, listReviews, countCommentsBy, voteTotals, listFollowers, reviewId, getCredentials } from '@/lib/db'
+import { getProfile, listReviewsLite, countCommentsBy, voteTotals, listFollowers, reviewId, getCredentials } from '@/lib/db'
 import { ensureProfile } from '@/lib/ensure-profile'
 import { published } from '@/lib/social-queries'
 import ProfileForm from '@/components/social/ProfileForm'
@@ -38,7 +38,7 @@ export default async function Settings () {
   // Whether there is a password to change at all. An account that came in
   // through Google has no credentials row, and only the server can tell.
   const [all, creds] = await Promise.all([
-    listReviews(session.user.email),
+    listReviewsLite(session.user.email),
     getCredentials(session.user.email)
   ])
   const live = published(all)

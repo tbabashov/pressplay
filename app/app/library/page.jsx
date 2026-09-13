@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { auth } from '@/auth'
-import { listReviews } from '@/lib/db'
+import { listReviewsLite } from '@/lib/db'
 import LibraryGrid from '@/components/app/LibraryGrid'
 import AlbumTint from '@/components/app/AlbumTint'
 import { projectReview } from '@/lib/library-shape'
@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function Library () {
   const session = await auth()
-  const reviews = session?.user ? (await listReviews(session.user.email)).map(projectReview) : []
+  const reviews = session?.user ? (await listReviewsLite(session.user.email)).map(projectReview) : []
 
   return (
     <>

@@ -4,7 +4,7 @@ import { getProfile } from '@/lib/db'
 import Search from '@/components/app/Search'
 import Suggestions from '@/components/app/Suggestions'
 import { suggestionsFor } from '@/lib/suggestions'
-import { listReviews } from '@/lib/db'
+import { listReviewsLite } from '@/lib/db'
 import wall from '@/lib/wall.json'
 
 export default async function RatePage () {
@@ -25,7 +25,7 @@ export default async function RatePage () {
   // pressing shuffle gives a different set. Drawn on the server, so the markup
   // the browser receives is already ordered and hydration has nothing to
   // disagree about.
-  const reviews = session?.user?.email ? await listReviews(session.user.email) : []
+  const reviews = session?.user?.email ? await listReviewsLite(session.user.email) : []
   const seed = Math.floor(Math.random() * 0x7fffffff)
   const suggested = await suggestionsFor(reviews, { limit: 12, seed, popular: wall })
     .catch(() => ({ kind: 'popular', items: [] }))

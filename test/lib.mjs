@@ -877,3 +877,42 @@ await test('canBuildSlides still lets you rebuild a record you built today', asy
   // An unlimited tier is never asked to count.
   assert.equal(canBuildSlides({ cap: Infinity, used: 500, builtToday: false }), true)
 })
+
+await test('projectReview reads the lite columns before the snapshot', async () => {
+  const { projectReview } = await import(R + 'library-shape.js')
+  // A lite read: no snapshot, three scalars computed in Postgres instead.
+  const lite = projectReview({
+    albumId: 'a', albumName: 'A', artist: 'X',
+    albumGenre: 'Rap', albumSongs: 12, albumRuntimeMs: 2400000, album: null
+  })
+  assert.equal(lite.genre, 'Rap')
+  assert.equal(lite.songs, 12)
+  assert.equal(lite.runtimeMs, 2400000)
+
+  // A full read still works, so the rating screen and the exporter are unaffected.
+  const full = projectReview({
+    albumId: 'a', albumName: 'A', artist: 'X',
+    album: { genre: 'Soul', tracks: [1, 2, 3], runtimeMs: 900 }
+  })
+  assert.equal(full.genre, 'Soul')
+  assert.equal(full.songs, 3)
+  assert.equal(full.runtimeMs, 900)
+})
+
+await test('publicCard counts songs without the tracklist', async () => {
+  const { publicCard } = await import(R + 'social-shape.js')
+  assert.equal(publicCard({ albumId: 'a', albumSongs: 9, album: null }).songs, 9)
+  assert.equal(publicCard({ albumId: 'a', album: { tracks: [1, 2] } }).songs, 2)
+  // Neither present is zero rather than a crash.
+  assert.equal(publicCard({ albumId: 'a' }).songs, 0)
+})
+
+await test('taste reports the ceiling its bars have to be drawn against', async () => {
+  const { taste } = await import(R + 'taste.js')
+  const { SCALE_PRESETS } = await import(R + 'scales.js')
+  const hundred = SCALE_PRESETS.find(s => s.id === 'hundred')
+  // A bar sized against a fixed eleven would compute over 100% here.
+  const t = taste([{ scaleModel: hundred, final: 80, scores: { a: 80 }, criteria: {} }])
+  assert.equal(t.ceiling, 100)
+  assert.ok((80 / t.ceiling) * 100 <= 100)
+})
