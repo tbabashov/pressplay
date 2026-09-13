@@ -13,8 +13,27 @@
 // changes nothing, because the whole point of a manual grant is that it is being
 // done outside the system that normally checks itself.
 
-import { getProfile, setSubscription } from '../lib/db/index.js'
+import fs from 'node:fs'
 import { TIERS } from '../lib/tiers.js'
+
+// Next loads .env.local for the app; a plain node script does not, so it is
+// read here. It means the connection string can sit in the file that is already
+// gitignored instead of being typed onto a command line, where it would land in
+// the shell history of whoever ran it.
+for (const file of ['.env.local', '.env']) {
+  if (!fs.existsSync(file)) continue
+  for (const line of fs.readFileSync(file, 'utf8').split('\n')) {
+    const t = line.trim()
+    if (!t || t.startsWith('#') || !t.includes('=')) continue
+    const i = t.indexOf('=')
+    const k = t.slice(0, i).trim()
+    let v = t.slice(i + 1).trim().replace(/^["']|["']$/g, '')
+    if (k && !process.env[k]) process.env[k] = v
+  }
+}
+
+// Imported after the env is in place: the store picks its backing at import.
+const { getProfile, setSubscription } = await import('../lib/db/index.js')
 
 const arg = name => {
   const i = process.argv.indexOf(`--${name}`)
