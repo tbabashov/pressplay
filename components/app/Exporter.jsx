@@ -71,8 +71,14 @@ export default function Exporter ({ data, tier = 'free' }) {
   // Start from defaults so server and client markup agree, then adopt whatever
   // was saved once mounted.
   const [settings, setSettings] = useState(DEFAULTS)
-  const [panel, setPanel] = useState(false)
-  const [stylePanel, setStylePanel] = useState(false)
+  // One at a time. These were independent booleans, so opening Style over
+  // Settings left both mounted and stacked, with two scrims and no way to tell
+  // which sheet a tap outside belonged to.
+  const [sheet, setSheet] = useState(null)   // null | 'settings' | 'style'
+  const panel = sheet === 'settings'
+  const stylePanel = sheet === 'style'
+  const setPanel = v => setSheet(v ? 'settings' : null)
+  const setStylePanel = v => setSheet(v ? 'style' : null)
   const [viewing, setViewing] = useState(null)   // index of the slide opened full size
 
   // Two kinds of "take that off the slide". A block belongs to this review, so

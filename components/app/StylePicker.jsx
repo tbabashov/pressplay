@@ -16,7 +16,7 @@ export default function StylePicker ({ open, onClose, settings, set, tier = 'fre
   return (
     <>
       <button
-        className={`set-scrim${open ? ' on' : ''}`}
+        className={`set-scrim${open ? ' show' : ''}`}
         onClick={onClose}
         aria-label="Close styles"
         tabIndex={open ? 0 : -1}
