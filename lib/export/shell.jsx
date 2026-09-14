@@ -393,14 +393,14 @@ export function ScoreChip ({ score, size = 54, fontSize = 27, decimals = 0, minW
     flexShrink: 0, fontVariantNumeric: 'tabular-nums'
   }
 
-  // Printed: no container at all, just the figure, tinted by its tier.
+  // Printed: the figure inside a drawn ellipse, like a mark on the page.
   if (kind === 'print') {
     return (
       <span style={{
-        ...base, width: minWidth || size * 1.2, height: size,
-        fontSize: fs * 1.24, fontWeight: 400,
-        color: isGradient ? 'var(--ink)' : inkTint,
-        justifyContent: 'flex-end'
+        ...base, width: minWidth || size * 1.5, height: size,
+        fontSize: fs * 1.02, fontWeight: 600,
+        borderRadius: '50%',
+        background: c.bg, color: c.fg
       }}>{text}</span>
     )
   }
@@ -419,19 +419,15 @@ export function ScoreChip ({ score, size = 54, fontSize = 27, decimals = 0, minW
     )
   }
 
-  // Receipt: a bracketed figure, colour carried by the type.
+  // Mono: a hairline box, squared off, in keeping with the rules elsewhere.
   if (kind === 'bracket') {
     return (
       <span style={{
-        ...base, width: minWidth || size * 1.5, height: size,
-        fontSize: fs * 0.94, fontWeight: 600, letterSpacing: 0.5,
-        color: isGradient ? 'var(--ink)' : inkTint,
-        justifyContent: 'flex-end'
-      }}>
-        <span style={{ opacity: 0.42, marginRight: 3 }}>[</span>
-        {text}
-        <span style={{ opacity: 0.42, marginLeft: 3 }}>]</span>
-      </span>
+        ...base, width: minWidth || size * 1.4, height: size * 0.86,
+        fontSize: fs * 0.94, fontWeight: 700, letterSpacing: 0.5,
+        background: c.bg, color: c.fg,
+        borderRadius: 2
+      }}>{text}</span>
     )
   }
 
