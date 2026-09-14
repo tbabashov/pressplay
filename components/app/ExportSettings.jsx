@@ -60,7 +60,7 @@ function Toggle ({ on, onChange, label }) {
   )
 }
 
-export default function ExportSettings ({ open, onClose, settings, set, onReset, paid = false, onLocked }) {
+export default function ExportSettings ({ open, onClose, settings, set, onReset, paid = false, myHandle = '', onLocked }) {
   const active = STYLE_LIST.find(s => s.id === settings.style) || STYLE_LIST[0]
   const has = look => (active.looks || []).includes(look)
   return (
@@ -245,7 +245,8 @@ export default function ExportSettings ({ open, onClose, settings, set, onReset,
             <Row label="Handle">
               <input
                 className="handle-input"
-                value={settings.handle ?? '@the.press.play'}
+                value={settings.handle ?? ''}
+                placeholder={myHandle || '@you'}
                 onChange={e => set('handle', e.target.value)}
                 aria-label="Watermark handle"
               />

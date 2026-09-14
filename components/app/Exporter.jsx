@@ -47,7 +47,7 @@ const allowedStyle = (tier, id) =>
 const DEFAULTS = {
   gradient: true, glass: true, align: 'top', textSize: 'auto', featureDrop: 2,
   accent: 'auto', perPage: 'auto', scale: 'first', safeZones: false,
-  style: 'paper', watermark: true, showHandle: false, handle: '@the.press.play',
+  style: 'paper', watermark: true, showHandle: false, handle: '',
   background: 'none', backgroundImage: '', backgroundDim: 0.62,
   autoDiscography: true,
   bg: null, dome: true, discPerPage: 9,
@@ -64,7 +64,7 @@ function loadSettings () {
   } catch { return DEFAULTS }
 }
 
-export default function Exporter ({ data, tier = 'free' }) {
+export default function Exporter ({ data, tier = 'free', handle }) {
   const limits = limitsFor(tier)
   const paid = !limits.watermark
   const [coverPalette, setCoverPalette] = useState(null)
@@ -75,6 +75,8 @@ export default function Exporter ({ data, tier = 'free' }) {
   // Settings left both mounted and stacked, with two scrims and no way to tell
   // which sheet a tap outside belonged to.
   const [sheet, setSheet] = useState(null)   // null | 'settings' | 'style'
+  // A locked style being tried on. Never saved, never exported.
+  const [trying, setTrying] = useState(null)
   const panel = sheet === 'settings'
   const stylePanel = sheet === 'style'
   const setPanel = v => setSheet(v ? 'settings' : null)
@@ -292,7 +294,9 @@ export default function Exporter ({ data, tier = 'free' }) {
     try { window.localStorage.removeItem(STORE) } catch {}
   }
 
-  const theme = settings
+  // Your own handle unless you have typed another.
+  const myHandle = handle ? `@${handle}` : ''
+  const theme = { ...settings, handle: settings.handle || myHandle, style: trying || settings.style }
 
   useEffect(() => {
     extractPalette(data.review.album.coverProxied)
@@ -513,6 +517,7 @@ export default function Exporter ({ data, tier = 'free' }) {
     .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 
   const one = async i => {
+    if (trying) return setWall({ tier, reason: `${STYLES[trying]?.name || 'That style'} comes with a subscription.` })
     setError('')
     setBusy(frames[i].key)
     try { save(await shoot(i), `${slug}-${String(i + 1).padStart(2, '0')}.png`) }
@@ -525,6 +530,7 @@ export default function Exporter ({ data, tier = 'free' }) {
     // free tier has been getting a paid feature. The button stays where it is
     // and says why, rather than disappearing: a control that vanishes teaches
     // nobody what it was for.
+    if (trying) return setWall({ tier, reason: `${STYLES[trying]?.name || 'That style'} comes with a subscription.` })
     if (!limits.downloadAll) {
       setWall({ tier, reason: 'Downloading every slide at once comes with Plus.' })
       return
@@ -591,15 +597,26 @@ export default function Exporter ({ data, tier = 'free' }) {
         </button>
       </div>
 
+      {trying && (
+        <p className="exp-trying">
+          Previewing <strong>{STYLES[trying]?.name}</strong>{'. Downloads keep your current style.'}
+          <button onClick={() => setWall({ tier, reason: `${STYLES[trying]?.name} comes with a subscription.` })}>
+            See the tiers
+          </button>
+          <button onClick={() => setTrying(null)}>Stop</button>
+        </p>
+      )}
+
       <ExportSettings
         open={panel} onClose={() => setPanel(false)}
-        settings={settings} set={set} onReset={reset} paid={paid}
+        settings={settings} set={set} onReset={reset} paid={paid} myHandle={myHandle}
         onLocked={reason => setWall({ tier, reason })}
       />
 
       <StylePicker
         open={stylePanel} onClose={() => setStylePanel(false)}
         settings={settings} set={set} tier={tier}
+        trying={trying} onTry={setTrying}
         onLocked={reason => setWall({ tier, reason })}
       />
 

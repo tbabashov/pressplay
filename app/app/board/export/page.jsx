@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { auth } from '@/auth'
 import { buildBoardExport } from '@/lib/export/board-build'
+import { getProfile } from '@/lib/db'
 import BoardExporter from '@/components/app/BoardExporter'
 
 export const metadata = { title: 'Export the leaderboard' }
@@ -33,7 +34,8 @@ export default async function BoardExportPage () {
         </div>
         <Link className="btn-ghost" href="/app/board">Back to the board</Link>
       </div>
-      <BoardExporter data={data} paid={session.user.role === 'owner'} />
+      <BoardExporter data={data} paid={session.user.role === 'owner'}
+        handle={(await getProfile(session.user.email))?.handle} />
     </>
   )
 }

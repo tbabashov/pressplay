@@ -63,7 +63,7 @@ export default async function ExportPage ({ params }) {
         </div>
         <Link className="btn-ghost" href={`/app/rate/${id}`}>Back to the rating</Link>
       </div>
-      <Exporter data={data} tier={tier} />
+      <Exporter data={data} tier={tier} handle={profile?.handle} />
     </>
   )
 }

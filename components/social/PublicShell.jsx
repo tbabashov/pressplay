@@ -25,12 +25,8 @@ export default async function PublicShell ({ children }) {
         </Link>
 
         <nav className="pub-nav">
-          <Link href="/browse">Browse raters</Link>
           {me
-            ? <>
-                <Link href={`/u/${me.handle}`}>Your page</Link>
-                <Link className="btn-primary pub-cta" href="/app">Open the app</Link>
-              </>
+            ? <Link className="btn-primary pub-cta" href="/app">Open the app</Link>
             : <Link className="btn-primary pub-cta" href="/">Start rating</Link>}
         </nav>
       </header>

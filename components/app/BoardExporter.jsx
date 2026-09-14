@@ -19,11 +19,11 @@ const freeFallback = id =>
 const DEFAULTS = {
   gradient: true, glass: true, align: 'top', textSize: 'auto', featureDrop: 2,
   accent: 'auto', perPage: 'auto', scale: 'first', safeZones: false,
-  style: 'signature', watermark: true, handle: '@the.press.play',
+  style: 'signature', watermark: true, handle: '',
   include: { title: true, songs: true, criteria: true, rank: true, discography: true }
 }
 
-export default function BoardExporter ({ data, paid = false }) {
+export default function BoardExporter ({ data, paid = false, handle }) {
   const [settings, setSettings] = useState(DEFAULTS)
   const [cover, setCover] = useState(null)
   const [panel, setPanel] = useState(false)
@@ -68,7 +68,7 @@ export default function BoardExporter ({ data, paid = false }) {
 
   const frames = useMemo(() => {
     if (!palette) return []
-    const theme = settings
+    const theme = { ...settings, handle: settings.handle || (handle ? `@${handle}` : '') }
     const out = [{
       key: 'title', label: 'Leaderboard title',
       node: <LeaderboardTitleFrame total={data.total} top={data.top} palette={palette} theme={theme} />
