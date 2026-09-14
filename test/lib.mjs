@@ -92,9 +92,10 @@ await test('a score placeholder is a dash, not a comma', async () => {
   // yet, not punctuation in a sentence, which is why it survives the rule
   // against em dashes in prose. N/A keeps a shorter en dash so an unscorable
   // track still reads differently from an unscored one.
-  const { fmtScore } = await import(R + 'rating-scale.js')
+  // fmtScore lives in scales.js now, so that it can read a scale's precision.
+  // Both names here point at the one implementation.
   const { scoreText, NA } = await import(R + 'rating-colors.js')
-  const { fmtScore: fmtScale } = await import(R + 'scales.js')
+  const { fmtScore, fmtScore: fmtScale } = await import(R + 'scales.js')
   const { fmtTime } = await import(R + 'music.js')
 
   for (const [what, got] of [
@@ -915,4 +916,30 @@ await test('taste reports the ceiling its bars have to be drawn against', async 
   const t = taste([{ scaleModel: hundred, final: 80, scores: { a: 80 }, criteria: {} }])
   assert.equal(t.ceiling, 100)
   assert.ok((80 / t.ceiling) * 100 <= 100)
+})
+
+await test('a scale carries how precisely its scores are shown', async () => {
+  const { normaliseScale, fmtScore, DEFAULT_DECIMALS } = await import(R + 'scales.js')
+  // Defaults to what every call site hardcoded before the setting existed.
+  assert.equal(normaliseScale({ max: 10 }).decimals, DEFAULT_DECIMALS)
+  assert.equal(normaliseScale({ max: 10, decimals: 2 }).decimals, 2)
+  assert.equal(normaliseScale({ max: 10, decimals: 0 }).decimals, 0)
+  // Out of range or nonsense falls back rather than producing toFixed(99).
+  assert.equal(normaliseScale({ max: 10, decimals: 9 }).decimals, DEFAULT_DECIMALS)
+  assert.equal(normaliseScale({ max: 10, decimals: -1 }).decimals, DEFAULT_DECIMALS)
+  assert.equal(normaliseScale({ max: 10, decimals: 'two' }).decimals, DEFAULT_DECIMALS)
+})
+
+await test('fmtScore prints a score at its own scale precision', async () => {
+  const { fmtScore } = await import(R + 'scales.js')
+  assert.equal(fmtScore(8.4372, { decimals: 0 }), '8')
+  assert.equal(fmtScore(8.4372, { decimals: 1 }), '8.4')
+  assert.equal(fmtScore(8.4372, { decimals: 2 }), '8.44')
+  assert.equal(fmtScore(8.4372, { decimals: 3 }), '8.437')
+  // A review from before the setting has no scale at all, and reads as it did.
+  assert.equal(fmtScore(8.4372), '8.4')
+  assert.equal(fmtScore(8.4372, null), '8.4')
+  // Not a number is a dash, never "NaN".
+  assert.equal(fmtScore(null, { decimals: 2 }), '—')
+  assert.equal(fmtScore(undefined, { decimals: 2 }), '—')
 })

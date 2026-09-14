@@ -1,7 +1,9 @@
 import Link from 'next/link'
 import { auth } from '@/auth'
-import { listReviewsLite } from '@/lib/db'
+import { listReviewsLite, getPreferences } from '@/lib/db'
 import { taste, songLanding } from '@/lib/taste'
+import { normalisePreferences, DEFAULT_PREFERENCES } from '@/lib/preferences'
+import { fmtScore } from '@/lib/scales'
 import { projectReview } from '@/lib/library-shape'
 import { chipColour, scoreText } from '@/lib/rating-colors'
 import AlbumTint from '@/components/app/AlbumTint'
@@ -11,13 +13,19 @@ import SongLanding from '@/components/app/SongLanding'
 export const metadata = { title: 'Taste' }
 export const dynamic = 'force-dynamic'
 
-const fmt = (n, d = 2) => (typeof n === 'number' ? n.toFixed(d) : '—')
 
 export default async function Stats () {
   const session = await auth()
   if (!session?.user) return null
 
-  const reviews = await listReviewsLite(session.user.email)
+  const [reviews, storedPrefs] = await Promise.all([
+    listReviewsLite(session.user.email),
+    getPreferences(session.user.email)
+  ])
+  // These figures average across every ladder in the library, so there is no one
+  // review's scale to read the precision off. The scale being rated on now is
+  // the closest thing to "how precise do you want numbers here".
+  const scale = (storedPrefs ? normalisePreferences(storedPrefs) : DEFAULT_PREFERENCES).scale
   const t = taste(reviews)
   const rated = reviews.map(projectReview)
   const landing = songLanding(reviews)
@@ -42,7 +50,7 @@ export default async function Stats () {
       <dl className="ts-figures">
         <div><dt>Albums</dt><dd className="tnum">{t.albums}</dd></div>
         <div><dt>Songs scored</dt><dd className="tnum">{t.songs}</dd></div>
-        <div><dt>Album average</dt><dd className="tnum">{fmt(t.average)}</dd></div>
+        <div><dt>Album average</dt><dd className="tnum">{fmtScore(t.average, scale)}</dd></div>
         {/* Named for what it is on any ladder. "Elevens given" was a figure
             only the house scale could ever produce. */}
         <div><dt>Top marks</dt><dd className="tnum">{t.topMarks}</dd></div>
@@ -68,7 +76,7 @@ export default async function Stats () {
                     <i style={{ width: `${Math.min(100, (c.avg / t.ceiling) * 100)}%`, background: col.bg }} />
                   </span>
                   <span className="ts-chip tnum" style={{ background: col.bg, color: col.fg }}>
-                    {fmt(c.avg, 1)}
+                    {fmtScore(c.avg, scale)}
                   </span>
                 </li>
               )
@@ -107,7 +115,7 @@ export default async function Stats () {
                 <strong>{a.artist}</strong>
                 <span className="ts-artist-n">{a.albums} rated</span>
                 <span className="ts-chip tnum" style={{ background: col.bg, color: col.fg }}>
-                  {fmt(a.avg, 1)}
+                  {fmtScore(a.avg, scale)}
                 </span>
               </li>
             )
@@ -133,7 +141,7 @@ export default async function Stats () {
                 <em>{t.best.artist}</em>
               </span>
               <span className="ts-best-score tnum" style={{ background: col.bg, color: col.fg }}>
-                {fmt(t.best.final)}
+                {fmtScore(t.best.final, scale)}
               </span>
             </Link>
           </section>

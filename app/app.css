@@ -1807,6 +1807,33 @@ body:has(.app) .vignette { opacity: 0.5; }
 .sb-na input { width: 16px; height: 16px; accent-color: var(--accent); }
 .sb-na span { font-size: 13.6px; font-weight: 560; }
 .sb-na em { grid-column: 2; font-style: normal; font-size: 11.8px; color: var(--fg-4); }
+/* Sits under Allow N/A and reads as its sibling, but with a select instead of
+   a checkbox, so the label column is the control and the note runs under it. */
+.sb-dp {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px 12px;
+  align-items: center; margin-top: 8px;
+  padding: 11px 14px; border-radius: 11px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
+}
+.sb-dp span { font-size: 13.6px; font-weight: 560; }
+.sb-dp em { grid-column: 1 / -1; font-style: normal; font-size: 11.8px; color: var(--fg-4); }
+.sb-dp select {
+  justify-self: end; min-width: 116px;
+  padding: 7px 28px 7px 10px;
+  font: inherit; font-size: 13px; font-weight: 560; color: var(--fg);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 9px; cursor: pointer; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%23b9b9c2' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 9px center; background-size: 10px;
+}
+.sb-dp select:hover { border-color: rgba(255,255,255,0.2); }
+.sb-dp select:focus {
+  outline: none; border-color: rgba(var(--accent-rgb), 0.6);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.16);
+}
+.sb-dp option { background: #14141a; color: var(--fg); }
+
 .sb-tiers { max-height: 380px; overflow-y: auto; }
 .sb-tiers li {
   display: grid; grid-template-columns: 46px minmax(0, 1fr) 34px;

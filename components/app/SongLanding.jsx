@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import { chipColour } from '@/lib/rating-colors'
-
-const fmt = n => (typeof n === 'number' ? n.toFixed(2) : '—')
+import { fmtScore } from '@/lib/scales'
 
 // The distribution, one rating system at a time.
 //
@@ -55,7 +54,7 @@ export default function SongLanding ({ groups }) {
         {groups.length > 1 && (
           <>From {g.albums} album{g.albums === 1 ? '' : 's'} rated on it. </>
         )}
-        Your song average here is {fmt(g.average)}.
+        Your song average here is {fmtScore(g.average, g.scale)}.
       </p>
 
       <ol className="ts-ladder">

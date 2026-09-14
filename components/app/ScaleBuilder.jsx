@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import {
-  SCALE_PRESETS, SCALE_MAX_CEILING, TIER_NAME_MAX, rampColour, readableOn
-} from '@/lib/scales'
+  SCALE_PRESETS, SCALE_MAX_CEILING, TIER_NAME_MAX, rampColour, readableOn, normaliseDecimals } from '@/lib/scales'
 import { chipColour } from '@/lib/rating-colors'
 
 // PRODUCT.md: a scale is an ordered list of tiers, each with a value, a name and
@@ -27,6 +26,13 @@ const darken = (h, by = 0.34) => {
   const c = [1, 2, 3].map(i => Math.round(parseInt(m[i], 16) * (1 - by)))
   return `#${c.map(v => Math.max(0, Math.min(255, v)).toString(16).padStart(2, '0')).join('')}`
 }
+
+const DP_CHOICES = [0, 1, 2, 3]
+
+// Shown against a real-looking number rather than as a bare count, because
+// "2" does not tell anybody what their leaderboard will look like and "8.44"
+// does.
+const example = d => (8.4372).toFixed(d)
 
 export default function ScaleBuilder ({ scale, onChange, locked = false }) {
   const [adding, setAdding] = useState('')
@@ -190,6 +196,23 @@ export default function ScaleBuilder ({ scale, onChange, locked = false }) {
         />
         <span>Allow N/A</span>
         <em>Skits and interludes get a dash and stay out of every average.</em>
+      </label>
+
+      {/* Not disabled when the rest of the builder is. Building a ladder is
+          what the paid tiers are for; how many decimal places the number it
+          produces is printed to is not, and the save keeps this even when it
+          puts the rest of the scale back. */}
+      <label className="sb-dp">
+        <span>Decimal places</span>
+        <select
+          value={normaliseDecimals(scale.decimals)}
+          onChange={e => onChange({ ...scale, decimals: Number(e.target.value) })}
+        >
+          {DP_CHOICES.map(d => (
+            <option key={d} value={d}>{d === 0 ? `${d} — ${example(0)}` : `${d} — ${example(d)}`}</option>
+          ))}
+        </select>
+        <em>How precise a rating reads, here and on the slides.</em>
       </label>
 
       <ul className="sb-tiers glass-list">

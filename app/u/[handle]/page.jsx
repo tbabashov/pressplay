@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Verified from '@/components/Verified'
+import { fmtScore } from '@/lib/scales'
 import { notFound } from 'next/navigation'
 import { auth } from '@/auth'
 import { getProfileByHandle, isFollowing } from '@/lib/db'
@@ -24,7 +25,6 @@ export async function generateMetadata ({ params }) {
   }
 }
 
-const fmt = n => (typeof n === 'number' ? n.toFixed(2) : null)
 
 export default async function RaterProfile ({ params }) {
   const handle = param((await params).handle)
@@ -87,7 +87,7 @@ export default async function RaterProfile ({ params }) {
           <dl className="rp-stats">
             <div><dt>Albums</dt><dd className="tnum">{stats.albums}</dd></div>
             <div><dt>Songs scored</dt><dd className="tnum">{stats.songs}</dd></div>
-            <div><dt>Average</dt><dd className="tnum">{fmt(stats.average) ?? 'None'}</dd></div>
+            <div><dt>Average</dt><dd className="tnum">{typeof stats.average === 'number' ? fmtScore(stats.average, stats.scale) : 'None'}</dd></div>
             <div><dt>Top marks</dt><dd className="tnum">{stats.topMarks}</dd></div>
           </dl>
 
@@ -111,7 +111,7 @@ export default async function RaterProfile ({ params }) {
                     </span>
                     {c && (
                       <span className="rp-score tnum" style={{ background: c.bg, color: c.fg }}>
-                        {a.final.toFixed(1)}
+                        {fmtScore(a.final, a.scaleModel)}
                       </span>
                     )}
                   </Link>

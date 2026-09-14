@@ -3,7 +3,8 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { styleOf } from './styles.js'
 import { ratingColor, scoreText, SCALE_ROWS, fmtRuntime, fmtDuration } from '../rating-colors.js'
-import { NA, fmtScore } from '../rating-scale.js'
+import { NA } from '../rating-scale.js'
+import { fmtScore } from '../scales.js'
 import { readableOn } from '../scales.js'
 import {
   FrameShell, Surface, ScoreChip, FitText, Fill, surfaceStyle, rowRule,
@@ -1219,7 +1220,7 @@ export function TracksFrame ({ data, palette, theme, tracks, showScale, dense,
 
 // ---------- Frame 3: criteria, now playing, best/worst, final rating ----------
 
-function CriterionRow ({ part, theme, last, max = 11, onEdit }) {
+function CriterionRow ({ part, theme, last, max = 11, scale, onEdit }) {
   const has = typeof part.value === 'number'
   const c = ratingColor(has ? Math.round(part.value) : null)
   return (
@@ -1245,7 +1246,7 @@ function CriterionRow ({ part, theme, last, max = 11, onEdit }) {
         fontVariantNumeric: 'tabular-nums', color: has ? 'var(--ink)' : 'rgba(var(--ink-rgb), 0.35)',
         flexShrink: 0
       }}>
-        {has ? part.value.toFixed(1) : '—'}
+        {has ? fmtScore(part.value, scale) : '—'}
       </span>
     </div>
   )
@@ -1346,7 +1347,7 @@ export function CriteriaFrame ({ data, palette, theme, hiddenParts = [], onRemov
         <Surface theme={theme} radius={30} style={{ padding: '10px 30px', flexShrink: 0 }}>
           {rows.map((pt, i) => (
             <Removable key={pt.key} id={`crit:${pt.key}`} name={pt.label} onRemove={onRemovePart}>
-              <CriterionRow part={pt} theme={theme} last={i === rows.length - 1} max={data.maxScore} onEdit={onEdit} />
+              <CriterionRow part={pt} theme={theme} last={i === rows.length - 1} max={data.maxScore} scale={data.scale} onEdit={onEdit} />
             </Removable>
           ))}
         </Surface>
@@ -1397,7 +1398,7 @@ export function CriteriaFrame ({ data, palette, theme, hiddenParts = [], onRemov
           boxShadow: c.glow ? `0 0 110px ${c.glow}` : '0 22px 50px rgba(0,0,0,0.4)',
           fontVariantNumeric: 'tabular-nums', flexShrink: 0
         }}>
-          {fmtScore(final)}
+          {fmtScore(final, data.scale)}
         </span>
       </Surface>
       </Removable>

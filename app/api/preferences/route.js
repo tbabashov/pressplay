@@ -45,7 +45,15 @@ export async function PUT (req) {
     // eleven keeps it rather than being pushed onto the new default: a tier
     // limit may stop somebody building a ladder, but it must not change the one
     // their existing scores were given on.
+    //
+    // Decimal places survive the reset. They live on the scale because a score
+    // has to keep the precision it was given, but they are how a number is
+    // printed rather than what the ladder is, and nothing about showing 8.44
+    // instead of 8.4 is a paid feature. Without this line a free account could
+    // set it, watch it save, and find it reverted on the next load.
+    const decimals = preferences.scale.decimals
     preferences.scale = base.scale?.id === LEGACY_SCALE_ID ? base.scale : DEFAULT_SCALE
+    preferences.scale = { ...preferences.scale, decimals }
   }
   // How many looks an account may keep is a tier limit, so it is trimmed here
   // and not only in the page that saves them.

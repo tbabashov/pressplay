@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Verified from '@/components/Verified'
+import { fmtScore } from '@/lib/scales'
 import { auth } from '@/auth'
 import { raters } from '@/lib/social-queries'
 import { ratingColor } from '@/lib/rating-colors'
@@ -57,7 +58,7 @@ export default async function Browse () {
                 {stats.songs} songs
                 {stats.average !== null && <>
                   <span className="rp-dot" aria-hidden="true">·</span>
-                  {stats.average.toFixed(2)} average
+                  {fmtScore(stats.average, stats.scale)} average
                 </>}
               </p>
 
@@ -72,7 +73,7 @@ export default async function Browse () {
                           : <span className="br-blank" aria-hidden="true" />}
                         {c && (
                           <span className="br-score tnum" style={{ background: c.bg, color: c.fg }}>
-                            {a.final.toFixed(1)}
+                            {fmtScore(a.final, a.scaleModel)}
                           </span>
                         )}
                       </Link>

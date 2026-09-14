@@ -1,4 +1,5 @@
 'use client'
+import { fmtScore } from '@/lib/scales'
 
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
@@ -86,7 +87,7 @@ export default function AlbumsOfTheYear ({ albums }) {
                   boxShadow: c.glow ? `0 0 26px ${c.glow}` : undefined
                 }}
               >
-                {a.final.toFixed(1)}
+                {fmtScore(a.final, a.scaleModel)}
               </span>
             </li>
           )

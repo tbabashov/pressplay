@@ -1,4 +1,5 @@
 'use client'
+import { fmtScore } from '@/lib/scales'
 
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
@@ -170,7 +171,7 @@ export default function Board ({ rows, snapshot }) {
                 className="bd-score tnum"
                 style={{ background: c.bg, color: c.fg, boxShadow: c.glow ? `0 0 30px ${c.glow}` : undefined }}
               >
-                {r.final.toFixed(1)}
+                {fmtScore(r.final, r.scaleModel)}
               </span>
             </li>
           )

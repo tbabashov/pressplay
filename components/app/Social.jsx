@@ -1,4 +1,5 @@
 'use client'
+import { fmtScore } from '@/lib/scales'
 
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
@@ -247,7 +248,7 @@ export default function Social ({ rows: initial, tab, viewer }) {
           {c && (
             <span className="sc-score tnum" style={{ background: c.bg, color: c.fg,
               boxShadow: c.glow ? `0 0 40px ${c.glow}` : undefined }}>
-              {row.final.toFixed(1)}
+              {fmtScore(row.final, row.scaleModel)}
             </span>
           )}
         </div>

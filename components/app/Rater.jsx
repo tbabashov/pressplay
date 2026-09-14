@@ -10,7 +10,7 @@ import { chipColour } from '../../lib/rating-colors'
 import { autoBestSong, autoWorstSong } from '../../lib/auto-picks'
 import { NA, normaliseDecimal } from '../../lib/rating-scale'
 import { superlativeByKey, DEFAULT_PREFERENCES, SUPERLATIVE_MAX, TEXT_SUPERLATIVE_MAX } from '../../lib/preferences'
-import { DEFAULT_SCALE } from '../../lib/scales'
+import { DEFAULT_SCALE, fmtScore } from '../../lib/scales'
 import ImageInput from './ImageInput'
 import SuperlativePicker from './SuperlativePicker'
 import FeatureInput from './FeatureInput'
@@ -518,7 +518,7 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
         <div className="verdict">
           <div className="verdict-row">
             <span>Song average<i>auto</i></span>
-            <b>{songAverage === null ? '—' : songAverage.toFixed(1)}</b>
+            <b>{fmtScore(songAverage, scale)}</b>
           </div>
           {CRITERIA.map(([key, label]) => (
             <label className="verdict-row" key={key}>
@@ -553,7 +553,7 @@ export default function Rater ({ album: source, initial = null, canSave = true, 
               className={`tnum${final === null ? ' is-empty' : ''}`}
               style={finalStyle(final, scale)}
             >
-              {final === null ? '—' : final.toFixed(1)}
+              {fmtScore(final, scale)}
             </strong>
           </div>
 

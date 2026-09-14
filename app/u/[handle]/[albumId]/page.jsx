@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Verified from '@/components/Verified'
 import { notFound } from 'next/navigation'
 import { auth } from '@/auth'
+import { fmtScore } from '@/lib/scales'
 import { getProfile, reviewId } from '@/lib/db'
 import { resolvePublicReview } from '@/lib/public-review'
 import { commentsFor } from '@/lib/social-queries'
@@ -22,7 +23,7 @@ export async function generateMetadata ({ params }) {
   if (!found) return { title: 'Not found' }
   const { profile, review } = found
   const name = profile.name || profile.handle
-  const score = typeof review.final === 'number' ? review.final.toFixed(1) : null
+  const score = typeof review.final === 'number' ? fmtScore(review.final, review.scaleModel) : null
   return {
     title: `${review.albumName} rated by ${name}`,
     description: score
@@ -118,7 +119,7 @@ export default async function PublicReview ({ params }) {
                   <dt>{c.label}</dt>
                   <dd>
                     <span className="pr-crit-chip tnum" style={{ background: col.bg, color: col.fg }}>
-                      {c.value.toFixed(1)}
+                      {fmtScore(c.value, review.scaleModel)}
                     </span>
                   </dd>
                 </div>

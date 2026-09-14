@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { fmtScore } from '../rating-scale.js'
+import { fmtScore } from '../scales.js'
 import { FrameShell, Surface, ScoreChip, FitText, Fill, rowRule } from './shell.jsx'
 import { Cover } from './frames.jsx'
 
@@ -33,7 +33,7 @@ function Delta ({ places, isNew, accent }) {
   )
 }
 
-function RatingDelta ({ delta }) {
+function RatingDelta ({ delta, scale }) {
   // No snapshot means there is nothing to compare against, so the column stays
   // empty rather than claiming every score held steady.
   if (delta === null || delta === undefined) return null
@@ -45,7 +45,7 @@ function RatingDelta ({ delta }) {
       fontSize: 21, fontWeight: 800, color: delta > 0 ? UP : DOWN,
       fontVariantNumeric: 'tabular-nums'
     }}>
-      {delta > 0 ? '+' : '−'}{Math.abs(delta).toFixed(1)}
+      {delta > 0 ? '+' : '−'}{fmtScore(Math.abs(delta), scale)}
     </span>
   )
 }
@@ -170,7 +170,7 @@ export function LeaderboardFrame ({ rows, from, to, total, palette, theme }) {
                 </FitText>
               </div>
               <div style={{ width: 70, textAlign: 'right', flexShrink: 0 }}>
-                <RatingDelta delta={r.ratingDelta} />
+                <RatingDelta delta={r.ratingDelta} scale={r.scaleModel} />
               </div>
               <ScoreChip score={r.rating} theme={theme} size={50} fontSize={27} decimals={1} minWidth={94} />
             </div>
@@ -243,7 +243,7 @@ export function MoversFrame ({ climbers, fallers, palette, theme }) {
             <div style={{ flex: 1, minWidth: 0 }}>
               <FitText size={23} min={15} weight={700} fitKey={r.album.name}>{r.album.name}</FitText>
               <div style={{ fontSize: 18, fontWeight: 600, color: 'rgba(var(--ink-rgb), 0.5)', marginTop: 2, fontVariantNumeric: 'tabular-nums' }}>
-                #{r.prevRank} → #{r.rank} · {fmtScore(r.rating)}
+                #{r.prevRank} → #{r.rank} · {fmtScore(r.rating, r.scaleModel)}
               </div>
             </div>
             <span style={{ fontSize: 26, fontWeight: 800, color: tone, flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}>
