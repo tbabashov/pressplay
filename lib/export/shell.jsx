@@ -319,14 +319,22 @@ export function FitText ({
 }) {
   const ref = useRef(null)
   const [fs, setFs] = useState(size)
-  const floor = min ?? Math.round(size * 0.62)
+  // A single word has nowhere to wrap, so it is kept on one line and shrunk to
+  // fit instead of being split between letters.
+  // children is often an <Editable>, so fall back to fitKey, which carries the
+  // same string.
+  const text = typeof children === 'string'
+    ? children
+    : (typeof fitKey === 'string' ? fitKey : '')
+  const oneWord = text.trim().length > 0 && !/\s/.test(text.trim())
+  const floor = Math.round((min ?? size * 0.62) * (oneWord ? 0.4 : 1))
   // boxHeight pins the box to a row's height so wrapping can't grow the row
   const boxH = lines > 1 ? (boxHeight ?? Math.round(size * 1.16 * lines)) : undefined
 
   useLayoutEffect(() => {
     const el = ref.current
     if (!el) return
-    const overflows = () => lines > 1
+    const overflows = () => (lines > 1 && !oneWord)
       ? el.scrollHeight > el.clientHeight + 1
       : el.scrollWidth > el.clientWidth + 1
     let s = size
@@ -337,7 +345,7 @@ export function FitText ({
       el.style.fontSize = `${s}px`
     }
     setFs(s)
-  }, [fitKey ?? (typeof children === 'string' ? children : ''), size, floor, lines, boxH])
+  }, [fitKey ?? text, size, floor, lines, boxH, oneWord])
 
   return (
     <div
@@ -350,7 +358,9 @@ export function FitText ({
         lineHeight: lines > 1 ? 1.16 : 1.2,
         height: boxH,
         overflow: 'hidden',
-        whiteSpace: lines > 1 ? 'normal' : 'nowrap',
+        whiteSpace: (lines > 1 && !oneWord) ? 'normal' : 'nowrap',
+        overflowWrap: 'break-word',
+        hyphens: 'auto',
         // a 2-line box that only needs one line should sit against the top
         display: lines > 1 ? 'flex' : 'block',
         flexDirection: 'column',

@@ -146,6 +146,9 @@ img { display: block; max-width: 100%; }
   letter-spacing: -0.035em;
   line-height: 0.95;
   text-wrap: balance;
+  /* A title too long for its column hyphenates rather than splitting mid-word. */
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .measure { max-width: 68ch; }
