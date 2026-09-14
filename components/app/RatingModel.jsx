@@ -76,9 +76,7 @@ export default function RatingModel ({ initial, can = { scales: true, criteria: 
         <h2 className="rm-h2">Scale</h2>
         {!can.scales && (
           <p className="rm-locked">
-            Your own scale is a Plus feature. The eleven point ladder is yours either way, and
-            anything you change here would be put back when it saved rather than kept, so it is
-            shown as it is. <Link href="/tiers">See what each tier includes</Link>.
+            Your own scale is a Plus feature. <Link href="/tiers">See what each tier includes</Link>.
           </p>
         )}
         <ScaleBuilder scale={scale} onChange={touch(setScale)} locked={!can.scales} />

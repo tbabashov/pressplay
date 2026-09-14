@@ -1934,6 +1934,9 @@ body:has(.app) .vignette { opacity: 0.5; }
   padding: 10px 13px; border-radius: 10px;
   background: rgba(var(--accent-rgb), 0.07);
   border: 1px solid rgba(var(--accent-rgb), 0.22);
+  /* It sat directly on the preset buttons underneath it. A panel explaining why
+     the controls below are disabled has to read as separate from them. */
+  margin-bottom: 14px;
 }
 .rm-locked a { color: var(--fg); text-decoration: underline; text-underline-offset: 2px; }
 .sb-locked { opacity: 0.62; }

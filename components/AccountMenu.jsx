@@ -81,9 +81,13 @@ export default function AccountMenu ({ name, image, handle, role, verified = fal
               <span className={`acct-tier acct-tier-${quota?.tier || 'free'}`}>
                 {quota ? quota.tierName : 'Your tier'}
               </span>
-              <span className="acct-plan-sub">
-                {quota?.unlimited ? 'Everything unlocked' : 'What this account is on'}
-              </span>
+              {/* Only when it says something the tier name above has not. On a
+                  capped tier "what this account is on" was the label for a
+                  label; "Everything unlocked" is the one case where the line
+                  adds a fact, so it is the only case that renders. */}
+              {quota?.unlimited && (
+                <span className="acct-plan-sub">Everything unlocked</span>
+              )}
             </span>
           </div>
 
