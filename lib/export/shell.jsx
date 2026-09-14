@@ -362,12 +362,25 @@ export function FitText ({
 // ---------- Score chip ----------
 // How a score reads is part of the design, not a colour swap: a printed page
 // wants a numeral, a poster wants a block, a receipt wants a bracketed figure.
+// How much to shrink the figure so it still fits its box as it gets longer.
+//
+// A chip is one size whatever is in it, so the number has to give way rather
+// than the box. "10" and a dash sit at full size; a decimal place costs a
+// little and a second costs more, which is what keeps 8.5 from touching the
+// ring around it and 8.44 from running out of one altogether.
+const FIT = { 1: 1, 2: 1, 3: 0.86, 4: 0.73, 5: 0.63 }
+const fitFor = text => FIT[Math.min(5, String(text).length)] ?? 0.63
+
 export function ScoreChip ({ score, size = 54, fontSize = 27, decimals = 0, minWidth, theme }) {
   const rounded = typeof score === 'number' ? Math.round(score) : score
   const c = ratingColor(rounded)
   const isGradient = typeof c.bg === 'string' && c.bg.startsWith('linear-gradient')
   const kind = styleOf(theme).score || 'pill'
   const text = scoreText(score, decimals)
+  // Width, not minWidth: a row of chips where 9.5 is wider than 10 and a dash
+  // is narrower than both reads as a column that will not line up, which is
+  // exactly what it was.
+  const fs = fontSize * fitFor(text)
   const base = {
     display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
     flexShrink: 0, fontVariantNumeric: 'tabular-nums'
@@ -377,8 +390,8 @@ export function ScoreChip ({ score, size = 54, fontSize = 27, decimals = 0, minW
   if (kind === 'print') {
     return (
       <span style={{
-        ...base, minWidth: minWidth || size * 1.2, height: size,
-        fontSize: fontSize * 1.24, fontWeight: 400,
+        ...base, width: minWidth || size * 1.2, height: size,
+        fontSize: fs * 1.24, fontWeight: 400,
         color: isGradient ? 'var(--ink)' : c.bg,
         justifyContent: 'flex-end'
       }}>{text}</span>
@@ -389,12 +402,12 @@ export function ScoreChip ({ score, size = 54, fontSize = 27, decimals = 0, minW
   if (kind === 'block') {
     return (
       <span style={{
-        ...base, minWidth: minWidth || size * 1.4, height: size,
-        padding: '0 12px', borderRadius: 0,
+        ...base, width: minWidth || size * 1.4, height: size,
+        borderRadius: 0,
         background: c.bg, color: c.fg,
         border: '3px solid rgba(0,0,0,0.55)',
         boxShadow: '5px 5px 0 rgba(0,0,0,0.4)',
-        fontSize, fontWeight: 400, letterSpacing: 0.5
+        fontSize: fs, fontWeight: 400, letterSpacing: 0.5
       }}>{text}</span>
     )
   }
@@ -403,8 +416,8 @@ export function ScoreChip ({ score, size = 54, fontSize = 27, decimals = 0, minW
   if (kind === 'bracket') {
     return (
       <span style={{
-        ...base, minWidth: minWidth || size * 1.5, height: size,
-        fontSize: fontSize * 0.94, fontWeight: 600, letterSpacing: 0.5,
+        ...base, width: minWidth || size * 1.5, height: size,
+        fontSize: fs * 0.94, fontWeight: 600, letterSpacing: 0.5,
         color: isGradient ? 'var(--ink)' : c.bg,
         justifyContent: 'flex-end'
       }}>
@@ -416,19 +429,26 @@ export function ScoreChip ({ score, size = 54, fontSize = 27, decimals = 0, minW
   }
 
   // Aurora: a lit ring round the figure, sized so the number stays readable.
+  //
+  // Smaller than it was. At the sizes a tracklist actually uses, the old floor
+  // of 62 meant nearly every ring was the same large circle regardless of the
+  // row it sat in, which read as oversized beside the text.
   if (kind === 'ring') {
-    const d = Math.max(size * 1.42, 62)
+    const d = Math.max(size * 1.3, 56)
     return (
       <span style={{
         ...base, width: d, height: d,
-        borderRadius: '50%', fontSize: fontSize * 1.06, fontWeight: 700,
+        borderRadius: '50%', fontSize: fs * 1.02, fontWeight: 700,
         color: isGradient ? '#fff' : c.bg,
         border: `2.5px solid ${isGradient ? 'rgba(255,255,255,0.85)' : c.bg}`,
         boxShadow: [
           `inset 0 0 ${d * 0.5}px ${c.glow || 'rgba(255,255,255,0.14)'}`,
           `0 0 ${d * 0.34}px ${c.glow || 'rgba(255,255,255,0.10)'}`
         ].join(', '),
-        background: 'rgba(0,0,0,0.3)'
+        // Darker behind the figure than it was. These sit on album art as well
+        // as on the page, and over a bright cover a 30% wash left the number
+        // competing with whatever was underneath it.
+        background: 'rgba(0,0,0,0.52)'
       }}>{text}</span>
     )
   }
@@ -437,8 +457,8 @@ export function ScoreChip ({ score, size = 54, fontSize = 27, decimals = 0, minW
   return (
     <span style={{
       ...base,
-      minWidth: minWidth || size * 1.5, height: size, padding: '0 16px',
-      borderRadius: size * 0.3, fontWeight: 800, fontSize,
+      width: minWidth || size * 1.5, height: size,
+      borderRadius: size * 0.3, fontWeight: 800, fontSize: fs,
       background: c.bg, color: c.fg,
       boxShadow: c.glow
         ? `0 0 ${size * 0.6}px ${c.glow}`

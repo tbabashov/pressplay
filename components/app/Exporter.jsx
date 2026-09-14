@@ -400,7 +400,7 @@ export default function Exporter ({ data, tier = 'free' }) {
         out.push({
           key: `disc-${gi}-${i}`,
           label: pages > 1 ? `${g.artist} discography ${i + 1} of ${pages}` : `${g.artist} discography`,
-          node: <DiscographyFrame group={slice} page={i + 1} pages={pages} counts={counts}
+          node: <DiscographyFrame group={slice} page={i + 1} pages={pages} counts={counts} scale={data.scale}
                   currentAlbumName={data.review.album.name} palette={palette} theme={theme}
                   onRemoveAlbum={preview
                     ? undefined

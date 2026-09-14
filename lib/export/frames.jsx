@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import { styleOf } from './styles.js'
 import { ratingColor, scoreText, SCALE_ROWS, fmtRuntime, fmtDuration } from '../rating-colors.js'
 import { NA } from '../rating-scale.js'
-import { fmtScore } from '../scales.js'
+import { fmtScore, normaliseDecimals } from '../scales.js'
 import { readableOn } from '../scales.js'
 import {
   FrameShell, Surface, ScoreChip, FitText, Fill, surfaceStyle, rowRule,
@@ -1477,7 +1477,7 @@ export function ThoughtsFrame ({ data, palette, theme, hiddenParts = [], onRemov
 }
 
 // ---------- Frame 4: where this album ranks ----------
-function RankRow ({ entry, highlight, palette, theme, artistRef, artistSize }) {
+function RankRow ({ entry, highlight, palette, theme, artistRef, artistSize, scale }) {
   const base = surfaceStyle(theme, { radius: 26, tint: 0.06, lift: highlight ? 0.09 : 0 })
   return (
     <div style={{
@@ -1521,7 +1521,8 @@ function RankRow ({ entry, highlight, palette, theme, artistRef, artistSize }) {
           {entry.album.artists.join(', ')}
         </div>
       </div>
-      <ScoreChip score={entry.rating} theme={theme} size={62} fontSize={33} decimals={1} minWidth={110} />
+      <ScoreChip score={entry.rating} theme={theme} size={62} fontSize={33}
+        decimals={normaliseDecimals(scale?.decimals)} minWidth={110} />
     </div>
   )
 }
@@ -1566,6 +1567,7 @@ export function ComparisonFrame ({ data, palette, theme, hiddenParts = [], onRem
             onRemove={entry.albumId === review.albumId ? undefined : onRemovePart}
           >
             <RankRow
+              scale={data.scale}
               entry={entry} palette={palette} theme={theme}
               highlight={entry.albumId === review.albumId}
               artistRef={el => { artistRefs.current[slot.get(entry.albumId)] = el }}
@@ -1581,7 +1583,7 @@ export function ComparisonFrame ({ data, palette, theme, hiddenParts = [], onRem
 // ---------- Frame 5+: one artist's discography ----------
 const CELL = Math.floor((CONTENT_W - 2 * 26) / 3) // 3 across the safe width
 
-function DiscoCell ({ album, isCurrent, palette, theme, onRemove }) {
+function DiscoCell ({ album, isCurrent, palette, theme, scale, onRemove }) {
   const rated = album.rated && typeof album.rating === 'number'
   return (
     <Removable id={album.key} name={album.name} onRemove={onRemove} inline>
@@ -1618,7 +1620,11 @@ function DiscoCell ({ album, isCurrent, palette, theme, onRemove }) {
         )}
         {rated && (
           <div style={{ position: 'absolute', right: 10, bottom: 10 }}>
-            <ScoreChip score={album.rating} theme={theme} size={54} fontSize={29} decimals={1} minWidth={98} />
+            {/* Bigger than the other cards' chips on purpose: this one sits on
+                album art rather than on the page, so it has a busy, bright and
+                unpredictable background to be read against. */}
+            <ScoreChip score={album.rating} theme={theme} size={66} fontSize={35}
+              decimals={normaliseDecimals(scale?.decimals)} minWidth={120} />
           </div>
         )}
       </div>
@@ -1639,7 +1645,7 @@ function DiscoCell ({ album, isCurrent, palette, theme, onRemove }) {
   )
 }
 
-export function DiscographyFrame ({ group, page, pages, currentAlbumName, palette, theme, counts, onRemoveAlbum }) {
+export function DiscographyFrame ({ group, page, pages, currentAlbumName, palette, theme, counts, scale, onRemoveAlbum }) {
   const coverForBg = group.albums.find(a => a.rated)?.cover || group.albums[0]?.cover
   // When the list is split across pages, the header still counts the whole
   // discography rather than whatever landed on this one.
@@ -1667,7 +1673,7 @@ export function DiscographyFrame ({ group, page, pages, currentAlbumName, palett
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 26, justifyContent: 'center' }}>
           {group.albums.filter(a => !a.hidden).map(a => (
             <DiscoCell
-              key={a.key} album={a} palette={palette} theme={theme}
+              key={a.key} album={a} palette={palette} theme={theme} scale={scale}
               isCurrent={a.name === currentAlbumName}
               onRemove={onRemoveAlbum}
             />
