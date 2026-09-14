@@ -3,6 +3,7 @@
 import { styleOf } from './styles.js'
 import React, { useLayoutEffect, useRef, useState } from 'react'
 import { ratingColor, scoreText } from '../rating-colors.js'
+import { readableInk } from '../scales.js'
 import { NA } from '../rating-scale.js'
 
 export const FONT = "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif"
@@ -265,7 +266,10 @@ export function FrameShell ({ palette, theme, children, fullBleed, pad, cover })
       }} />
       <div style={{
         position: 'relative', flex: 1, display: 'flex', flexDirection: 'column',
-        padding: fullBleed ? 0 : `${inset.top}px ${inset.right}px ${inset.bottom}px ${inset.left}px`
+        // Reserve the credit's line so content cannot run under it.
+        padding: fullBleed
+          ? 0
+          : `${inset.top}px ${inset.right}px ${inset.bottom + (theme?.watermark !== false ? 56 : 0)}px ${inset.left}px`
       }}>
         {children}
       </div>
@@ -375,8 +379,11 @@ export function ScoreChip ({ score, size = 54, fontSize = 27, decimals = 0, minW
   const rounded = typeof score === 'number' ? Math.round(score) : score
   const c = ratingColor(rounded)
   const isGradient = typeof c.bg === 'string' && c.bg.startsWith('linear-gradient')
-  const kind = styleOf(theme).score || 'pill'
+  const style = styleOf(theme)
+  const kind = style.score || 'pill'
   const text = scoreText(score, decimals)
+  // print, bracket and ring use the tier colour as type, so it needs contrast.
+  const inkTint = isGradient ? null : readableInk(c.bg, style.ink)
   // Width, not minWidth: a row of chips where 9.5 is wider than 10 and a dash
   // is narrower than both reads as a column that will not line up, which is
   // exactly what it was.
@@ -392,7 +399,7 @@ export function ScoreChip ({ score, size = 54, fontSize = 27, decimals = 0, minW
       <span style={{
         ...base, width: minWidth || size * 1.2, height: size,
         fontSize: fs * 1.24, fontWeight: 400,
-        color: isGradient ? 'var(--ink)' : c.bg,
+        color: isGradient ? 'var(--ink)' : inkTint,
         justifyContent: 'flex-end'
       }}>{text}</span>
     )
@@ -418,7 +425,7 @@ export function ScoreChip ({ score, size = 54, fontSize = 27, decimals = 0, minW
       <span style={{
         ...base, width: minWidth || size * 1.5, height: size,
         fontSize: fs * 0.94, fontWeight: 600, letterSpacing: 0.5,
-        color: isGradient ? 'var(--ink)' : c.bg,
+        color: isGradient ? 'var(--ink)' : inkTint,
         justifyContent: 'flex-end'
       }}>
         <span style={{ opacity: 0.42, marginRight: 3 }}>[</span>
@@ -439,8 +446,8 @@ export function ScoreChip ({ score, size = 54, fontSize = 27, decimals = 0, minW
       <span style={{
         ...base, width: d, height: d,
         borderRadius: '50%', fontSize: fs * 1.02, fontWeight: 700,
-        color: isGradient ? '#fff' : c.bg,
-        border: `2.5px solid ${isGradient ? 'rgba(255,255,255,0.85)' : c.bg}`,
+        color: isGradient ? '#fff' : inkTint,
+        border: `2.5px solid ${isGradient ? 'rgba(255,255,255,0.85)' : inkTint}`,
         boxShadow: [
           `inset 0 0 ${d * 0.5}px ${c.glow || 'rgba(255,255,255,0.14)'}`,
           `0 0 ${d * 0.34}px ${c.glow || 'rgba(255,255,255,0.10)'}`
