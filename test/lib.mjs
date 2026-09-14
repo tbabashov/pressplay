@@ -943,3 +943,20 @@ await test('fmtScore prints a score at its own scale precision', async () => {
   assert.equal(fmtScore(null, { decimals: 2 }), '—')
   assert.equal(fmtScore(undefined, { decimals: 2 }), '—')
 })
+
+await test('the schema guard reads the schema, not the prose around it', async () => {
+  const { tableNames, alteredColumns } = await import(R + 'db/postgres.js')
+  // The real schema explains itself in comments, and one of them says "create
+  // table if not exists does nothing at all to an existing one". Read as DDL
+  // that is a table called "does", nothing is called does, and the guard is
+  // false on every boot — so the migration and its advisory lock run on every
+  // cold start, which is the contention the guard exists to prevent.
+  const sql = `
+    -- too: create table if not exists does nothing at all to an existing one,
+    create table if not exists reviews (id text primary key);
+    -- alter table users add column if not exists imaginary text;
+    alter table users add column if not exists tier text not null default 'free';
+  `
+  assert.deepEqual(tableNames(sql), ['reviews'])
+  assert.deepEqual(alteredColumns(sql), [['users', 'tier']])
+})
