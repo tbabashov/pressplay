@@ -823,7 +823,7 @@ body:has(.app) .vignette { opacity: 0.5; }
    button lands in the same place on every slide in the row. */
 .exp-meta {
   display: grid; justify-items: start;
-  gap: 8px; margin-top: 10px;
+  gap: 6px; margin-top: 8px;
 }
 .exp-meta span {
   font-size: 12.6px; color: var(--fg-4);
@@ -2675,6 +2675,12 @@ body:has(.app) .vignette { opacity: 0.5; }
   /* The slide rail scrolls with a thumb, so the arrows are noise. */
   .sl-arrow { display: none; }
   .exp-grid { --pw-n: 172; }
+  /* The reserved second caption line earns its keep on a wide screen, where a
+     row of slides is visible at once and a button stepping down under the one
+     long label is obvious. On a phone the rail snaps to a single slide, so
+     there is nothing to line up against and the reservation is just a gap
+     between a one line caption and its button. */
+  .exp-meta span { min-height: 0; }
   .lk-row { gap: 7px; }
   .lk-add, .lk-use { min-height: 40px; display: inline-flex; align-items: center; }
 
