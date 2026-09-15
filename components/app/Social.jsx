@@ -248,7 +248,7 @@ export default function Social ({ rows: initial, tab, viewer }) {
           {c && (
             <span className="sc-score tnum" style={{ background: c.bg, color: c.fg,
               boxShadow: c.glow ? `0 0 40px ${c.glow}` : undefined }}>
-              {fmtScore(row.final, row.scaleModel)}
+              {fmtScore(row.final, row.scaleModel)}<em>/{max}</em>
             </span>
           )}
         </div>

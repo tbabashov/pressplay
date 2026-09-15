@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import AlbumBuilder from './AlbumBuilder'
 
 // The suggestions come in as children rather than as a sibling, so this can
 // decide whether they belong on screen. They are still built on the server —
@@ -18,6 +19,7 @@ export default function Search ({ children }) {
   const [state, setState] = useState('idle')   // idle | loading | done | error
   const [error, setError] = useState('')
   const box = useRef(null)
+  const [building, setBuilding] = useState(false)
   const router = useRouter()
 
   // Focus only when there is nothing to read yet. Arriving with a query and
@@ -69,6 +71,7 @@ export default function Search ({ children }) {
 
   return (
     <div className="search">
+      <AlbumBuilder open={building} onClose={() => setBuilding(false)} initialName={q.trim()} />
       <div className="search-field">
         <svg viewBox="0 0 24 24" aria-hidden="true" className="search-icon">
           <circle cx="10.5" cy="10.5" r="6.4" fill="none" stroke="currentColor" strokeWidth="2" />
@@ -90,6 +93,10 @@ export default function Search ({ children }) {
         )}
       </div>
 
+      <div className="search-make">
+        <button onClick={() => setBuilding(true)}>Cannot find it? Add the album yourself</button>
+      </div>
+
       {state === 'error' && (
         <p className="notice notice-bad">
           {error} <button onClick={() => setQ(q + ' ')}>Try again</button>
@@ -106,7 +113,8 @@ export default function Search ({ children }) {
 
       {state === 'done' && results.length === 0 && (
         <p className="notice">
-          Nothing came back for that. Try the artist name, or fewer words.
+          Nothing came back for that. Try the artist name, or fewer words.{' '}
+          <button onClick={() => setBuilding(true)}>Add it yourself</button>
         </p>
       )}
 
